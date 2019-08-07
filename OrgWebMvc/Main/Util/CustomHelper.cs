@@ -1,4 +1,4 @@
-﻿using InstApp.Annotation;
+using InstApp.Annotation;
 using InstApp.Util.Common;
 using System;
 using System.Collections;
@@ -50,8 +50,8 @@ namespace OrgWebMvc.Main.Util
 
             Table.Add(THead);
             int Idx = 1;
-
-
+            string IDProp = ObjectUtil.GetIDProps(ObjectType);
+            object ID = null;
             foreach (object Obj in Collection)
             {
                 HtmlTag Tr = new HtmlTag("tr");
@@ -59,11 +59,26 @@ namespace OrgWebMvc.Main.Util
                 Tr.Add(new HtmlTag("td", Idx.ToString()));
                 foreach (PropertyInfo Prop in CustomedProp)
                 {
+                    if (Prop.Name.Equals(IDProp))
+                    {
+                        ID = Prop.GetValue(Obj);
+                    }
                     HtmlTag Td = new HtmlTag("td", ObjectType.GetProperty(Prop.Name).GetValue(Obj).ToString());
                     Tr.Add(Td);
                 }
                 Idx++;
-                Tr.Add(new HtmlTag("td", "buttons"));
+                HtmlTag Options = new HtmlTag("td");
+                Options.Class = "btn-group";
+
+                HtmlTag BtnEdit = new HtmlTag("button", "Edit");
+                BtnEdit.Class = "btn btn-warning";
+                BtnEdit.AddAttribute("onclick", "editEntity(" + ID + ")");
+                HtmlTag BtnDelete = new HtmlTag("button", "Delete");
+                BtnDelete.Class = "btn btn-danger";
+                BtnDelete.AddAttribute("onclick", "deleteEntity(" + ID + ")");
+                Options.AddAll(BtnEdit, BtnDelete);
+
+                Tr.Add(Options);
                 TBody.Add(Tr);
             }
 
@@ -72,7 +87,11 @@ namespace OrgWebMvc.Main.Util
             return ControlUtil.HtmlTagToString(Table);
         }
 
-        public static IHtmlString GenerateForm(Type ObjectType)
+        public static IHtmlString GenerateForm(Type ObjectType, object Entity = null)
+        {
+            return new HtmlString(GenerateFormString(ObjectType, Entity));
+        }
+        public static string GenerateFormString(Type ObjectType, object Entity = null)
         {
 
             string ObjName = StringUtil.ToUpperCase(0, ObjectType.Name);
@@ -91,19 +110,57 @@ namespace OrgWebMvc.Main.Util
                 object[] Attributes = Prop.GetCustomAttributes(typeof(FieldAttribute), true);
                 if (Attributes.Length > 0)
                 {
+                    object Value = null;
+
                     FieldAttribute Attribute = (FieldAttribute)Attributes[0];
+                    HtmlTag InputField = new HtmlTag("input");
+
                     if (Attribute.FieldType.Contains("id_"))
                     {
-                        continue;
+                        if (Entity == null)
+                            continue;
+                        else
+                            InputField.AddAttribute("disabled", "disabled");
                     }
 
-                    HtmlTag Label = new HtmlTag("p", Prop.Name.ToUpper());
+                    bool IsTextArea = Attribute.FieldType.Equals(AttributeConstant.TYPE_TEXTAREA);
+                    bool IsDate = Attribute.FieldType.Equals(AttributeConstant.TYPE_DATE);
+                    bool IsNumber = Attribute.FieldType.Equals(AttributeConstant.TYPE_NUMBER);
+                    bool IsDropDown = Attribute.FieldType.Equals(AttributeConstant.TYPE_DROPDOWN);
+                   // bool IsTextArea = Attribute.FieldType.Equals(AttributeConstant.TYPE_TEXTAREA);
 
-                    HtmlTag InputField = new HtmlTag("input");
+                    HtmlTag Label = new HtmlTag("p", Prop.Name.ToUpper());
+                    if (Entity != null)
+                    {
+                        Value = Prop.GetValue(Entity);
+                    }
+
+                    if (IsTextArea)
+                    {
+                        InputField.Key = "textarea";
+                        InputField.Value = Value == null ? "" : Value.ToString();
+                    }                    
+                    else if (IsDropDown)
+                    {
+
+                    }
+                    else 
+                    {
+                        string type = "text";
+                        if (IsNumber)
+                            type = "number";
+                        else if (IsDate)
+                            type = "date";
+                        InputField.AddAttribute("type", type);
+                        InputField.AddAttribute("value", Value == null ? "" : Value.ToString());
+                    }
+                   
+
+                    
                     InputField.Class = "form-control";
                     InputField.ID = Prop.Name;
                     InputField.Name = "input-entity";
-                    InputField.AddAttribute("type", "text");
+                   
                     Form.Add(Label);
                     Form.Add(InputField);
                 }
@@ -117,14 +174,23 @@ namespace OrgWebMvc.Main.Util
 
             Form.Add(Action);
 
-            HtmlTag Button = new HtmlTag("input");
-            Button.Class = "btn btn-success";
-            Button.AddAttribute("type", "submit");
-            Button.AddAttribute("value", "Send");
-            Form.Add(new BreakLine());
-            Form.Add(Button);
+            HtmlTag BtnWrapper = new HtmlTag("div");
+            BtnWrapper.Class = "btn-group";
+            HtmlTag BtnSubmit = new HtmlTag("input");
+            BtnSubmit.Class = "btn btn-success";
+            BtnSubmit.AddAttribute("type", "submit");
+            BtnSubmit.AddAttribute("value", "Submit");
 
-            return new HtmlString(ControlUtil.HtmlTagToString(Form));
+            HtmlTag BtnReset = new HtmlTag("a", "reset");
+            BtnReset.Class = "btn btn-default";
+            BtnReset.AddAttribute("onclick", "generateForm(null)");
+
+            BtnWrapper.AddAll(BtnSubmit, BtnReset);
+
+            Form.Add(new BreakLine());
+            Form.Add(BtnWrapper);
+
+            return ControlUtil.HtmlTagToString(Form);
         }
     }
 }

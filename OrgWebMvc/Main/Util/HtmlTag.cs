@@ -40,6 +40,16 @@ namespace OrgWebMvc.Main.Util
         public void Add(HtmlTag Tag)
         {
             ValueList.Add(Tag);
+
+        }
+
+        public void AddAll(params HtmlTag[] Tag)
+        {
+            for(int i = 0; i < Tag.Length; i++)
+            {
+                ValueList.Add(Tag[i]);
+            }
+            
         }
         public void Clear()
         {

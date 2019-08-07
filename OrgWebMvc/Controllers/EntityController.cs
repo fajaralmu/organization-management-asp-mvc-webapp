@@ -89,6 +89,18 @@ namespace OrgWebMvc.Controllers
                     Response.data = CustomHelper.GenerateTableString(typeof(division), ObjList);
                     Response.count = DivisionSvc.count;
                     break;
+                case "Form":
+                    Response.code = 0;
+                    Response.message = "Success";
+                    object Entity = null;
+                    if (StringUtil.NotNullAndNotBlank(Request.Form["Id"]))
+                    {
+                        Entity = DivisionSvc.GetById(int.Parse(Request.Form["Id"]));
+                    }
+                    
+                    Response.data = CustomHelper.GenerateFormString(typeof(division), Entity);
+                    Response.count = DivisionSvc.count;
+                    break;
                 case "Post":
                     division Division = (division)ObjectUtil.FillObjectWithMap(new division(), BaseService.ReqToDict(Request));
                     if (Division != null)

@@ -59,9 +59,9 @@ namespace InstApp.Util.Common
             return Object.GetType().GetProperty(propname).GetValue(Object);
         }
 
-        public static string GetIDProps(string ObjectPath)
+        public static string GetIDProps(Type t)
         {
-            Type t = Type.GetType(ObjectPath);
+            //Type t = Type.GetType(ObjectPath);
             PropertyInfo[] Props = t.GetProperties();
             for (int i = 0; i < Props.Length; i++)
             {
