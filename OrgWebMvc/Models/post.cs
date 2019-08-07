@@ -9,15 +9,20 @@
 
 namespace OrgWebMvc.Models
 {
+    using InstApp.Annotation;
     using System;
     using System.Collections.Generic;
-    
+
     public partial class post
     {
+        [FieldAttribute(FieldType = AttributeConstant.TYPE_ID_AI)]
         public int id { get; set; }
         public int user_id { get; set; }
+        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX)]
         public string title { get; set; }
+        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTAREA)]
         public string body { get; set; }
+        [FieldAttribute(FieldType = AttributeConstant.TYPE_DATE)]
         public System.DateTime date { get; set; }
         public int type { get; set; }
         public Nullable<int> post_id { get; set; }

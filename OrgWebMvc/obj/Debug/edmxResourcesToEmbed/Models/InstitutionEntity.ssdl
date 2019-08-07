@@ -27,8 +27,8 @@
     <Key>
       <PropertyRef Name="id" />
     </Key>
-    <Property Name="id" Type="int" Nullable="false" />
-    <Property Name="name" Type="int" Nullable="false" />
+    <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="name" Type="varchar" MaxLength="100" Nullable="false" />
     <Property Name="division_id" Type="int" Nullable="false" />
     <Property Name="position" Type="varchar" MaxLength="200" Nullable="false" />
   </EntityType>

@@ -38,8 +38,16 @@ namespace OrgWebMvc.Main.Service
 
         public override object GetById(object Id)
         {
-            division division = (from c in dbEntities.divisions where c.id.Equals(Id) select c).SingleOrDefault();
-            return division;
+            try
+            {
+                division division = (from c in dbEntities.divisions where c.id==(int)Id select c).SingleOrDefault();
+                return division;
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
+            
         }
 
         public override void Delete(object Obj)

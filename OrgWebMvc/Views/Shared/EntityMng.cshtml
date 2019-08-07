@@ -1,0 +1,148 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using OrgWebMvc.Main.Util
+@using System.Collections.Generic
+
+<div>
+    <script src="~/Scripts/ajax.js"></script>
+    <h2>@ViewData["Entity"] Management</h2>
+    @CustomHelper.GenerateForm((Type)ViewData["EntityType"])
+    <h3>LIST</h3>
+    <!-- @@CustomHelper.GenerateTable((Type)ViewData["EntityType"], (List<object>)ViewData["EntityList"])
+    -->
+    <div id="info-list">
+        <p>Offset: <span id="info-offset"></span></p>
+
+        <p>Total: <span id="info-total"></span></p>
+        <p>Limit:</p> 
+        <select style="width:100px" id="select-limit" onchange="updateLimit()">
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+        </select>
+        <p></p>
+    </div>
+    <div id="button-list"></div>
+    <div id="entity-list">
+
+    </div>
+    <script>
+        let limit = 5;
+        let offset = 0;
+        let total = 0;
+        let inputs = document.getElementsByName("input-entity");
+        let tableList = document.getElementById("entity-list");
+        let infoLimit = document.getElementById("select-limit");
+        let infoOffset = document.getElementById("info-offset");
+        let infoTotal = document.getElementById("info-total");
+        let buttonList = document.getElementById("button-list");
+
+        let URL = "/Entity/@ViewData["Entity"]Svc";
+
+        function submitEvent(e) {
+
+            e.preventDefault();
+
+            let c = confirm("Are you ready?");
+            if (c == false) {
+                return;
+            }
+
+            let params = "Action=Post";
+            let fieldParams = "field_param=${";
+            for (let i = 0; i < inputs.length; i++) {
+                let field = inputs[i];
+                fieldParams += field.id + "=" + field.value;
+                if (i < inputs.length - 1) {
+                    fieldParams += ";";
+                }
+
+            }
+
+            fieldParams += "}$";
+            params += "&" + fieldParams;
+            postReq(URL, params, function (data) {
+                if (data.code == 0) {
+                    alert("Success");
+                    clearField(inputs);
+                    loadList();
+                } else {
+                    alert("Failed");
+                }
+                console.log("response from api", data);
+            }, function (data) {
+                alert("Server Error");
+                console.log("error", data);
+            });
+
+            return false;
+        }
+
+        function loadList() {
+
+            postReq(URL, "Action=List&limit=" + limit + "&offset=" + offset, function (data) {
+                let jsonResp = data;
+                console.log("JSON", jsonResp);
+                if (jsonResp.code == 0) {
+                    tableList.innerHTML = jsonResp.data;
+                    total = jsonResp.count;
+                    refreshInfo();
+                    generateButton();
+                } else {
+                    alert("Error loading")
+                }
+            }, function (data) {
+                alert("Server Error");
+            });
+        }
+
+        function refreshInfo() {
+            infoLimit.value = limit;
+            infoOffset.innerHTML = offset;
+            infoTotal.innerHTML = total;
+        }
+
+        function clearField(elements) {
+            for (let i = 0; i < elements.length; i++) {
+                elements[i].value = "";
+            }
+        }
+
+        function generateButton() {
+            buttonList.innerHTML = "";
+            let buttonCount = Math.ceil(total / limit);
+            for (let i = 0; i < buttonCount; i++) {
+                let btn = document.createElement("button");
+                let className = "btn btn-primary";
+                if (i == offset) {
+                    className += " active";
+                }
+                btn.className = className;
+                btn.id = "btn-" + i;
+                btn.innerHTML = (i + 1);
+                let offst = i;
+                btn.onclick = function (e) {
+                    setNavProperty(limit, offst);
+                    loadList();
+                };
+
+                buttonList.appendChild(btn);
+            }
+        }
+
+        function updateLimit() {
+            setNavProperty(infoLimit.value, 0);
+            loadList();
+        }
+
+        function setNavProperty(_limit, _offset) {
+            limit = _limit;
+            offset = _offset;
+        }
+
+
+        loadList();
+    </script>
+</div>

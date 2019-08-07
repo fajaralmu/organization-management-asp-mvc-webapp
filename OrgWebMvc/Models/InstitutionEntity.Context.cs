@@ -28,7 +28,7 @@ namespace OrgWebMvc.Models
         public static INST_DBEntities Instance()
         {
 
-            if (dbEntities == null || IsDisposed(dbEntities))
+            if (dbEntities == null || InstApp.Util.Common.ObjectUtil.IsDisposed(dbEntities))
             {
                 dbEntities = new INST_DBEntities();
             }
@@ -48,26 +48,6 @@ namespace OrgWebMvc.Models
         public virtual DbSet<user> users { get; set; }
         public virtual DbSet<post> posts { get; set; }
 
-        private static bool IsDisposed(DbContext context)
-        {
-            if (context == null) return false;
-            var result = true;
-
-            var typeDbContext = typeof(DbContext);
-            var typeInternalContext = typeDbContext.Assembly.GetType("System.Data.Entity.Internal.InternalContext");
-
-            var fi_InternalContext = typeDbContext.GetField("_internalContext", BindingFlags.NonPublic | BindingFlags.Instance);
-            var pi_IsDisposed = typeInternalContext.GetProperty("IsDisposed");
-
-            var ic = fi_InternalContext.GetValue(context);
-
-            if (ic != null)
-            {
-                result = (bool)pi_IsDisposed.GetValue(ic);
-            }
-
-            return result;
-        }
-
+    
     }
 }

@@ -9,14 +9,19 @@
 
 namespace OrgWebMvc.Models
 {
+    using InstApp.Annotation;
     using System;
     using System.Collections.Generic;
-    
+
     public partial class member
     {
+        [FieldAttribute(FieldType = AttributeConstant.TYPE_ID_AI)]
         public int id { get; set; }
-        public int name { get; set; }
+        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX)]
+        public string name { get; set; }
+        [FieldAttribute(Required = true, FieldType = AttributeConstant.TYPE_DROPDOWN, FieldName = "Division", ClassReference = "division", ClassAttributeConverter = "name")]
         public int division_id { get; set; }
+        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX)]
         public string position { get; set; }
     
         public virtual division division { get; set; }

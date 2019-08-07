@@ -210,14 +210,19 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\EntityController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Main\API\WebResponse.cs" />
     <Compile Include="Main\Service\EventService.cs" />
     <Compile Include="Main\Service\PostService.cs" />
     <Compile Include="Main\Service\MemberService.cs" />
     <Compile Include="Main\Service\ProgramService.cs" />
     <Compile Include="Main\Service\LoggedUserIdentity.cs" />
     <Compile Include="Main\Service\DivisionService.cs" />
+    <Compile Include="Main\Util\BreakLine.cs" />
+    <Compile Include="Main\Util\CustomHelper.cs" />
+    <Compile Include="Main\Util\HtmlTag.cs" />
     <Compile Include="Models\division.cs">
       <DependentUpon>InstitutionEntity.tt</DependentUpon>
     </Compile>
@@ -273,6 +278,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\Img\loading-disk.gif" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="favicon.ico" />
@@ -291,6 +297,7 @@
     </Content>
     <Content Include="Scripts\ai.0.22.9-build00167.js" />
     <Content Include="Scripts\ai.0.22.9-build00167.min.js" />
+    <Content Include="Scripts\ajax.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="ApplicationInsights.config">
@@ -314,6 +321,7 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\util.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -351,9 +359,11 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Shared\_AdminPartial.cshtml" />
     <Content Include="Views\Admin\Index.cshtml" />
+    <Content Include="Views\Shared\EntityMng.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Controllers\API\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

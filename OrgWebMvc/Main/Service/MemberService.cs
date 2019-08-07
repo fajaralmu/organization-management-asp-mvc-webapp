@@ -62,8 +62,7 @@ namespace OrgWebMvc.Main.Service
         public override object Add(object Obj)
         {
             member member = (member)Obj;
-           
-            member newmember = dbEntities.members.Add(member);
+             member newmember = dbEntities.members.Add(member);
             try
             {
                 dbEntities.SaveChanges();

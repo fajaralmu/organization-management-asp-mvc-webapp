@@ -62,7 +62,7 @@ namespace OrgWebMvc.Main.Service
             return count;
         }
 
-        public static List<object> GetObjectList(BaseService Service, HttpRequest Req)
+        public static List<object> GetObjectList( BaseService Service, HttpRequestBase Req)
         {
             int Offset = 0;
             int Limit = 0;
@@ -92,7 +92,7 @@ namespace OrgWebMvc.Main.Service
 
         }
 
-        public static Dictionary<string, object> ReqToDict(HttpRequest Req)
+        public static Dictionary<string, object> ReqToDict(HttpRequestBase Req)
         {
             if (StringUtil.NotNullAndNotBlank(Req.Form["field_param"]))
             {

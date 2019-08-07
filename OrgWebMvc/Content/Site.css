@@ -22,3 +22,15 @@ select,
 textarea {
     max-width: 280px;
 }
+
+
+/**ENTITY MANAGEMENT**/
+#info {
+	bottom: 5%;
+	right: 5%;
+	color: blue;
+	position: fixed;
+	background-color: burlywood;
+	opacity: 0.5;
+	font-size: 1.5em;
+}

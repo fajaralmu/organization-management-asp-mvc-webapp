@@ -9,9 +9,10 @@
 
 namespace OrgWebMvc.Models
 {
+    using InstApp.Annotation;
     using System;
     using System.Collections.Generic;
-    
+
     public partial class user
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -20,7 +21,8 @@ namespace OrgWebMvc.Models
             this.divisions = new HashSet<division>();
             this.posts = new HashSet<post>();
         }
-    
+
+        [FieldAttribute(FieldType = AttributeConstant.TYPE_ID_AI)]
         public int id { get; set; }
         public string username { get; set; }
         public string name { get; set; }
