@@ -9,7 +9,7 @@ namespace OrgWebMvc.Main.Service
 {
     public class UserService : BaseService
     {
-        
+
         public override List<object> ObjectList(int offset, int limit)
         {
             List<object> ObjList = new List<object>();
@@ -38,7 +38,7 @@ namespace OrgWebMvc.Main.Service
 
         public override object GetById(object Id)
         {
-            user user = (from c in dbEntities.users where c.id.Equals(Id) select c).SingleOrDefault();
+            user user = (from c in dbEntities.users where c.id == (int)Id select c).SingleOrDefault();
             return user;
         }
 
@@ -74,11 +74,11 @@ namespace OrgWebMvc.Main.Service
         public override object Add(object Obj)
         {
             user user = (user)Obj;
-            if(user.admin == null)
+            if (user.admin == null)
             {
                 user.admin = 1;
             }
-            
+
             user newUser = dbEntities.users.Add(user);
             try
             {

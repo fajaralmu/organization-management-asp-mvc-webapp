@@ -27,7 +27,7 @@
     <Key>
       <PropertyRef Name="id" />
     </Key>
-    <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="name" Type="varchar" MaxLength="100" Nullable="false" />
     <Property Name="division_id" Type="int" Nullable="false" />
     <Property Name="position" Type="varchar" MaxLength="200" Nullable="false" />
@@ -88,13 +88,13 @@
   </Association>
   <Association Name="FK_event_program">
     <End Role="program" Type="Self.program" Multiplicity="1" />
-    <End Role="event" Type="Self.event" Multiplicity="0..1" />
+    <End Role="event" Type="Self.event" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="program">
         <PropertyRef Name="id" />
       </Principal>
       <Dependent Role="event">
-        <PropertyRef Name="id" />
+        <PropertyRef Name="program_id" />
       </Dependent>
     </ReferentialConstraint>
   </Association>

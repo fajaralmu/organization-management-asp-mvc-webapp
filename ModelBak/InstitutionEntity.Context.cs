@@ -48,6 +48,6 @@ namespace OrgWebMvc.Models
         public virtual DbSet<user> users { get; set; }
         public virtual DbSet<post> posts { get; set; }
 
-
+    
     }
 }

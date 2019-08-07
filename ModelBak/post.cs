@@ -13,20 +13,20 @@ namespace OrgWebMvc.Models
     using System;
     using System.Collections.Generic;
 
-    public partial class program
+    public partial class post
     {
         [FieldAttribute(FieldType = AttributeConstant.TYPE_ID_AI)]
         public int id { get; set; }
+        public int user_id { get; set; }
         [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX)]
-        public string name { get; set; }
+        public string title { get; set; }
         [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTAREA)]
-        public string description { get; set; }
-        [FieldAttribute(Required = true, FieldType = AttributeConstant.TYPE_DROPDOWN, FieldName = "Division", ClassReference = "division", ClassAttributeConverter = "name")]
-        public int division_id { get; set; }
+        public string body { get; set; }
+        [FieldAttribute(FieldType = AttributeConstant.TYPE_DATE)]
+        public System.DateTime date { get; set; }
+        public int type { get; set; }
+        public Nullable<int> post_id { get; set; }
     
-        public virtual division division { get; set; }
-        public virtual @event @event { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<@event> events { get; set; }
+        public virtual user user { get; set; }
     }
 }

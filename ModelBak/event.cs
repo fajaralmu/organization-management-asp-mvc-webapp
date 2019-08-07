@@ -15,15 +15,8 @@ namespace OrgWebMvc.Models
 
     public partial class @event
     {
-        public @event()
-        {
-            done = 0;
-        }
-
         [FieldAttribute(FieldType = AttributeConstant.TYPE_ID_AI)]
         public int id { get; set; }
-        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX)]
-        public string name { get; set; }
         [FieldAttribute(Required = true, FieldType = AttributeConstant.TYPE_DROPDOWN, FieldName = "Program Name", ClassReference = "program", ClassAttributeConverter = "name")]
         public int program_id { get; set; }
         public int user_id { get; set; }
@@ -37,8 +30,9 @@ namespace OrgWebMvc.Models
         public string info { get; set; }
         [FieldAttribute(Required = true, FieldType = AttributeConstant.TYPE_DROPDOWN, DropDownValues = new object[] { 0, 1 }, DropDownItemName = new object[] { "not done", "done" })]
         public int done { get; set; }
-        
-        
-        public virtual program program1 { get; set; }
+        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX)]
+        public string name { get; set; }
+
+        public virtual program program { get; set; }
     }
 }

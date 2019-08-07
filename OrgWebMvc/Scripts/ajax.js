@@ -21,10 +21,10 @@ function postReq(url, param, callback, errorCallback){
 }
 
 function infoLoading() {
-    document.getElementById("info").innerHTML = 
+    document.getElementById("loading-wrapper").innerHTML =
 			 "<img width='60px' src=\"/Assets/Img/loading-disk.gif\"/><br/>Please Wait...";
 }
 
 function infoDone() {
-    document.getElementById("info").innerHTML = "";
+    document.getElementById("loading-wrapper").innerHTML = "";
 }

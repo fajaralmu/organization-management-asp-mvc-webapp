@@ -10,12 +10,29 @@ namespace InstApp.Util.Common
         private const string Numbers = "1234567890";
         private const string Chars = "qwertyuiopasdfghjklzxcvbnm1234567890";
 
-        public static String DateTimeToString(DateTime Date)
+        public static string DateTimeToString(DateTime Date)
         {
-            
-           return  Date.Year + "-" + Date.Month + "-" + Date.Day + " " + Date.Hour + ":" + Date.Minute + ":" + Date.Second + "." + Date.Millisecond;
+            return Date.Year + "-" + AddZero(Date.Month, 10) + "-" + AddZero(Date.Day, 10) + " " + AddZero(Date.Hour, 10) + ":" + AddZero(Date.Minute, 10) + ":" + AddZero(Date.Second, 10) + "." + Date.Millisecond;
+        }
 
+        public static string DateAcceptableForHtmlInput(DateTime Date)
+        {
+            return Date.Year + "-" + AddZero(Date.Month, 10) + "-" + AddZero(Date.Day, 10);
+        }
 
+        public static string AddZero(int Val, int Min)
+        {
+            string N = Val.ToString();
+            string MinStr = Min.ToString();
+
+            int ValLength = N.Length;
+            int MinLength = MinStr.Length;
+            int Diff = MinLength - ValLength;
+            for (int i = 1; i <= Diff; i++)
+            {
+                N = "0" + N;
+            }
+            return N;
         }
 
         private static bool IsItemAlreadyExist(List<string> list, string val)
@@ -116,12 +133,17 @@ namespace InstApp.Util.Common
                 int Index = R.Next(0, Size);
                 RandomString += Numbers.ElementAt(Index);
             }
+
             return RandomString;
         }
 
         public static string ToUpperCase(int index, string data)
         {
             string result = "";
+            if(data == null)
+            {
+                return "";
+            }
             for (int i = 0; i < data.Length; i++)
             {
                 char Char = data[i];

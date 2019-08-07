@@ -39,7 +39,7 @@ namespace OrgWebMvc.Main.Service
 
         public override object GetById(object Id)
         {
-            program program = (from c in dbEntities.programs where c.id.Equals(Id) select c).SingleOrDefault();
+            program program = (from c in dbEntities.programs where c.id==(int)Id select c).SingleOrDefault();
             return program;
         }
 

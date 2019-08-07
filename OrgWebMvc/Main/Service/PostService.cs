@@ -39,7 +39,7 @@ namespace OrgWebMvc.Main.Service
 
         public override object GetById(object Id)
         {
-            post post = (from c in dbEntities.posts where c.id.Equals(Id) select c).SingleOrDefault();
+            post post = (from c in dbEntities.posts where c.id==(int)Id select c).SingleOrDefault();
             return post;
         }
 
@@ -121,12 +121,12 @@ namespace OrgWebMvc.Main.Service
         {
 
             string id = Params.ContainsKey("id") ? (string)Params["id"] : "";
-            string name = Params.ContainsKey("name") ? (string)Params["name"] : "";
+            string title = Params.ContainsKey("title") ? (string)Params["title"] : "";
             string orderby = Params.ContainsKey("orderby") ? (string)Params["orderby"] : "";
             string ordertype = Params.ContainsKey("ordertype") ? (string)Params["ordertype"] : "";
 
             string sql = "select * from post where id like '%" + id + "%'" +
-                " and name like '%" + name + "%'";
+                " and title like '%" + title + "%'";
             if (!orderby.Equals(""))
             {
                 sql += " ORDER BY " + orderby;

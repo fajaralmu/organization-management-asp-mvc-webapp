@@ -41,7 +41,7 @@
         let buttonList = document.getElementById("button-list");
 
         let URL = "/Entity/@ViewData["Entity"]Svc";
-
+        let URLRaw = "/Entity/$name$Svc";
         function submitEvent(e) {
             e.preventDefault();
 
@@ -55,7 +55,7 @@
             for (let i = 0; i < inputs.length; i++) {
                 let field = inputs[i];
                 let value = field.value;
-                console.log("TYPE of FIELD", typeof (field));
+                console.log("TYPE of FIELD", (field));
                 fieldParams += field.id + "=" + value;
                 if (i < inputs.length - 1) {
                     fieldParams += ";";
@@ -173,6 +173,38 @@
             }, function (response) {
                 alert("server error");
             });
+        }
+
+        function fillComboBox(cbxId, classReffName, classReffAttr, helper) {
+            let value = helper.value;
+            console.log(cbxId, classReffName, classReffAttr, value);
+            let comboBox = document.getElementById(cbxId);
+            comboBox.innerHTML = "";
+            let CustomUrl = URLRaw.replace("$name$", classReffName);
+            postReq(CustomUrl, "Action=List&Type=JSONList&limit=" + 10 + "&offset=" + 0 + "&search_param=${" + classReffAttr + "=" + value + "}$",
+                function (response) {
+                   
+                    if (response.code == 0 && response.count > 0) {
+                        let listResp = response.data;
+                        //  console.log("JSON", jsonResp);
+                        for (let i = 0; i < listResp.length; i++) {
+                            let obj = listResp[i];
+                            let option = document.createElement("option");
+                            option.value = obj["id"];
+                            option.innerHTML = obj[classReffAttr];
+                            
+                            comboBox.appendChild(option);
+                        }
+                    } else {
+                      //  alert("Error loading")
+                    }
+                }, function (response) {
+                    alert("Server Error");
+                });
+        }
+
+        function setValue(elementId, value) {
+            document.getElementById(elementId).value = value;
         }
 
         generateForm(null);

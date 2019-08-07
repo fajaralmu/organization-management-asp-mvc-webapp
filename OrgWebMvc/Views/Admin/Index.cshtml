@@ -3,7 +3,6 @@
     ViewBag.Title = "Index";
 }
 <div>
-    <h2>Index</h2>
     <p>Admin Index Page</p>
     <hr />
     <div class="row" style="text-align: center">
@@ -32,6 +31,32 @@
                 <small>Division</small>
             </h2>
             <a class="btn btn-default"  href="~/Entity/Division">Go</a>
+        </div>
+    </div>
+    <hr />
+    <div class="row" style="text-align: center">
+        <p>Administration</p>
+
+        <div class=" col-md-2">
+            <h2>
+                &#128682;<br />
+                <small>Article</small>
+            </h2>
+            <a class="btn btn-default" runat="server" href="~/Entity/Post">Go</a>
+        </div>
+        <div class=" col-md-2">
+            <h2>
+                &#128104;<br />
+                <small>Member</small>
+            </h2>
+            <a class="btn btn-default" runat="server" href="~/Entity/Member">Go</a>
+        </div>
+        <div class=" col-md-2">
+            <h2>
+                &#128221;<br />
+                <small>Transactions</small>
+            </h2>
+            <a class="btn btn-default" runat="server" href="~/Web/Admin/Management/Management.aspx?object=issue">Go</a>
         </div>
     </div>
 </div>

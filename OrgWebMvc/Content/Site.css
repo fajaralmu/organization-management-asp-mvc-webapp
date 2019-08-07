@@ -25,12 +25,12 @@ textarea {
 
 
 /**ENTITY MANAGEMENT**/
-#info {
+#loading-wrapper {
 	bottom: 5%;
 	right: 5%;
 	color: blue;
 	position: fixed;
-	background-color: burlywood;
+	background-color: chartreuse;
 	opacity: 0.5;
 	font-size: 1.5em;
 }

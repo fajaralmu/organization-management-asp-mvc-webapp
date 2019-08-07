@@ -91,9 +91,9 @@ namespace OrgWebMvc.Main.Util
         {
             return new HtmlString(GenerateFormString(ObjectType, Entity));
         }
+
         public static string GenerateFormString(Type ObjectType, object Entity = null)
         {
-
             string ObjName = StringUtil.ToUpperCase(0, ObjectType.Name);
             HtmlTag Form = new HtmlTag("form");
             Form.ID = "form-entity";
@@ -114,7 +114,7 @@ namespace OrgWebMvc.Main.Util
 
                     FieldAttribute Attribute = (FieldAttribute)Attributes[0];
                     HtmlTag InputField = new HtmlTag("input");
-
+                    HtmlTag InputHelper = null;
                     if (Attribute.FieldType.Contains("id_"))
                     {
                         if (Entity == null)
@@ -127,7 +127,7 @@ namespace OrgWebMvc.Main.Util
                     bool IsDate = Attribute.FieldType.Equals(AttributeConstant.TYPE_DATE);
                     bool IsNumber = Attribute.FieldType.Equals(AttributeConstant.TYPE_NUMBER);
                     bool IsDropDown = Attribute.FieldType.Equals(AttributeConstant.TYPE_DROPDOWN);
-                   // bool IsTextArea = Attribute.FieldType.Equals(AttributeConstant.TYPE_TEXTAREA);
+                    // bool IsTextArea = Attribute.FieldType.Equals(AttributeConstant.TYPE_TEXTAREA);
 
                     HtmlTag Label = new HtmlTag("p", Prop.Name.ToUpper());
                     if (Entity != null)
@@ -139,29 +139,47 @@ namespace OrgWebMvc.Main.Util
                     {
                         InputField.Key = "textarea";
                         InputField.Value = Value == null ? "" : Value.ToString();
-                    }                    
+                    }
                     else if (IsDropDown)
                     {
+                        InputField.Key = "select";
+                        InputField.AddAttribute("multiple", "multiple");
+
+                        InputHelper = new HtmlTag("input");
+                        InputHelper.AddAttribute("autocomplete", "off");
+                        InputHelper.Class = "form-control";
+                        InputHelper.ID = "helper-" + Prop.Name;
+                        InputHelper.AddAttribute("onkeyup", "fillComboBox('" + Prop.Name.Trim() + "','"
+                            + StringUtil.ToUpperCase(0, Attribute.ClassReference) + "','"
+                            + Attribute.ClassAttributeConverter + "',this)");
+
+                        InputField.AddAttribute("onchange", "setValue('" + InputHelper.ID + "',this.options[this.selectedIndex].innerText)");
 
                     }
-                    else 
+                    else
                     {
                         string type = "text";
-                        if (IsNumber)
-                            type = "number";
-                        else if (IsDate)
+                        if (IsDate)
+                        {
                             type = "date";
+                            if (Value != null)
+                                Value = StringUtil.DateAcceptableForHtmlInput((DateTime)Value);
+                        }
                         InputField.AddAttribute("type", type);
                         InputField.AddAttribute("value", Value == null ? "" : Value.ToString());
                     }
-                   
 
-                    
+
+
                     InputField.Class = "form-control";
                     InputField.ID = Prop.Name;
                     InputField.Name = "input-entity";
-                   
+
                     Form.Add(Label);
+                    if (InputHelper != null)
+                    {
+                        Form.Add(InputHelper);
+                    }
                     Form.Add(InputField);
                 }
             }

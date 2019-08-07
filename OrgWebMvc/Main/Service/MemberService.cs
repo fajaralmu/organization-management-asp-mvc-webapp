@@ -40,7 +40,7 @@ namespace OrgWebMvc.Main.Service
 
         public override object GetById(object Id)
         {
-            member member = (from c in dbEntities.members where c.id.Equals(Id) select c).SingleOrDefault();
+            member member = (from c in dbEntities.members where c.id==(int)Id select c).SingleOrDefault();
             return member;
         }
 

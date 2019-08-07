@@ -26,7 +26,5 @@ namespace OrgWebMvc.Models
     
         public virtual division division { get; set; }
         public virtual @event @event { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<@event> events { get; set; }
     }
 }

@@ -13,20 +13,17 @@ namespace OrgWebMvc.Models
     using System;
     using System.Collections.Generic;
 
-    public partial class program
+    public partial class member
     {
         [FieldAttribute(FieldType = AttributeConstant.TYPE_ID_AI)]
         public int id { get; set; }
         [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX)]
         public string name { get; set; }
-        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTAREA)]
-        public string description { get; set; }
         [FieldAttribute(Required = true, FieldType = AttributeConstant.TYPE_DROPDOWN, FieldName = "Division", ClassReference = "division", ClassAttributeConverter = "name")]
         public int division_id { get; set; }
+        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX)]
+        public string position { get; set; }
     
         public virtual division division { get; set; }
-        public virtual @event @event { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<@event> events { get; set; }
     }
 }

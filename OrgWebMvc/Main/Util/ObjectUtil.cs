@@ -189,6 +189,12 @@ namespace InstApp.Util.Common
                     if (PropInfo.PropertyType.Equals(typeof(System.Int32)))
                     {
                         Value = int.Parse(Value.ToString());
+                    }else if (PropInfo.PropertyType.Equals(typeof(System.DateTime)))
+                    {
+                        string DateStr = Value.ToString();
+                        DateTime Date = DateTime.Now;
+                        DateTime.TryParse(DateStr, out Date);
+                        Value = Date;
                     }
 
                     OBJ.GetType().GetProperty(key).SetValue(OBJ, Value);

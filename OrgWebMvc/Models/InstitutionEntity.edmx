@@ -32,7 +32,7 @@
           <Key>
             <PropertyRef Name="id" />
           </Key>
-          <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="name" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="division_id" Type="int" Nullable="false" />
           <Property Name="position" Type="varchar" MaxLength="200" Nullable="false" />
@@ -93,13 +93,13 @@
         </Association>
         <Association Name="FK_event_program">
           <End Role="program" Type="Self.program" Multiplicity="1" />
-          <End Role="event" Type="Self.event" Multiplicity="0..1" />
+          <End Role="event" Type="Self.event" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="program">
               <PropertyRef Name="id" />
             </Principal>
             <Dependent Role="event">
-              <PropertyRef Name="id" />
+              <PropertyRef Name="program_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -196,8 +196,8 @@
           <Property Name="participant" Type="Int32" Nullable="false" />
           <Property Name="info" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="done" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="program" Relationship="Self.FK_event_program" FromRole="event" ToRole="program" />
           <Property Name="name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="program1" Relationship="INST_DBModel.FK_event_program1" FromRole="event" ToRole="program" />
         </EntityType>
         <EntityType Name="member">
           <Key>
@@ -218,7 +218,7 @@
           <Property Name="description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="division_id" Type="Int32" Nullable="false" />
           <NavigationProperty Name="division" Relationship="Self.FK_program_division" FromRole="program" ToRole="division" />
-          <NavigationProperty Name="event" Relationship="Self.FK_event_program" FromRole="program" ToRole="event" />
+          <NavigationProperty Name="events" Relationship="INST_DBModel.FK_event_program1" FromRole="program" ToRole="event" />
         </EntityType>
         <EntityType Name="sysdiagram">
           <Key>
@@ -279,18 +279,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_event_program">
-          <End Role="program" Type="Self.program" Multiplicity="1" />
-          <End Role="event" Type="Self.event" Multiplicity="0..1" />
-          <ReferentialConstraint>
-            <Principal Role="program">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="event">
-              <PropertyRef Name="id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityContainer Name="INST_DBEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="divisions" EntityType="Self.division" />
           <EntitySet Name="events" EntityType="Self.event" />
@@ -310,14 +298,14 @@
             <End Role="division" EntitySet="divisions" />
             <End Role="program" EntitySet="programs" />
           </AssociationSet>
-          <AssociationSet Name="FK_event_program" Association="Self.FK_event_program">
-            <End Role="program" EntitySet="programs" />
-            <End Role="event" EntitySet="events" />
-          </AssociationSet>
           <EntitySet Name="posts" EntityType="INST_DBModel.post" />
           <AssociationSet Name="FK_post_user" Association="INST_DBModel.FK_post_user">
             <End Role="user" EntitySet="users" />
             <End Role="post" EntitySet="posts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_event_program1" Association="INST_DBModel.FK_event_program1">
+            <End Role="program" EntitySet="programs" />
+            <End Role="event" EntitySet="events" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="post">
@@ -342,6 +330,18 @@
             </Principal>
             <Dependent Role="post">
               <PropertyRef Name="user_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_event_program1">
+          <End Type="INST_DBModel.program" Role="program" Multiplicity="1" />
+          <End Type="INST_DBModel.event" Role="event" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="program">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="event">
+              <PropertyRef Name="program_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>

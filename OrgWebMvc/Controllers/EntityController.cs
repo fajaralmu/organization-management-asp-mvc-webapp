@@ -22,8 +22,7 @@ namespace OrgWebMvc.Controllers
 
         public ActionResult Division()
         {
-
-            if (!base.UserValid())
+            if (!UserValid())
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -39,21 +38,49 @@ namespace OrgWebMvc.Controllers
 
         public ActionResult Program()
         {
+            if (!UserValid())
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            ProgramService ProgramSvc = new ProgramService();
+
+            ViewBag.Title = "Program";
+            ViewData["EntityType"] = typeof(program);
+            ViewData["EntityList"] = BaseService.GetObjectList(ProgramSvc, Request);
+            ViewData["Entity"] = "Program";
             return View("~/Views/Shared/EntityMng.cshtml");
         }
 
         public ActionResult Event()
         {
+            EventService EventSvc = new EventService();
+
+            ViewBag.Title = "Event";
+            ViewData["EntityType"] = typeof(@event);
+            ViewData["EntityList"] = BaseService.GetObjectList(EventSvc, Request);
+            ViewData["Entity"] = "Event";
             return View("~/Views/Shared/EntityMng.cshtml");
         }
 
         public ActionResult Member()
         {
+            MemberService MemberSvc = new MemberService();
+
+            ViewBag.Title = "Member";
+            ViewData["EntityType"] = typeof(member);
+            ViewData["EntityList"] = BaseService.GetObjectList(MemberSvc, Request);
+            ViewData["Entity"] = "Member";
             return View("~/Views/Shared/EntityMng.cshtml");
         }
 
         public ActionResult Post()
         {
+            PostService PostSvc = new PostService();
+
+            ViewBag.Title = "Post";
+            ViewData["EntityType"] = typeof(post);
+            ViewData["EntityList"] = BaseService.GetObjectList(PostSvc, Request);
+            ViewData["Entity"] = "Post";
             return View("~/Views/Shared/EntityMng.cshtml");
         }
 
@@ -62,18 +89,18 @@ namespace OrgWebMvc.Controllers
         [HttpPost]
         public ActionResult DivisionSvc()
         {
-           bool UserIsLoggedIn = UserValid();
+            bool UserIsLoggedIn = UserValid();
             WebResponse Response = new WebResponse();
             if (!StringUtil.NotNullAndNotBlank(Request.Form["Action"]))
             {
                 return Json(Response);
             }
             string Action = Request.Form["Action"].ToString();
-            DivisionService DivisionSvc = new DivisionService();
+            DivisionService EntitySvc = new DivisionService();
             switch (Action)
             {
                 case "List":
-                    List<object> ObjList = BaseService.GetObjectList(DivisionSvc, Request);
+                    List<object> ObjList = BaseService.GetObjectList(EntitySvc, Request);
                     List<division> Divisions = (List<division>)ObjectUtil.ConvertList(ObjList, typeof(List<division>));
                     List<division> ListToSend = new List<division>();
                     foreach (division D in Divisions)
@@ -84,22 +111,24 @@ namespace OrgWebMvc.Controllers
                         }, D);
                         ListToSend.Add(Div);
                     }
-                    Response.code = 0;
-                    Response.message = "Success";
-                    Response.data = CustomHelper.GenerateTableString(typeof(division), ObjList);
-                    Response.count = DivisionSvc.count;
+                    object ResponseData = null;
+                    if (StringUtil.NotNullAndNotBlank(Request.Form["Type"]) && Request.Form["Type"].ToString().Equals("JSONList"))
+                    {
+                        ResponseData = ListToSend;
+                    }
+                    else
+                    {
+                        ResponseData = CustomHelper.GenerateTableString(typeof(division), ObjList);
+                    }
+                    Response = new WebResponse(0, "Success", ResponseData, EntitySvc.count);
                     break;
                 case "Form":
-                    Response.code = 0;
-                    Response.message = "Success";
                     object Entity = null;
                     if (StringUtil.NotNullAndNotBlank(Request.Form["Id"]))
                     {
-                        Entity = DivisionSvc.GetById(int.Parse(Request.Form["Id"]));
+                        Entity = EntitySvc.GetById(int.Parse(Request.Form["Id"]));
                     }
-                    
-                    Response.data = CustomHelper.GenerateFormString(typeof(division), Entity);
-                    Response.count = DivisionSvc.count;
+                    Response = new WebResponse(0, "Success", CustomHelper.GenerateFormString(typeof(division), Entity), EntitySvc.count);
                     break;
                 case "Post":
                     division Division = (division)ObjectUtil.FillObjectWithMap(new division(), BaseService.ReqToDict(Request));
@@ -112,11 +141,11 @@ namespace OrgWebMvc.Controllers
                         if (Division.id != null && Division.id != 0)
                         {
                             Info = "update";
-                            DBDivision = (division)DivisionSvc.Update(Division);
+                            DBDivision = (division)EntitySvc.Update(Division);
                         }
                         else
                         {
-                            DBDivision = (division)DivisionSvc.Add(Division);
+                            DBDivision = (division)EntitySvc.Add(Division);
                         }
                         if (DBDivision == null)
                         {
@@ -125,9 +154,7 @@ namespace OrgWebMvc.Controllers
                         division toSend = (division)ObjectUtil.GetObjectValues(new string[]{
                             "id","name","description","user_id"
                         }, DBDivision);
-                        Response.code = 0;
-                        Response.message = "Success " + Info;
-                        Response.data = toSend;
+                        Response = new WebResponse(0, "Success " + Info, toSend);
                     }
                     break;
                 case "Delete":
@@ -135,12 +162,11 @@ namespace OrgWebMvc.Controllers
                     {
                         return Json(Response);
                     }
-                    division DBDiv =(division) DivisionSvc.GetById(int.Parse(Request.Form["Id"]));
-                    if(DBDiv != null)
+                    division DBDiv = (division)EntitySvc.GetById(int.Parse(Request.Form["Id"]));
+                    if (DBDiv != null)
                     {
-                        DivisionSvc.Delete(DBDiv);
-                        Response.code = 0;
-                        Response.message = "Success";
+                        EntitySvc.Delete(DBDiv);
+                        Response = new WebResponse(0, "Success");
                     }
                     break;
                 default:
@@ -149,22 +175,21 @@ namespace OrgWebMvc.Controllers
             return Json(Response);
         }
 
-
-
         [HttpPost]
         public ActionResult ProgramSvc()
         {
+            bool UserIsLoggedIn = UserValid();
             WebResponse Response = new WebResponse();
             if (!StringUtil.NotNullAndNotBlank(Request.Form["Action"]))
             {
                 return Json(Response);
             }
             string Action = Request.Form["Action"].ToString();
-            ProgramService ProgramSvc = new ProgramService();
+            ProgramService EntitySvc = new ProgramService();
             switch (Action)
             {
                 case "List":
-                    List<object> ObjList = BaseService.GetObjectList(ProgramSvc, Request);
+                    List<object> ObjList = BaseService.GetObjectList(EntitySvc, Request);
                     List<program> programs = (List<program>)ObjectUtil.ConvertList(ObjList, typeof(List<program>));
                     List<program> ListToSend = new List<program>();
                     foreach (program P in programs)
@@ -175,10 +200,23 @@ namespace OrgWebMvc.Controllers
                         }, P);
                         ListToSend.Add(Div);
                     }
-                    Response.code = 0;
-                    Response.message = "Success";
-                    Response.data = ListToSend;
-                    Response.count = ProgramSvc.count;
+                    object ResponseData = null;
+                    if (StringUtil.NotNullAndNotBlank(Request.Form["Type"]) && Request.Form["Type"].ToString().Equals("JSONList"))
+                    {
+                        ResponseData = ListToSend;
+                    }
+                    else
+                    {
+                        ResponseData = CustomHelper.GenerateTableString(typeof(program), ObjList);
+                    }
+                    Response = new WebResponse(0, "Success", ResponseData, EntitySvc.count); break;
+                case "Form":
+                    object Entity = null;
+                    if (StringUtil.NotNullAndNotBlank(Request.Form["Id"]))
+                    {
+                        Entity = EntitySvc.GetById(int.Parse(Request.Form["Id"]));
+                    }
+                    Response = new WebResponse(0, "Success", CustomHelper.GenerateFormString(typeof(program), Entity), EntitySvc.count);
                     break;
                 case "Post":
                     program Program = (program)ObjectUtil.FillObjectWithMap(new program(), BaseService.ReqToDict(Request));
@@ -189,11 +227,11 @@ namespace OrgWebMvc.Controllers
                         if (Program.id != null && Program.id != 0)
                         {
                             Info = "update";
-                            ProgramDB = (program)ProgramSvc.Update(Program);
+                            ProgramDB = (program)EntitySvc.Update(Program);
                         }
                         else
                         {
-                            ProgramDB = (program)ProgramSvc.Add(Program);
+                            ProgramDB = (program)EntitySvc.Add(Program);
                         }
                         if (ProgramDB == null)
                         {
@@ -202,9 +240,7 @@ namespace OrgWebMvc.Controllers
                         program toSend = (program)ObjectUtil.GetObjectValues(new string[]{
                             "id","name","description","division_id"
                         }, ProgramDB);
-                        Response.code = 0;
-                        Response.message = "Success " + Info;
-                        Response.data = toSend;
+                        Response = new WebResponse(0, "Success " + Info, toSend);
                     }
                     break;
                 case "Delete":
@@ -212,12 +248,11 @@ namespace OrgWebMvc.Controllers
                     {
                         return Json(Response);
                     }
-                    program DBProg = (program)ProgramSvc.GetById(int.Parse(Request.Form["Id"]));
+                    program DBProg = (program)EntitySvc.GetById(int.Parse(Request.Form["Id"]));
                     if (DBProg != null)
                     {
-                        ProgramSvc.Delete(DBProg);
-                        Response.code = 0;
-                        Response.message = "Success";
+                        EntitySvc.Delete(DBProg);
+                        Response = new WebResponse(0, "Success");
                     }
                     break;
                 default:
@@ -226,21 +261,21 @@ namespace OrgWebMvc.Controllers
             return Json(Response);
         }
 
-
         [HttpPost]
         public ActionResult EventSvc()
         {
+            bool UserIsLoggedIn = UserValid();
             WebResponse Response = new WebResponse();
             if (!StringUtil.NotNullAndNotBlank(Request.Form["Action"]))
             {
                 return Json(Response);
             }
             string Action = Request.Form["Action"].ToString();
-            EventService EventSvc = new EventService();
+            EventService EntitySvc = new EventService();
             switch (Action)
             {
                 case "List":
-                    List<object> ObjList = BaseService.GetObjectList(EventSvc, Request);
+                    List<object> ObjList = BaseService.GetObjectList(EntitySvc, Request);
                     List<@event> Events = (List<@event>)ObjectUtil.ConvertList(ObjList, typeof(List<@event>));
                     List<@event> ListToSend = new List<@event>();
                     foreach (@event E in Events)
@@ -251,25 +286,39 @@ namespace OrgWebMvc.Controllers
                         }, E);
                         ListToSend.Add(Ev);
                     }
-                    Response.code = 0;
-                    Response.message = "Success";
-                    Response.data = ListToSend;
-                    Response.count = EventSvc.count;
+                    object ResponseData = null;
+                    if (StringUtil.NotNullAndNotBlank(Request.Form["Type"]) && Request.Form["Type"].ToString().Equals("JSONList"))
+                    {
+                        ResponseData = ListToSend;
+                    }
+                    else
+                    {
+                        ResponseData = CustomHelper.GenerateTableString(typeof(@event), ObjList);
+                    }
+                    Response = new WebResponse(0, "Success", ResponseData, EntitySvc.count); break;
+                case "Form":
+                    object Entity = null;
+                    if (StringUtil.NotNullAndNotBlank(Request.Form["Id"]))
+                    {
+                        Entity = EntitySvc.GetById(int.Parse(Request.Form["Id"]));
+                    }
+                    Response = new WebResponse(0, "Success", CustomHelper.GenerateFormString(typeof(@event), Entity), EntitySvc.count);
                     break;
                 case "Post":
                     @event Event = (@event)ObjectUtil.FillObjectWithMap(new @event(), BaseService.ReqToDict(Request));
                     if (Event != null)
                     {
+                        Event.user_id = LoggedUser.id;
                         @event EventDB = null;
                         string Info = "create";
                         if (Event.id != null && Event.id != 0)
                         {
                             Info = "update";
-                            EventDB = (@event)EventSvc.Update(Event);
+                            EventDB = (@event)EntitySvc.Update(Event);
                         }
                         else
                         {
-                            EventDB = (@event)EventSvc.Add(Event);
+                            EventDB = (@event)EntitySvc.Add(Event);
                         }
                         if (EventDB == null)
                         {
@@ -278,9 +327,7 @@ namespace OrgWebMvc.Controllers
                         @event toSend = (@event)ObjectUtil.GetObjectValues(new string[]{
                             "id","program_id","user_id","date","location","participant","info","done","name"
                         }, EventDB);
-                        Response.code = 0;
-                        Response.message = "Success " + Info;
-                        Response.data = toSend;
+                        Response = new WebResponse(0, "Success " + Info, toSend);
                     }
                     break;
                 case "Delete":
@@ -288,12 +335,11 @@ namespace OrgWebMvc.Controllers
                     {
                         return Json(Response);
                     }
-                    @event DbEvt = (@event)EventSvc.GetById(int.Parse(Request.Form["Id"]));
+                    @event DbEvt = (@event)EntitySvc.GetById(int.Parse(Request.Form["Id"]));
                     if (DbEvt != null)
                     {
-                        EventSvc.Delete(DbEvt);
-                        Response.code = 0;
-                        Response.message = "Success";
+                        EntitySvc.Delete(DbEvt);
+                        Response = new WebResponse(0, "Success");
                     }
                     break;
                 default:
@@ -305,17 +351,18 @@ namespace OrgWebMvc.Controllers
         [HttpPost]
         public ActionResult MemberSvc()
         {
+            bool UserIsLoggedIn = UserValid();
             WebResponse Response = new WebResponse();
             if (!StringUtil.NotNullAndNotBlank(Request.Form["Action"]))
             {
                 return Json(Response);
             }
             string Action = Request.Form["Action"].ToString();
-            MemberService MemberSvc = new MemberService();
+            MemberService EntitySvc = new MemberService();
             switch (Action)
             {
                 case "List":
-                    List<object> ObjList = BaseService.GetObjectList(MemberSvc, Request);
+                    List<object> ObjList = BaseService.GetObjectList(EntitySvc, Request);
                     List<member> Members = (List<member>)ObjectUtil.ConvertList(ObjList, typeof(List<member>));
                     List<member> ListToSend = new List<member>();
                     foreach (member Obj in Members)
@@ -326,10 +373,24 @@ namespace OrgWebMvc.Controllers
                         }, Obj);
                         ListToSend.Add(Mmb);
                     }
-                    Response.code = 0;
-                    Response.message = "Success";
-                    Response.data = ListToSend;
-                    Response.count = MemberSvc.count;
+                    object ResponseData = null;
+                    if (StringUtil.NotNullAndNotBlank(Request.Form["Type"]) && Request.Form["Type"].ToString().Equals("JSONList"))
+                    {
+                        ResponseData = ListToSend;
+                    }
+                    else
+                    {
+                        ResponseData = CustomHelper.GenerateTableString(typeof(member), ObjList);
+                    }
+                    Response = new WebResponse(0, "Success", ResponseData, EntitySvc.count);
+                    break;
+                case "Form":
+                    object Entity = null;
+                    if (StringUtil.NotNullAndNotBlank(Request.Form["Id"]))
+                    {
+                        Entity = EntitySvc.GetById(int.Parse(Request.Form["Id"]));
+                    }
+                    Response = new WebResponse(0, "Success", CustomHelper.GenerateFormString(typeof(member), Entity), EntitySvc.count);
                     break;
                 case "Post":
                     member Member = (member)ObjectUtil.FillObjectWithMap(new member(), BaseService.ReqToDict(Request));
@@ -340,11 +401,11 @@ namespace OrgWebMvc.Controllers
                         if (Member.id != null && Member.id != 0)
                         {
                             Info = "update";
-                            MemberDB = (member)MemberSvc.Update(Member);
+                            MemberDB = (member)EntitySvc.Update(Member);
                         }
                         else
                         {
-                            MemberDB = (member)MemberSvc.Add(Member);
+                            MemberDB = (member)EntitySvc.Add(Member);
                         }
                         if (MemberDB == null)
                         {
@@ -353,9 +414,7 @@ namespace OrgWebMvc.Controllers
                         member toSend = (member)ObjectUtil.GetObjectValues(new string[]{
                             "id","name","position","division_id"
                         }, MemberDB);
-                        Response.code = 0;
-                        Response.message = "Success " + Info;
-                        Response.data = toSend;
+                        Response = new WebResponse(0, "Success " + Info, toSend);
                     }
                     break;
                 case "Delete":
@@ -363,12 +422,11 @@ namespace OrgWebMvc.Controllers
                     {
                         return Json(Response);
                     }
-                    member DBmmb = (member)MemberSvc.GetById(int.Parse(Request.Form["Id"]));
+                    member DBmmb = (member)EntitySvc.GetById(int.Parse(Request.Form["Id"]));
                     if (DBmmb != null)
                     {
-                        MemberSvc.Delete(DBmmb);
-                        Response.code = 0;
-                        Response.message = "Success";
+                        EntitySvc.Delete(DBmmb);
+                        Response = new WebResponse(0, "Success");
                     }
                     break;
                 default:
@@ -378,19 +436,20 @@ namespace OrgWebMvc.Controllers
         }
 
         [HttpPost]
-        public ActionResult postSvc()
+        public ActionResult PostSvc()
         {
+            bool UserIsLoggedIn = UserValid();
             WebResponse Response = new WebResponse();
             if (!StringUtil.NotNullAndNotBlank(Request.Form["Action"]))
             {
                 return Json(Response);
             }
             string Action = Request.Form["Action"].ToString();
-            PostService postSvc = new PostService();
+            PostService EntitySvc = new PostService();
             switch (Action)
             {
                 case "List":
-                    List<object> ObjList = BaseService.GetObjectList(postSvc, Request);
+                    List<object> ObjList = BaseService.GetObjectList(EntitySvc, Request);
                     List<post> posts = (List<post>)ObjectUtil.ConvertList(ObjList, typeof(List<post>));
                     List<post> ListToSend = new List<post>();
                     foreach (post Obj in posts)
@@ -401,10 +460,24 @@ namespace OrgWebMvc.Controllers
                         }, Obj);
                         ListToSend.Add(Mmb);
                     }
-                    Response.code = 0;
-                    Response.message = "Success";
-                    Response.data = ListToSend;
-                    Response.count = postSvc.count;
+                    object ResponseData = null;
+                    if (StringUtil.NotNullAndNotBlank(Request.Form["Type"]) && Request.Form["Type"].ToString().Equals("JSONList"))
+                    {
+                        ResponseData = ListToSend;
+                    }
+                    else
+                    {
+                        ResponseData = CustomHelper.GenerateTableString(typeof(post), ObjList);
+                    }
+                    Response = new WebResponse(0, "Success", ResponseData, EntitySvc.count);
+                    break;
+                case "Form":
+                    object Entity = null;
+                    if (StringUtil.NotNullAndNotBlank(Request.Form["Id"]))
+                    {
+                        Entity = EntitySvc.GetById(int.Parse(Request.Form["Id"]));
+                    }
+                    Response = new WebResponse(0, "Success", CustomHelper.GenerateFormString(typeof(post), Entity), EntitySvc.count);
                     break;
                 case "Post":
                     post post = (post)ObjectUtil.FillObjectWithMap(new post(), BaseService.ReqToDict(Request));
@@ -412,14 +485,15 @@ namespace OrgWebMvc.Controllers
                     {
                         post postDB = null;
                         string Info = "create";
+                        post.user_id = LoggedUser.id;
                         if (post.id != null && post.id != 0)
                         {
                             Info = "update";
-                            postDB = (post)postSvc.Update(post);
+                            postDB = (post)EntitySvc.Update(post);
                         }
                         else
                         {
-                            postDB = (post)postSvc.Add(post);
+                            postDB = (post)EntitySvc.Add(post);
                         }
                         if (postDB == null)
                         {
@@ -428,9 +502,7 @@ namespace OrgWebMvc.Controllers
                         post toSend = (post)ObjectUtil.GetObjectValues(new string[]{
                            "id","user_id","title","body","date","type","post_id"
                         }, postDB);
-                        Response.code = 0;
-                        Response.message = "Success " + Info;
-                        Response.data = toSend;
+                        Response = new WebResponse(0, "Success " + Info, toSend);
                     }
                     break;
                 case "Delete":
@@ -438,12 +510,11 @@ namespace OrgWebMvc.Controllers
                     {
                         return Json(Response);
                     }
-                    post DBmmb = (post)postSvc.GetById(int.Parse(Request.Form["Id"]));
+                    post DBmmb = (post)EntitySvc.GetById(int.Parse(Request.Form["Id"]));
                     if (DBmmb != null)
                     {
-                        postSvc.Delete(DBmmb);
-                        Response.code = 0;
-                        Response.message = "Success";
+                        EntitySvc.Delete(DBmmb);
+                        Response = new WebResponse(0, "Success");
                     }
                     break;
                 default:

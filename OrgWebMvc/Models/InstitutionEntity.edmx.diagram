@@ -6,17 +6,17 @@
     <edmx:Diagrams>
       <Diagram DiagramId="84137d1dfc484c7fb23a3614161c3c1f" Name="Diagram1">
         <EntityTypeShape EntityType="INST_DBModel.division" Width="1.5" PointX="3" PointY="2.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="INST_DBModel.event" Width="1.5" PointX="7.5" PointY="3.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="INST_DBModel.event" Width="1.5" PointX="7.375" PointY="3.375" IsExpanded="true" />
         <EntityTypeShape EntityType="INST_DBModel.member" Width="1.5" PointX="5.25" PointY="1.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="INST_DBModel.program" Width="1.5" PointX="5.25" PointY="4.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="INST_DBModel.program" Width="1.5" PointX="4.625" PointY="3.75" IsExpanded="true" />
         <EntityTypeShape EntityType="INST_DBModel.sysdiagram" Width="1.5" PointX="0.75" PointY="6.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="INST_DBModel.user" Width="1.5" PointX="0.75" PointY="2.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="INST_DBModel.user" Width="1.5" PointX="0.5" PointY="2.625" IsExpanded="true" />
         <AssociationConnector Association="INST_DBModel.FK_division_user" ManuallyRouted="false" />
         <AssociationConnector Association="INST_DBModel.FK_member_division" ManuallyRouted="false" />
         <AssociationConnector Association="INST_DBModel.FK_program_division" ManuallyRouted="false" />
-        <AssociationConnector Association="INST_DBModel.FK_event_program" ManuallyRouted="false" />
         <EntityTypeShape EntityType="INST_DBModel.post" Width="1.5" PointX="3" PointY="6.625" />
         <AssociationConnector Association="INST_DBModel.FK_post_user" />
+        <AssociationConnector Association="INST_DBModel.FK_event_program1" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

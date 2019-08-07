@@ -39,7 +39,7 @@ namespace OrgWebMvc.Main.Service
 
         public override object GetById(object Id)
         {
-            @event @event = (from c in dbEntities.events where c.id.Equals(Id) select c).SingleOrDefault();
+            @event @event = (from o in dbEntities.events where o.id==(int)Id select o).SingleOrDefault();
             return @event;
         }
 
@@ -61,7 +61,6 @@ namespace OrgWebMvc.Main.Service
         public override object Add(object Obj)
         {
             @event @event = (@event)Obj;
-           
             @event newEvent = dbEntities.events.Add(@event);
             try
             {
@@ -125,7 +124,7 @@ namespace OrgWebMvc.Main.Service
             string orderby = Params.ContainsKey("orderby") ? (string)Params["orderby"] : "";
             string ordertype = Params.ContainsKey("ordertype") ? (string)Params["ordertype"] : "";
 
-            string sql = "select * from @event where id like '%" + id + "%'" +
+            string sql = "select * from [event] where id like '%" + id + "%'" +
                 " and name like '%" + name + "%'";
             if (!orderby.Equals(""))
             {
