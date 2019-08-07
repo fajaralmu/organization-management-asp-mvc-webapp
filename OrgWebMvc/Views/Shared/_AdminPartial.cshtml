@@ -1,0 +1,13 @@
+﻿@using OrgWebMvc.Main.Service
+
+@if (Session["loggedUser"]!= null)
+{
+    <!--  <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li> -->
+        <li>@Html.ActionLink("Admin", "Index", "Admin")</li>
+   
+   
+}
+else
+{
+   
+}
