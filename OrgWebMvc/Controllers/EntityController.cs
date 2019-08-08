@@ -100,7 +100,7 @@ namespace OrgWebMvc.Controllers
             switch (Action)
             {
                 case "List":
-                    List<object> ObjList = BaseService.GetObjectList(EntitySvc, Request);
+                    List<object> ObjList = BaseService.GetObjectList(EntitySvc, Request, LoggedUser);
                     List<division> Divisions = (List<division>)ObjectUtil.ConvertList(ObjList, typeof(List<division>));
                     List<division> ListToSend = new List<division>();
                     foreach (division D in Divisions)
@@ -189,7 +189,7 @@ namespace OrgWebMvc.Controllers
             switch (Action)
             {
                 case "List":
-                    List<object> ObjList = BaseService.GetObjectList(EntitySvc, Request);
+                    List<object> ObjList = BaseService.GetObjectList(EntitySvc, Request, LoggedUser);
                     List<program> programs = (List<program>)ObjectUtil.ConvertList(ObjList, typeof(List<program>));
                     List<program> ListToSend = new List<program>();
                     foreach (program P in programs)
@@ -275,7 +275,7 @@ namespace OrgWebMvc.Controllers
             switch (Action)
             {
                 case "List":
-                    List<object> ObjList = BaseService.GetObjectList(EntitySvc, Request);
+                    List<object> ObjList = BaseService.GetObjectList(EntitySvc, Request, LoggedUser);
                     List<@event> Events = (List<@event>)ObjectUtil.ConvertList(ObjList, typeof(List<@event>));
                     List<@event> ListToSend = new List<@event>();
                     foreach (@event E in Events)
@@ -362,7 +362,7 @@ namespace OrgWebMvc.Controllers
             switch (Action)
             {
                 case "List":
-                    List<object> ObjList = BaseService.GetObjectList(EntitySvc, Request);
+                    List<object> ObjList = BaseService.GetObjectList(EntitySvc, Request, LoggedUser);
                     List<member> Members = (List<member>)ObjectUtil.ConvertList(ObjList, typeof(List<member>));
                     List<member> ListToSend = new List<member>();
                     foreach (member Obj in Members)
@@ -449,7 +449,7 @@ namespace OrgWebMvc.Controllers
             switch (Action)
             {
                 case "List":
-                    List<object> ObjList = BaseService.GetObjectList(EntitySvc, Request);
+                    List<object> ObjList = BaseService.GetObjectList(EntitySvc, Request, LoggedUser);
                     List<post> posts = (List<post>)ObjectUtil.ConvertList(ObjList, typeof(List<post>));
                     List<post> ListToSend = new List<post>();
                     foreach (post Obj in posts)

@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using OrgWebMvc.Models;
+using InstApp.Util.Common;
 
 namespace OrgWebMvc.Main.Service
 {
@@ -11,7 +12,7 @@ namespace OrgWebMvc.Main.Service
 
         : BaseService
     {
-        
+
         public override List<object> ObjectList(int offset, int limit)
         {
             List<object> ObjList = new List<object>();
@@ -40,7 +41,7 @@ namespace OrgWebMvc.Main.Service
 
         public override object GetById(object Id)
         {
-            member member = (from c in dbEntities.members where c.id==(int)Id select c).SingleOrDefault();
+            member member = (from c in dbEntities.members where c.id == (int)Id select c).SingleOrDefault();
             return member;
         }
 
@@ -52,7 +53,7 @@ namespace OrgWebMvc.Main.Service
         }
 
 
-        
+
 
         public override int ObjectCount()
         {
@@ -62,7 +63,7 @@ namespace OrgWebMvc.Main.Service
         public override object Add(object Obj)
         {
             member member = (member)Obj;
-             member newmember = dbEntities.members.Add(member);
+            member newmember = dbEntities.members.Add(member);
             try
             {
                 dbEntities.SaveChanges();
@@ -120,13 +121,15 @@ namespace OrgWebMvc.Main.Service
         public override List<object> SearchAdvanced(Dictionary<string, object> Params, int limit = 0, int offset = 0)
         {
 
-            string id = Params.ContainsKey("id") ? (string)Params["id"] : "";
+            string id = Params.ContainsKey("id") ? Params["id"].ToString() : "";
             string name = Params.ContainsKey("name") ? (string)Params["name"] : "";
+            string user_id = Params.ContainsKey("user_id") ? Params["user_id"].ToString() : "";
             string orderby = Params.ContainsKey("orderby") ? (string)Params["orderby"] : "";
             string ordertype = Params.ContainsKey("ordertype") ? (string)Params["ordertype"] : "";
 
-            string sql = "select * from member where id like '%" + id + "%'" +
-                " and name like '%" + name + "%'";
+            string sql = "select * from member left join division on division.id = member.division_id where member.id like '%" + id + "%'" +
+                " and member.name like '%" + name + "%' " +
+                (StringUtil.NotNullAndNotBlank(user_id) ? " and division.user_id=" + user_id : "");
             if (!orderby.Equals(""))
             {
                 sql += " ORDER BY " + orderby;

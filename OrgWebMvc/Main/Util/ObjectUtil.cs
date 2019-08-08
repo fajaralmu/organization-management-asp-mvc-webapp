@@ -54,6 +54,22 @@ namespace InstApp.Util.Common
             return list;
         }
 
+        public static object GetValueOfArray(object Value, object[] Values, object[] Keys)
+        {
+            if (Values.Length > Keys.Length)
+            {
+                return null;
+            }
+            for(int i = 0; i < Values.Length; i++)
+            {
+                if (Value.Equals(Values[i]))
+                {
+                    return Keys[i];
+                }
+            }
+            return null;
+        }
+
         public static object GetValueFromProp(string propname, object Object)
         {
             return Object.GetType().GetProperty(propname).GetValue(Object);

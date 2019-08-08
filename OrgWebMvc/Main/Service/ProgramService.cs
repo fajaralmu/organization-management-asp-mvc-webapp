@@ -4,13 +4,14 @@ using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using OrgWebMvc.Models;
+using InstApp.Util.Common;
 
 namespace OrgWebMvc.Main.Service
 {
     public class ProgramService
         : BaseService
     {
-        
+
         public override List<object> ObjectList(int offset, int limit)
         {
             List<object> ObjList = new List<object>();
@@ -39,7 +40,7 @@ namespace OrgWebMvc.Main.Service
 
         public override object GetById(object Id)
         {
-            program program = (from c in dbEntities.programs where c.id==(int)Id select c).SingleOrDefault();
+            program program = (from c in dbEntities.programs where c.id == (int)Id select c).SingleOrDefault();
             return program;
         }
 
@@ -51,7 +52,7 @@ namespace OrgWebMvc.Main.Service
         }
 
 
-        
+
 
         public override int ObjectCount()
         {
@@ -61,7 +62,7 @@ namespace OrgWebMvc.Main.Service
         public override object Add(object Obj)
         {
             program program = (program)Obj;
-           
+
             program newProgram = dbEntities.programs.Add(program);
             try
             {
@@ -121,12 +122,14 @@ namespace OrgWebMvc.Main.Service
         {
 
             string id = Params.ContainsKey("id") ? (string)Params["id"] : "";
+            string user_id = Params.ContainsKey("user_id") ? Params["user_id"].ToString() : "";
             string name = Params.ContainsKey("name") ? (string)Params["name"] : "";
             string orderby = Params.ContainsKey("orderby") ? (string)Params["orderby"] : "";
             string ordertype = Params.ContainsKey("ordertype") ? (string)Params["ordertype"] : "";
 
-            string sql = "select * from program where id like '%" + id + "%'" +
-                " and name like '%" + name + "%'";
+            string sql = "select * from program left join division on division.id = program.division_id where program.id like '%" + id + "%'" +
+                " and program.name like '%" + name + "%'" +
+                 (StringUtil.NotNullAndNotBlank(user_id) ? " and division.user_id=" + user_id : "");
             if (!orderby.Equals(""))
             {
                 sql += " ORDER BY " + orderby;

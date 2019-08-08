@@ -127,6 +127,7 @@ namespace InstApp.Util.Common
             string RandomString = "";
             int Size = Numbers.Length;
             Random R = new Random();
+
             for (int i = 0; i < Length; i++)
             {
 
@@ -163,6 +164,18 @@ namespace InstApp.Util.Common
                 return true;
             }
             return false;
+        }
+
+        public static bool NotNullAndNotBlank(params object[] Objs)
+        {
+            foreach (object Obj in Objs)
+            {
+                if (Obj == null || Obj.ToString().Equals(""))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         public static bool NotNullAndNotBlankAndTypeOf(object Obj, Type t)

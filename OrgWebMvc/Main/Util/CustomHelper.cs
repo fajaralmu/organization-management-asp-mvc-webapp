@@ -37,6 +37,8 @@ namespace OrgWebMvc.Main.Util
                 if (Attributes.Length > 0)
                 {
                     FieldAttribute Attribute = (FieldAttribute)Attributes[0];
+                    if (Attribute.SkipInTable)
+                        continue;
                     HtmlTag Th = new HtmlTag("th", Prop.Name.ToUpper());
                     ColumnNames.Add(Th);
                     CustomedProp.Add(Prop);
@@ -54,6 +56,7 @@ namespace OrgWebMvc.Main.Util
             object ID = null;
             foreach (object Obj in Collection)
             {
+
                 HtmlTag Tr = new HtmlTag("tr");
                 Tr.ID = "row-obj-" + Idx;
                 Tr.Add(new HtmlTag("td", Idx.ToString()));
@@ -63,7 +66,29 @@ namespace OrgWebMvc.Main.Util
                     {
                         ID = Prop.GetValue(Obj);
                     }
-                    HtmlTag Td = new HtmlTag("td", ObjectType.GetProperty(Prop.Name).GetValue(Obj).ToString());
+                    FieldAttribute Attribute = (FieldAttribute)Prop.GetCustomAttributes(typeof(FieldAttribute), true)[0];
+
+                    if (Attribute.SkipInTable)
+                        continue;
+
+                    object Value = ObjectType.GetProperty(Prop.Name).GetValue(Obj);
+
+                    if (Attribute.FieldType.Equals(AttributeConstant.TYPE_DROPDOWN) && Value != null)
+                    {
+                        if (StringUtil.NotNullAndNotBlank(Attribute.Values, Attribute.ItemNames))
+                        {
+                            Value = ObjectUtil.GetValueOfArray(Value, Attribute.Values, Attribute.ItemNames);
+                        }
+                        else if (StringUtil.NotNullAndNotBlank(Attribute.ClassReference, Attribute.ClassAttributeConverter))
+                        {
+                            string ClassAttrName = Attribute.ClassRefPropName == null ? Attribute.ClassReference : Attribute.ClassRefPropName;
+                            object ClassVal = ObjectUtil.GetValueFromProp(ClassAttrName, Obj);
+                            object ClassConverter = ObjectUtil.GetValueFromProp(Attribute.ClassAttributeConverter, ClassVal);
+                            Value = ClassConverter;
+                        }
+                    }
+
+                    HtmlTag Td = new HtmlTag("td", Value);
                     Tr.Add(Td);
                 }
                 Idx++;
@@ -92,16 +117,41 @@ namespace OrgWebMvc.Main.Util
             return new HtmlString(GenerateFormString(ObjectType, Entity));
         }
 
+        public static HtmlTag GenerateTable(int Col, HtmlTag[] Elements)
+        {
+            HtmlTag Table = new HtmlTag("table");
+            int ColIdx = 1;
+            HtmlTag CurrentTr = new HtmlTag("tr");
+            List<HtmlTag> Tds = new List<HtmlTag>();
+            for (int i = 0; i < Elements.Length; i++)
+            {
+                HtmlTag Tag = Elements[i];
+
+                HtmlTag Td = new HtmlTag("td", Tag);
+                Tds.Add(Td);
+                if (ColIdx == Col || i == Elements.Length-1)
+                {
+                    ColIdx = 0;
+                    CurrentTr.Add(Tds);
+                    Table.Add(CurrentTr);
+                    Tds.Clear();
+                    CurrentTr = new HtmlTag("tr");
+                }
+                ColIdx++;
+            }
+
+            return (Table);
+        }
+
         public static string GenerateFormString(Type ObjectType, object Entity = null)
         {
             string ObjName = StringUtil.ToUpperCase(0, ObjectType.Name);
             HtmlTag Form = new HtmlTag("form");
             Form.ID = "form-entity";
             Form.Class = "form";
-            //  Form.AddAttribute("method", "POST");
-            //  Form.AddAttribute("action", ObjName + "Svc");
-
             Form.AddAttribute("onsubmit", "return submitEvent(event)");
+
+            List<HtmlTag> InputFields = new List<HtmlTag>();
 
             PropertyInfo[] Props = ObjectType.GetProperties();
             for (int i = 0; i < Props.Length; i++)
@@ -143,18 +193,45 @@ namespace OrgWebMvc.Main.Util
                     else if (IsDropDown)
                     {
                         InputField.Key = "select";
-                        InputField.AddAttribute("multiple", "multiple");
+                        if (StringUtil.NotNullAndNotBlank(Attribute.Values, Attribute.ItemNames) && Attribute.ItemNames.Length > 0)
+                        {
+                            for (int j = 0; j < Attribute.Values.Length; j++)
+                            {
+                                HtmlTag Option = new HtmlTag("option", Attribute.ItemNames[j]);
+                                if ((Entity != null && Value.ToString().Equals(Attribute.Values[j].ToString())))
+                                    Option.AddAttribute("selected", "");
+                                Option.AddAttribute("value", Attribute.Values[j].ToString());
+                                InputField.Add(Option);
+                            }
+                        }
+                        else if (StringUtil.NotNullAndNotBlank(Attribute.ClassReference, Attribute.ClassAttributeConverter))
+                        {
+                            InputField.AddAttribute("multiple", "multiple");
 
-                        InputHelper = new HtmlTag("input");
-                        InputHelper.AddAttribute("autocomplete", "off");
-                        InputHelper.Class = "form-control";
-                        InputHelper.ID = "helper-" + Prop.Name;
-                        InputHelper.AddAttribute("onkeyup", "fillComboBox('" + Prop.Name.Trim() + "','"
-                            + StringUtil.ToUpperCase(0, Attribute.ClassReference) + "','"
-                            + Attribute.ClassAttributeConverter + "',this)");
+                            InputHelper = new HtmlTag("input");
+                            InputHelper.AddAttribute("autocomplete", "off");
+                            InputHelper.Class = "form-control";
+                            InputHelper.ID = "helper-" + Prop.Name;
+                            InputHelper.AddAttribute("onkeyup", "fillComboBox('" + Prop.Name.Trim() + "','"
+                                + StringUtil.ToUpperCase(0, Attribute.ClassReference) + "','"
+                                + Attribute.ClassAttributeConverter + "',this)");
 
-                        InputField.AddAttribute("onchange", "setValue('" + InputHelper.ID + "',this.options[this.selectedIndex].innerText)");
-
+                            InputField.AddAttribute("onchange", "setValue('" + InputHelper.ID + "',this.options[this.selectedIndex].innerText)");
+                            if (Entity != null)
+                            {
+                                string ClassAttr = Attribute.ClassRefPropName != null ? Attribute.ClassRefPropName : Attribute.ClassReference;
+                                object ClassVal = ObjectUtil.GetValueFromProp(ClassAttr, Entity);
+                                if (ClassVal != null)
+                                {
+                                    string ClassAttrValue = ObjectUtil.GetValueFromProp(Attribute.ClassAttributeConverter, ClassVal).ToString();
+                                    HtmlTag Option = new HtmlTag("option", ClassAttrValue);
+                                    Option.AddAttribute("selected", "");
+                                    Option.AddAttribute("value", Value.ToString());
+                                    InputHelper.AddAttribute("value", ClassAttrValue);
+                                    InputField.Add(Option);
+                                }
+                            }
+                        }
                     }
                     else
                     {
@@ -169,18 +246,19 @@ namespace OrgWebMvc.Main.Util
                         InputField.AddAttribute("value", Value == null ? "" : Value.ToString());
                     }
 
-
-
                     InputField.Class = "form-control";
                     InputField.ID = Prop.Name;
                     InputField.Name = "input-entity";
 
-                    Form.Add(Label);
+                    InputFields.Add(Label);
                     if (InputHelper != null)
                     {
-                        Form.Add(InputHelper);
+                        InputFields.Add(Wrap(null, InputHelper, InputField));
                     }
-                    Form.Add(InputField);
+                    else
+                    {
+                        InputFields.Add(InputField);
+                    }
                 }
             }
 
@@ -190,10 +268,8 @@ namespace OrgWebMvc.Main.Util
             Action.AddAttribute("type", "hidden");
             Action.AddAttribute("value", "Post");
 
-            Form.Add(Action);
+            InputFields.Add(Action);
 
-            HtmlTag BtnWrapper = new HtmlTag("div");
-            BtnWrapper.Class = "btn-group";
             HtmlTag BtnSubmit = new HtmlTag("input");
             BtnSubmit.Class = "btn btn-success";
             BtnSubmit.AddAttribute("type", "submit");
@@ -203,12 +279,23 @@ namespace OrgWebMvc.Main.Util
             BtnReset.Class = "btn btn-default";
             BtnReset.AddAttribute("onclick", "generateForm(null)");
 
-            BtnWrapper.AddAll(BtnSubmit, BtnReset);
+            InputFields.Add(Wrap("btn-group", BtnSubmit, BtnReset));
 
-            Form.Add(new BreakLine());
-            Form.Add(BtnWrapper);
-
+            HtmlTag Table = GenerateTable(2, InputFields.ToArray());
+            Form.Add(Table);
             return ControlUtil.HtmlTagToString(Form);
+        }
+
+        public static HtmlTag Wrap(string Class, params HtmlTag[] Tags)
+        {
+            HtmlTag Wrapper = new HtmlTag("div");
+            if (Class != null)
+                Wrapper.Class = Class;
+            foreach (HtmlTag Tag in Tags)
+            {
+                Wrapper.Add(Tag);
+            }
+            return Wrapper;
         }
     }
 }

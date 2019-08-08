@@ -20,7 +20,7 @@ namespace OrgWebMvc.Models
         public int user_id { get; set; }
         [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX)]
         public string title { get; set; }
-        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTAREA)]
+        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTAREA, SkipInTable =true)]
         public string body { get; set; }
         [FieldAttribute(FieldType = AttributeConstant.TYPE_DATE)]
         public System.DateTime date { get; set; }

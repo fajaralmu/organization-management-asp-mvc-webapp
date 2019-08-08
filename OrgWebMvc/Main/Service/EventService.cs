@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using OrgWebMvc.Models;
+using InstApp.Util.Common;
 
 namespace OrgWebMvc.Main.Service
 {
@@ -119,13 +120,16 @@ namespace OrgWebMvc.Main.Service
         public override List<object> SearchAdvanced(Dictionary<string, object> Params, int limit = 0, int offset = 0)
         {
 
-            string id = Params.ContainsKey("id") ? (string)Params["id"] : "";
+            string id = Params.ContainsKey("id") ? Params["id"].ToString() : "";
             string name = Params.ContainsKey("name") ? (string)Params["name"] : "";
+            string user_id = Params.ContainsKey("user_id") ? Params["user_id"].ToString() : "";
             string orderby = Params.ContainsKey("orderby") ? (string)Params["orderby"] : "";
             string ordertype = Params.ContainsKey("ordertype") ? (string)Params["ordertype"] : "";
 
-            string sql = "select * from [event] where id like '%" + id + "%'" +
-                " and name like '%" + name + "%'";
+            string sql = "select * from [event] left join [program] on [program].[id]=[event].[program_id] "+
+                " left join [division] on [division].[id] = [program].[division_id] where [event].[id] like '%" + id + "%'" +
+                " and [event].[name] like '%" + name + "%' "+
+                (StringUtil.NotNullAndNotBlank(user_id)?" and [division].[user_id] = "+user_id:"");
             if (!orderby.Equals(""))
             {
                 sql += " ORDER BY " + orderby;

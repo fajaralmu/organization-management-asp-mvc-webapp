@@ -62,7 +62,7 @@ namespace OrgWebMvc.Main.Service
             return count;
         }
 
-        public static List<object> GetObjectList( BaseService Service, HttpRequestBase Req)
+        public static List<object> GetObjectList( BaseService Service, HttpRequestBase Req, user LoggedUser = null)
         {
             int Offset = 0;
             int Limit = 0;
@@ -86,7 +86,13 @@ namespace OrgWebMvc.Main.Service
                 Param = Param.Replace("${", "");
                 Param = Param.Replace("}$", "");
                 Param = Param.Replace(";", "&");
+                
+
                 Params = StringUtil.QUeryStringToDict(Param);
+            }
+            if (LoggedUser != null)
+            {
+                Params.Add("user_id", LoggedUser.id);
             }
             return Service.SearchAdvanced(Params, Limit, Offset);
 
