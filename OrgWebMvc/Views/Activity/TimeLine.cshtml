@@ -1,0 +1,21 @@
+﻿
+@{
+    ViewBag.Title = "TimeLine";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div >
+    
+    
+    <h2>TimeLine</h2>
+
+    <div class="timeline">
+        @Html.Partial("~/Views/Shared/_TimeLinePartial.cshtml")
+    </div>
+    <script src="~/Scripts/activity.js"></script>
+    <script src="~/Scripts/ajax.js"></script>
+    <script>load();</script>
+   
+</div>
+
+
+

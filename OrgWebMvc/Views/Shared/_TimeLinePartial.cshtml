@@ -1,0 +1,53 @@
+﻿<div class="container">
+    <div>
+        bulan<input type="number"  id="bulan"  min=1 max=12 />
+        tahun<input type="number" id="tahun" />
+        <button id="prev" onclick="cari()">Go</button>
+    </div>
+    <div id="kalender" >
+        <p></p>
+        <div class="nav-tanggal">
+            <table class="table" style="table-layout:fixed">
+                <tr>
+                    <td>
+                        <a class="btn" id="prev" onclick="prefmonth(true)">&#10096;</a>
+                    </td>
+                    <td>
+                        <span id="tgl-info"></span>
+                    </td>
+                    <td>
+                        <a class="btn" id="next" onclick="nextmonth(true)">&#10097;</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <table class="table" id="tgl">
+            <thead>
+                <tr>
+                    <th>
+                        Senin
+                    </th>
+                    <th>
+                        Selasa
+                    </th>
+                    <th>
+                        Rabu
+                    </th>
+                    <th>
+                        Kamis
+                    </th>
+                    <th>
+                        Jumat
+                    </th>
+                    <th>
+                        Sabtu
+                    </th>
+                    <th>
+                        Ahad
+                    </th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+  
+</div>

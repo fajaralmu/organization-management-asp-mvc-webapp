@@ -208,6 +208,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\ActivityController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\EntityController.cs" />
@@ -301,6 +302,7 @@
       <DependentUpon>InstitutionEntity.edmx</DependentUpon>
       <LastGenOutput>InstitutionEntity.cs</LastGenOutput>
     </Content>
+    <Content Include="Scripts\activity.js" />
     <Content Include="Scripts\ai.0.22.9-build00167.js" />
     <Content Include="Scripts\ai.0.22.9-build00167.min.js" />
     <Content Include="Scripts\ajax.js" />
@@ -375,6 +377,8 @@
     <Content Include="Views\Shared\_AdminPartial.cshtml" />
     <Content Include="Views\Admin\Index.cshtml" />
     <Content Include="Views\Shared\EntityMng.cshtml" />
+    <Content Include="Views\Activity\TimeLine.cshtml" />
+    <Content Include="Views\Shared\_TimeLinePartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

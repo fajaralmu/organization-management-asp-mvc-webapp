@@ -8,9 +8,11 @@
     <script src="~/Scripts/ajax.js"></script>
     <h2>@ViewData["Entity"] Management</h2>
     <!--@@CustomHelper.GenerateForm((Type)ViewData["EntityType"])-->
-    <div id="entity-form"></div>
+    <button onclick="toggleComponent('entity-form')" class="btn btn-default">Toggle Form</button>
+    <div id="entity-form" style="display:block"></div>
     <!-- @@CustomHelper.GenerateTable((Type)ViewData["EntityType"], (List<object>)ViewData["EntityList"])
     -->
+    
     <div  id="info-list">
         <p style="display:none">Offset: <span id="info-offset"></span></p>
 
@@ -285,6 +287,12 @@
             console.log("search params obj", search_params_obj);
             fillSearchParam();
             loadList();
+        }
+
+        function toggleComponent(id) {
+            let currentVal = document.getElementById(id).style.display;
+            let val = currentVal == "block" ? "none" : "block";
+            document.getElementById(id).style.display = val;
         }
 
         generateForm(null);
