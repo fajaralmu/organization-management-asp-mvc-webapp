@@ -18,11 +18,11 @@ namespace OrgWebMvc.Models
         [FieldAttribute(FieldType = AttributeConstant.TYPE_ID_AI)]
         public int id { get; set; }
         public int user_id { get; set; }
-        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX)]
+        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX, Required = true)]
         public string title { get; set; }
-        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTAREA, SkipInTable =true)]
+        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTAREA, Required = true, SkipInTable =true)]
         public string body { get; set; }
-        [FieldAttribute(FieldType = AttributeConstant.TYPE_DATE)]
+        [FieldAttribute(FieldType = AttributeConstant.TYPE_DATE, Required = true)]
         public System.DateTime date { get; set; }
         public int type { get; set; }
         public Nullable<int> post_id { get; set; }

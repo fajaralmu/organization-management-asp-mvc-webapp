@@ -11,12 +11,12 @@
     <div id="entity-form"></div>
     <!-- @@CustomHelper.GenerateTable((Type)ViewData["EntityType"], (List<object>)ViewData["EntityList"])
     -->
-    <div id="info-list">
-        <p>Offset: <span id="info-offset"></span></p>
+    <div  id="info-list">
+        <p style="display:none">Offset: <span id="info-offset"></span></p>
 
-        <p>Total: <span id="info-total"></span></p>
+        <p style="display:none">Total: <span id="info-total"></span></p>
         <p>Limit:</p>
-        <select style="width:100px" id="select-limit" onchange="updateLimit()">
+        <select style="width:10%" id="select-limit" onchange="updateLimit()">
             <option value="5">5</option>
             <option value="10">10</option>
             <option value="15">15</option>
@@ -39,10 +39,13 @@
         let infoOffset = document.getElementById("info-offset");
         let infoTotal = document.getElementById("info-total");
         let buttonList = document.getElementById("button-list");
+        let buttonSortList = document.getElementsByName("button-sort");
         let filterFields = document.getElementsByName("filter-box");
         let search_params = null;
-        let serach_params_obj = {};
+        let search_params_obj = {};
         let lastFilterBoxFocus = "";
+        let currentSortBy = "";
+        let currentSortType = "";
 
         let URL = "/Entity/@ViewData["Entity"]Svc";
         let URLRaw = "/Entity/$name$Svc";
@@ -141,6 +144,13 @@
                 };
 
                 buttonList.appendChild(btn);
+            }
+            for (let i = 0; i < buttonSortList.length; i++) {
+                let btn = buttonSortList[i];
+                if (btn.id == currentSortType + "-" + currentSortBy) {
+                    btn.className = "btn active";
+                    btn.style.fontWeight = "bold";
+                }
             }
         }
 
@@ -244,11 +254,27 @@
             }
         }
 
+        function sortEntity(sortBy, sortType) {
+            filterEntity(null, sortBy, sortType);
+        }
+
         function filterEntity(element) {
+            filterEntity(element, null, null);
+        }
+
+        function filterEntity(element, sortBy, sortType) {
             if(element!=null)
                 lastFilterBoxFocus = element.id;
             search_params = null;
             search_params_obj = {};
+            if (sortBy != null && sortType != null) {
+                currentSortBy = sortBy;
+                currentSortType = sortType;
+                
+            }
+            search_params_obj['orderby'] = currentSortBy;
+            search_params_obj['ordertype'] = currentSortType;
+
             for (let i = 0; i < filterFields.length; i++) {
                 let filterField = filterFields[i];
                 if (filterField.value != null && filterField.value != "") {

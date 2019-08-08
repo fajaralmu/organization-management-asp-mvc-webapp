@@ -157,7 +157,7 @@ namespace InstApp.Util.Common
             return result;
         }
 
-        public static bool NotNullAndNotBlank(object Obj)
+        internal static bool NotNullAndNotBlank(object Obj)
         {
             if (Obj != null && !Obj.ToString().Equals(""))
             {
@@ -195,9 +195,11 @@ namespace InstApp.Util.Common
                 string[] Params = q.Split('&');
                 foreach (string Param in Params)
                 {
-                    if (Param == null || Param == "") continue;
-                    string[] Prop = Param.Split('=');
-                    Map.Add(Prop[0], Prop[1]);
+                    if (Param != null &&Param!= "")
+                    {
+                        string[] Prop = Param.Split('=');
+                        Map.Add(Prop[0], Prop[1]);
+                    }
                 }
                 return Map;
 

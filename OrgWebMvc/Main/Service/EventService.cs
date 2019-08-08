@@ -11,7 +11,7 @@ namespace OrgWebMvc.Main.Service
     public class EventService
         : BaseService
     {
-        
+
         public override List<object> ObjectList(int offset, int limit)
         {
             List<object> ObjList = new List<object>();
@@ -24,6 +24,7 @@ namespace OrgWebMvc.Main.Service
             count = dbEntities.events.Count();
             return ObjList;
         }
+
         public override object Update(object Obj)
         {
             Refresh();
@@ -40,7 +41,7 @@ namespace OrgWebMvc.Main.Service
 
         public override object GetById(object Id)
         {
-            @event @event = (from o in dbEntities.events where o.id==(int)Id select o).SingleOrDefault();
+            @event @event = (from o in dbEntities.events where o.id == (int)Id select o).SingleOrDefault();
             return @event;
         }
 
@@ -50,9 +51,6 @@ namespace OrgWebMvc.Main.Service
             dbEntities.events.Remove(@event);
             dbEntities.SaveChanges();
         }
-
-
-        
 
         public override int ObjectCount()
         {
@@ -122,14 +120,22 @@ namespace OrgWebMvc.Main.Service
 
             string id = Params.ContainsKey("id") ? Params["id"].ToString() : "";
             string name = Params.ContainsKey("name") ? (string)Params["name"] : "";
+            string program = Params.ContainsKey("program") ? (string)Params["program"] : "";
+            string location = Params.ContainsKey("location") ? (string)Params["location"] : "";
+            string participant = Params.ContainsKey("participant") ? Params["participant"].ToString() : "";
+            string info = Params.ContainsKey("info") ? (string)Params["info"] : "";
             string user_id = Params.ContainsKey("user_id") ? Params["user_id"].ToString() : "";
             string orderby = Params.ContainsKey("orderby") ? (string)Params["orderby"] : "";
             string ordertype = Params.ContainsKey("ordertype") ? (string)Params["ordertype"] : "";
 
-            string sql = "select * from [event] left join [program] on [program].[id]=[event].[program_id] "+
+            string sql = "select * from [event] left join [program] on [program].[id]=[event].[program_id] " +
                 " left join [division] on [division].[id] = [program].[division_id] where [event].[id] like '%" + id + "%'" +
-                " and [event].[name] like '%" + name + "%' "+
-                (StringUtil.NotNullAndNotBlank(user_id)?" and [division].[user_id] = "+user_id:"");
+                " and [event].[name] like '%" + name + "%' " +
+                " and [program].[name]  like '%" + program + "%' " +
+                " and [event].[location]  like '%" + location + "%' " +
+                " and [event].[participant]  like '%" + participant + "%' " +
+                " and [event].[info]  like '%" + info + "%' " +
+                (StringUtil.NotNullAndNotBlank(user_id) ? " and [division].[user_id] = " + user_id : "");
             if (!orderby.Equals(""))
             {
                 sql += " ORDER BY " + orderby;

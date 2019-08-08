@@ -10,7 +10,7 @@ namespace OrgWebMvc.Main.Service
 {
     public class DivisionService : BaseService
     {
-        
+
         public override List<object> ObjectList(int offset, int limit)
         {
             List<object> ObjList = new List<object>();
@@ -41,14 +41,14 @@ namespace OrgWebMvc.Main.Service
         {
             try
             {
-                division division = (from c in dbEntities.divisions where c.id==(int)Id select c).SingleOrDefault();
+                division division = (from c in dbEntities.divisions where c.id == (int)Id select c).SingleOrDefault();
                 return division;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return null;
             }
-            
+
         }
 
         public override void Delete(object Obj)
@@ -59,7 +59,7 @@ namespace OrgWebMvc.Main.Service
         }
 
 
-        
+
 
         public override int ObjectCount()
         {
@@ -69,7 +69,7 @@ namespace OrgWebMvc.Main.Service
         public override object Add(object Obj)
         {
             division division = (division)Obj;
-           
+
             division newDivision = dbEntities.divisions.Add(division);
             try
             {
@@ -130,12 +130,13 @@ namespace OrgWebMvc.Main.Service
 
             string id = Params.ContainsKey("id") ? Params["id"].ToString() : "";
             string name = Params.ContainsKey("name") ? (string)Params["name"] : "";
+            string desc = Params.ContainsKey("description") ? (string)Params["description"] : "";
             string user_id = Params.ContainsKey("user_id") ? Params["user_id"].ToString() : "";
             string orderby = Params.ContainsKey("orderby") ? (string)Params["orderby"] : "";
             string ordertype = Params.ContainsKey("ordertype") ? (string)Params["ordertype"] : "";
 
             string sql = "select * from division where id like '%" + id + "%'" +
-                " and name like '%" + name + "%' " +
+                " and name like '%" + name + "%' and description like '%" + desc + "%'" +
                 (StringUtil.NotNullAndNotBlank(user_id) ? " and user_id=" + user_id + " " : "");
             if (!orderby.Equals(""))
             {

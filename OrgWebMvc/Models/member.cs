@@ -17,11 +17,11 @@ namespace OrgWebMvc.Models
     {
         [FieldAttribute(FieldType = AttributeConstant.TYPE_ID_AI)]
         public int id { get; set; }
-        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX)]
+        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX, Required = true)]
         public string name { get; set; }
         [FieldAttribute(Required = true, FieldType = AttributeConstant.TYPE_DROPDOWN, FieldName = "Division", ClassReference = "division", ClassAttributeConverter = "name")]
         public int division_id { get; set; }
-        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX)]
+        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX, Required = true)]
         public string position { get; set; }
     
         public virtual division division { get; set; }

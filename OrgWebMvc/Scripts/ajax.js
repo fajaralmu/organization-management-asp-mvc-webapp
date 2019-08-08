@@ -21,10 +21,9 @@ function postReq(url, param, callback, errorCallback){
 }
 
 function infoLoading() {
-    document.getElementById("loading-wrapper").innerHTML =
-			 "<img width='60px' src=\"/Assets/Img/loading-disk.gif\"/><br/>Please Wait...";
+    document.getElementById("loading-wrapper2").style.display = "block";
 }
 
 function infoDone() {
-    document.getElementById("loading-wrapper").innerHTML = "";
+    document.getElementById("loading-wrapper2").style.display = "none";
 }

@@ -35,24 +35,51 @@ namespace OrgWebMvc.Main.Util
             {
                 PropertyInfo Prop = Props[i];
                 object[] Attributes = Prop.GetCustomAttributes(typeof(FieldAttribute), true);
-                if (Attributes.Length > 0)
-                {
-                    FieldAttribute Attribute = (FieldAttribute)Attributes[0];
-                    if (Attribute.SkipInTable)
-                        continue;
-                    HtmlTag FilterBox = new HtmlTag("input");
-                    FilterBox.Name = "filter-box";
-                    FilterBox.ID = "filter-"+Prop.Name;
-                    FilterBox.AddAttribute("onkeyup", "filterEntity(this)");
-                    FilterBox.Class = "form-control";
+                if (Attributes.Length == 0)
+                    continue;
 
-                    HtmlTag Th = new HtmlTag("th", Wrap(null, DivLabel(Prop.Name.ToUpper()),FilterBox));
-                   
-                    ColumnNames.Add(Th);
-                    CustomedProp.Add(Prop);
+                FieldAttribute Attribute = (FieldAttribute)Attributes[0];
+                if (Attribute.SkipInTable)
+                    continue;
+
+                string FieldName = Prop.Name;
+                string ObjName = ObjectType.Name;
+                bool ClassRef = false;
+                if (StringUtil.NotNullAndNotBlank(Attribute.ClassReference))
+                {
+                    ClassRef = true;
+                    FieldName = Attribute.ClassAttributeConverter;
+                    ObjName = Attribute.ClassReference;
                 }
+
+                //filter
+                HtmlTag FilterBox = new HtmlTag("input");
+                FilterBox.Name = "filter-box";
+                FilterBox.ID = "filter-" + (ClassRef ? ObjName : FieldName);
+                FilterBox.AddAttribute("onkeyup", "filterEntity(this)");
+                FilterBox.Class = "form-control";
+
+                //sorting
+                HtmlTag BtnAsc = new HtmlTag("button", "&#8657;");
+                BtnAsc.ID = "asc-" + ObjName + "." + FieldName;
+                BtnAsc.Name = "button-sort";
+                BtnAsc.Class = "btn";
+                BtnAsc.AddAttribute("onclick", "sortEntity('" + ObjName + "." + FieldName + "','asc')");
+                HtmlTag BtnDesc = new HtmlTag("button", "&#8659;");
+                BtnDesc.ID = "desc-" + ObjName + "." + FieldName;
+                BtnDesc.Name = "button-sort";
+                BtnDesc.Class = "btn";
+                BtnDesc.AddAttribute("onclick", "sortEntity('" + ObjName + "." + FieldName + "','desc')");
+
+                //    HtmlTag SortWrapper = Wrap("btn-group", BtnAsc, BtnDesc);
+                HtmlTag FilterWrapper = Wrap(null, DivLabel(ClassRef ? ObjName.ToUpper() : FieldName.ToUpper()), FilterBox, BtnAsc, BtnDesc);
+                HtmlTag Th = new HtmlTag("th", FilterWrapper);
+
+                ColumnNames.Add(Th);
+                CustomedProp.Add(Prop);
+
             }
-            ColumnNames.Add(new HtmlTag("th", "Option"));
+            ColumnNames.Add(new HtmlTag("th", "OPTION"));
             HtmlTag THead = new HtmlTag("thead", ColumnNames);
             HtmlTag TBody = new HtmlTag("tbody");
 
@@ -103,10 +130,10 @@ namespace OrgWebMvc.Main.Util
                 HtmlTag Options = new HtmlTag("td");
                 Options.Class = "btn-group";
 
-                HtmlTag BtnEdit = new HtmlTag("button", "Edit");
+                HtmlTag BtnEdit = new HtmlTag("button", "<span class=\"glyphicon glyphicon-edit\"></span>");
                 BtnEdit.Class = "btn btn-warning";
                 BtnEdit.AddAttribute("onclick", "editEntity(" + ID + ")");
-                HtmlTag BtnDelete = new HtmlTag("button", "Delete");
+                HtmlTag BtnDelete = new HtmlTag("button", "<span class=\"glyphicon glyphicon-trash\"></span>");
                 BtnDelete.Class = "btn btn-danger";
                 BtnDelete.AddAttribute("onclick", "deleteEntity(" + ID + ")");
                 Options.AddAll(BtnEdit, BtnDelete);
@@ -137,7 +164,7 @@ namespace OrgWebMvc.Main.Util
 
                 HtmlTag Td = new HtmlTag("td", Tag);
                 Tds.Add(Td);
-                if (ColIdx == Col || i == Elements.Length-1)
+                if (ColIdx == Col || i == Elements.Length - 1)
                 {
                     ColIdx = 0;
                     CurrentTr.Add(Tds);
@@ -252,6 +279,11 @@ namespace OrgWebMvc.Main.Util
                         }
                         InputField.AddAttribute("type", type);
                         InputField.AddAttribute("value", Value == null ? "" : Value.ToString());
+                    }
+
+                    if (Attribute.Required)
+                    {
+                        InputField.AddAttribute("required", "true");
                     }
 
                     InputField.Class = "form-control";

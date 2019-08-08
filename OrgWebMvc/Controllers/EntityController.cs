@@ -53,6 +53,10 @@ namespace OrgWebMvc.Controllers
 
         public ActionResult Event()
         {
+            if (!UserValid())
+            {
+                return RedirectToAction("Index", "Home");
+            }
             EventService EventSvc = new EventService();
 
             ViewBag.Title = "Event";
@@ -64,6 +68,10 @@ namespace OrgWebMvc.Controllers
 
         public ActionResult Member()
         {
+            if (!UserValid())
+            {
+                return RedirectToAction("Index", "Home");
+            }
             MemberService MemberSvc = new MemberService();
 
             ViewBag.Title = "Member";
@@ -75,6 +83,10 @@ namespace OrgWebMvc.Controllers
 
         public ActionResult Post()
         {
+            if (!UserValid())
+            {
+                return RedirectToAction("Index", "Home");
+            }
             PostService PostSvc = new PostService();
 
             ViewBag.Title = "Post";

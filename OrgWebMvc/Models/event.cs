@@ -20,18 +20,18 @@ namespace OrgWebMvc.Models
             done = 0;
         }
 
-        [FieldAttribute(FieldType = AttributeConstant.TYPE_ID_AI)]
+        [FieldAttribute(FieldType = AttributeConstant.TYPE_ID_AI, Required = true)]
         public int id { get; set; }
-        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX)]
+        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX, Required = true)]
         public string name { get; set; }
         [FieldAttribute(Required = true, FieldType = AttributeConstant.TYPE_DROPDOWN, FieldName = "Program Name", ClassRefPropName="program1", ClassReference = "program", ClassAttributeConverter = "name")]
         public int program_id { get; set; }
         public int user_id { get; set; }
-        [FieldAttribute(FieldType = AttributeConstant.TYPE_DATE)]
+        [FieldAttribute(FieldType = AttributeConstant.TYPE_DATE, Required = true)]
         public System.DateTime date { get; set; }
-        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX)]
+        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX, Required = true)]
         public string location { get; set; }
-        [FieldAttribute(FieldType = AttributeConstant.TYPE_NUMBER)]
+        [FieldAttribute(FieldType = AttributeConstant.TYPE_NUMBER, Required = true)]
         public int participant { get; set; }
         [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTAREA)]
         public string info { get; set; }

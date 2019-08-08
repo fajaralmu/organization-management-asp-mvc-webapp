@@ -6,10 +6,10 @@
     <title>@ViewBag.Title - Mahasiswa Pencinta Islam</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
-
+    <script src="~/Scripts/popper.min.js"></script>
 </head>
 <body>
-    <div id="loading-wrapper"></div>
+   
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
@@ -34,9 +34,11 @@
         </div>
     </div>
     <div class="container body-content">
+        <div id="loading-wrapper2" class="spinner-border"></div>
         @RenderBody()
         <hr />
         <footer>
+            
             <p>&copy; @DateTime.Now.Year - Mahasiswa Pecinta Islam</p>
         </footer>
     </div>
