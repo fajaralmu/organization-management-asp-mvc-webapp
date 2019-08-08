@@ -118,7 +118,7 @@ namespace OrgWebMvc.Controllers
                     }
                     else
                     {
-                        ResponseData = CustomHelper.GenerateTableString(typeof(division), ObjList);
+                        ResponseData = CustomHelper.GenerateDataTableString(typeof(division), ObjList);
                     }
                     Response = new WebResponse(0, "Success", ResponseData, EntitySvc.count);
                     break;
@@ -207,7 +207,7 @@ namespace OrgWebMvc.Controllers
                     }
                     else
                     {
-                        ResponseData = CustomHelper.GenerateTableString(typeof(program), ObjList);
+                        ResponseData = CustomHelper.GenerateDataTableString(typeof(program), ObjList);
                     }
                     Response = new WebResponse(0, "Success", ResponseData, EntitySvc.count); break;
                 case "Form":
@@ -293,7 +293,7 @@ namespace OrgWebMvc.Controllers
                     }
                     else
                     {
-                        ResponseData = CustomHelper.GenerateTableString(typeof(@event), ObjList);
+                        ResponseData = CustomHelper.GenerateDataTableString(typeof(@event), ObjList);
                     }
                     Response = new WebResponse(0, "Success", ResponseData, EntitySvc.count); break;
                 case "Form":
@@ -380,7 +380,7 @@ namespace OrgWebMvc.Controllers
                     }
                     else
                     {
-                        ResponseData = CustomHelper.GenerateTableString(typeof(member), ObjList);
+                        ResponseData = CustomHelper.GenerateDataTableString(typeof(member), ObjList);
                     }
                     Response = new WebResponse(0, "Success", ResponseData, EntitySvc.count);
                     break;
@@ -467,7 +467,7 @@ namespace OrgWebMvc.Controllers
                     }
                     else
                     {
-                        ResponseData = CustomHelper.GenerateTableString(typeof(post), ObjList);
+                        ResponseData = CustomHelper.GenerateDataTableString(typeof(post), ObjList);
                     }
                     Response = new WebResponse(0, "Success", ResponseData, EntitySvc.count);
                     break;

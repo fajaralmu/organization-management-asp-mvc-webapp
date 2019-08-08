@@ -195,6 +195,7 @@ namespace InstApp.Util.Common
                 string[] Params = q.Split('&');
                 foreach (string Param in Params)
                 {
+                    if (Param == null || Param == "") continue;
                     string[] Prop = Param.Split('=');
                     Map.Add(Prop[0], Prop[1]);
                 }

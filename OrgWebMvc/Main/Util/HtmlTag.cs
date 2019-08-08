@@ -22,6 +22,13 @@ namespace OrgWebMvc.Main.Util
             this.Value = Value;
             Init();
         }
+        public HtmlTag(string Key, HtmlTag Value)
+        {
+            this.Key = Key;
+            this.Value = Value;
+            Init();
+            ValueList.Add(Value);
+        }
 
         public void Init()
         {

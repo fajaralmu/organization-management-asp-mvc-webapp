@@ -39,6 +39,10 @@
         let infoOffset = document.getElementById("info-offset");
         let infoTotal = document.getElementById("info-total");
         let buttonList = document.getElementById("button-list");
+        let filterFields = document.getElementsByName("filter-box");
+        let search_params = null;
+        let serach_params_obj = {};
+        let lastFilterBoxFocus = "";
 
         let URL = "/Entity/@ViewData["Entity"]Svc";
         let URLRaw = "/Entity/$name$Svc";
@@ -83,8 +87,11 @@
         }
 
         function loadList() {
-
-            postReq(URL, "Action=List&limit=" + limit + "&offset=" + offset, function (data) {
+            let params = "Action=List&limit=" + limit + "&offset=" + offset;
+            if (search_params != null) {
+                params += "&search_param=${" + search_params + "}$";
+            }
+            postReq(URL, params, function (data) {
                 let jsonResp = data;
                 console.log("JSON", jsonResp);
                 if (jsonResp.code == 0) {
@@ -95,8 +102,10 @@
                 } else {
                     alert("Error loading")
                 }
+                fillFilterBox();
             }, function (data) {
                 alert("Server Error");
+               
             });
         }
 
@@ -183,7 +192,7 @@
             let CustomUrl = URLRaw.replace("$name$", classReffName);
             postReq(CustomUrl, "Action=List&Type=JSONList&limit=" + 10 + "&offset=" + 0 + "&search_param=${" + classReffAttr + "=" + value + "}$",
                 function (response) {
-                   
+
                     if (response.code == 0 && response.count > 0) {
                         let listResp = response.data;
                         //  console.log("JSON", jsonResp);
@@ -192,11 +201,11 @@
                             let option = document.createElement("option");
                             option.value = obj["id"];
                             option.innerHTML = obj[classReffAttr];
-                            
+
                             comboBox.appendChild(option);
                         }
                     } else {
-                      //  alert("Error loading")
+                        //  alert("Error loading")
                     }
                 }, function (response) {
                     alert("Server Error");
@@ -205,6 +214,51 @@
 
         function setValue(elementId, value) {
             document.getElementById(elementId).value = value;
+        }
+
+        function fillSearchParam() {
+            search_params = "";
+            for (let key in search_params_obj) {
+                
+                if (search_params_obj.hasOwnProperty(key)){
+                    let param_item =(key + "=" + search_params_obj[key] + ";");
+                    search_params += param_item;
+                    console.log("key", param_item);
+                }
+            }
+            console.log("search param: ", search_params);
+        }
+
+        function fillFilterBox() {
+            for (let i = 0; i < filterFields.length; i++) {
+                let filterField = filterFields[i];
+                for (let key in search_params_obj) {
+                    if (filterField.id == "filter-" + key)
+                    {
+                        filterField.value = search_params_obj[key];
+                    }
+                    if (filterField.id == lastFilterBoxFocus) {
+                        filterField.focus();
+                    }
+                }
+            }
+        }
+
+        function filterEntity(element) {
+            if(element!=null)
+                lastFilterBoxFocus = element.id;
+            search_params = null;
+            search_params_obj = {};
+            for (let i = 0; i < filterFields.length; i++) {
+                let filterField = filterFields[i];
+                if (filterField.value != null && filterField.value != "") {
+                    let param_name = filterField.id.replace("filter-", "");
+                    search_params_obj[param_name] = filterField.value;
+                }
+            }
+            console.log("search params obj", search_params_obj);
+            fillSearchParam();
+            loadList();
         }
 
         generateForm(null);

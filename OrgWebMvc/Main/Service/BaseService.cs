@@ -64,6 +64,7 @@ namespace OrgWebMvc.Main.Service
 
         public static List<object> GetObjectList( BaseService Service, HttpRequestBase Req, user LoggedUser = null)
         {
+            Service.Refresh();
             int Offset = 0;
             int Limit = 0;
             Dictionary<string, object> Params = new Dictionary<string, object>();

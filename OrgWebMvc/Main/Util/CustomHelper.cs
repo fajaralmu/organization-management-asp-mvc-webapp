@@ -13,16 +13,17 @@ namespace OrgWebMvc.Main.Util
     {
         public static IHtmlString GenerateTable(Type ObjectType, List<object> Collection)
         {
-            return new HtmlString(GenerateTableString(ObjectType, Collection));
+            return new HtmlString(GenerateDataTableString(ObjectType, Collection));
         }
 
-        public static string GenerateTableString(Type ObjectType, List<object> Collection)
+        public static string GenerateDataTableString(Type ObjectType, List<object> Collection)
         {
             HtmlTag Table = new HtmlTag("table");
             Table.Class = ("table");
             Table.ID = "table-list-entity";
 
             HtmlTag ColumnNames = new HtmlTag("tr");
+            ColumnNames.AddAttribute("valign", "top");
             HtmlTag No = new HtmlTag("th", "#");
             No.AddAttribute("scope", "col");
             ColumnNames.Add(No);
@@ -39,7 +40,14 @@ namespace OrgWebMvc.Main.Util
                     FieldAttribute Attribute = (FieldAttribute)Attributes[0];
                     if (Attribute.SkipInTable)
                         continue;
-                    HtmlTag Th = new HtmlTag("th", Prop.Name.ToUpper());
+                    HtmlTag FilterBox = new HtmlTag("input");
+                    FilterBox.Name = "filter-box";
+                    FilterBox.ID = "filter-"+Prop.Name;
+                    FilterBox.AddAttribute("onkeyup", "filterEntity(this)");
+                    FilterBox.Class = "form-control";
+
+                    HtmlTag Th = new HtmlTag("th", Wrap(null, DivLabel(Prop.Name.ToUpper()),FilterBox));
+                   
                     ColumnNames.Add(Th);
                     CustomedProp.Add(Prop);
                 }
@@ -284,6 +292,11 @@ namespace OrgWebMvc.Main.Util
             HtmlTag Table = GenerateTable(2, InputFields.ToArray());
             Form.Add(Table);
             return ControlUtil.HtmlTagToString(Form);
+        }
+
+        public static HtmlTag DivLabel(string Text)
+        {
+            return new HtmlTag("div", Text);
         }
 
         public static HtmlTag Wrap(string Class, params HtmlTag[] Tags)
