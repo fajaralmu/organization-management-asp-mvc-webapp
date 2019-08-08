@@ -38,6 +38,13 @@ textarea {
 	font-size: 1.5em;
 }
 
+/**CALENDAR**/
+.date_element:hover{
+    cursor:pointer;
+    background-color:cadetblue;
+    color:white;
+}
+
 /*SPINNER*/
 @-webkit-keyframes spinner-border {
   to {

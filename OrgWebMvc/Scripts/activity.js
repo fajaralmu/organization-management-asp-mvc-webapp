@@ -1,55 +1,64 @@
-﻿let bulan = [
-        { nama: "Januari", hari: 31 },
-        { nama: "Februari", hari: 28 },
-        { nama: "Maret", hari: 31 },
-        { nama: "April", hari: 30 },
-        { nama: "Mei", hari: 31 },
-        { nama: "Juni", hari: 30 },
-        { nama: "Juli", hari: 31 },
-        { nama: "Agustus", hari: 31 },
-        { nama: "September", hari: 30 },
-        { nama: "Oktober", hari: 31 },
-        { nama: "November", hari: 30 },
-        { nama: "Desember", hari: 31 },
+﻿let month = [
+        { name: "Januari", day: 31 },
+        { name: "Februari", day: 28 },
+        { name: "Maret", day: 31 },
+        { name: "April", day: 30 },
+        { name: "Mei", day: 31 },
+        { name: "Juni", day: 30 },
+        { name: "Juli", day: 31 },
+        { name: "Agustus", day: 31 },
+        { name: "September", day: 30 },
+        { name: "Oktober", day: 31 },
+        { name: "November", day: 30 },
+        { name: "Desember", day: 31 },
 ];
-let bulan_skrg = 7;// 0;
-//let mulai = { pekan: 2, hari: 1, jmlhari: 31 };
-let mulai = { pekan: 1, hari: 3, jmlhari: 31 };
-let mulai_lama = { pekan: 0, hari: 0, jmlhari: 0 };
-let tahun_skrg = 1945;
-let bulan_label = document.getElementById("bulan");
-let tahun_label = document.getElementById("tahun");
-let tabel = document.getElementById("tgl");
-let input_bulan = document.getElementById("bulan");
-let input_tahun = document.getElementById("tahun");
-let tgl_info = document.getElementById("tgl-info");
+let month_now = 7;// 0;
+//let begin = { week: 2, day: 1, dayCount: 31 };
+let begin = { week: 1, day: 3, dayCount: 31 };
+let begin_old = { week: 0, day: 0, dayCount: 0 };
+let year_now = 1945;
+//let month_label = document.getElementById("month");
+//let year_label = document.getElementById("year");
+let tabel = document.getElementById("date");
+let input_month = document.getElementById("input_month");
+let input_year = document.getElementById("input_year");
+let date_info = document.getElementById("date-info");
+let running_month = 7;
+let running_year = 1945;
 
 function load() {
-    alert("oke");
-    ////console.log("Now Month ", bulan_skrg);
-    // //console.log("Month  ", bulan[bulan_skrg])
-    bulan_label.innerHTML = bulan[bulan_skrg].nama;
-    buatTabel();
-    mulai_lama = mulai;
-    mulai = isiHari(bulan_skrg, true, mulai);
+    createTable();
+    begin_old = begin;
+    begin = fillDay(month_now, true, begin);
+    fillInputMonth();
+    input_month.value = new Date().getMonth() + 1;
+    input_year.value = new Date().getFullYear();
+    setCalendar();
 
-    input_bulan.value = new Date().getMonth() + 1;
-    input_tahun.value = new Date().getFullYear();
-    cari();
-    
 }
 
-function buatTabel() {
+function fillInputMonth() {
+    input_month.innerHTML = "";
+    for (let i = 0; i < month.length; i++) {
+        console.log("option ", i, input_month);
+        let opt = document.createElement("option");
+        opt.value = i + 1;
+        opt.innerHTML = month[i].name;
+        input_month.appendChild(opt);
+    }
+}
+
+function createTable() {
     //console.log("BUAT TABEL");
     let tBody = document.createElement("tbody");
     for (let r = 1; r <= 6; r++) {
         let tr = document.createElement("tr");
-        // tr.setAttribute("pekan",r);
+        // tr.setAttribute("week",r);
         for (let i = 1; i <= 7; i++) {
             let col = document.createElement("td");
-            col.setAttribute("class", "_tanggal_");
-            col.setAttribute("hari", +i);
-            col.setAttribute("pekan", +r);
+            col.setAttribute("class", "date_element");
+            col.setAttribute("day", +i);
+            col.setAttribute("week", +r);
             tr.appendChild(col);
         }
         tBody.appendChild(tr);
@@ -58,218 +67,237 @@ function buatTabel() {
 }
 
 
-
-function cari() {
-    doCari();
+function setCalendar() {
+    //  loading();
+    //  cariAsync();
+    doSetCalendar();
 }
 
+function doSetCalendar() {
+    console.log("==start==");
 
-
-function doCari() {
-    let bln = input_bulan.value - 1;
-    let thn = input_tahun.value;
-    let selisih = +Math.abs(thn - tahun_skrg);
-    alert("Selisih tahun:" + selisih);
-    let jmlbulan = 0;
-    if (selisih > 0)
-        jmlbulan = (11 - bulan_skrg) + (selisih > 1 ? ((selisih - 1) * 12) : 0) + (+bln);
+     running_month = input_month.value - 1;
+     running_year = input_year.value;
+    let diff_year = +Math.abs(running_year - year_now);
+    // alert("diff_year year:" + diff_year);
+    let monthCount = 0;
+    if (diff_year > 0)
+        monthCount = (11 - month_now) + (diff_year > 1 ? ((diff_year - 1) * 12) : 0) + (+running_month);
     else
-        jmlbulan = bln - bulan_skrg;
-    let kurangdari = false;
-    if (thn - tahun_skrg > 0) {
-        kurangdari = false;
-    } else if (thn - tahun_skrg < 0) {
-        kurangdari = true;
+        monthCount = running_month - month_now;
+    let less = false;
+    if (running_year - year_now > 0) {
+        less = false;
+    } else if (running_year - year_now < 0) {
+        less = true;
     } else {
-        if (bln - bulan_skrg > 0) {
-            kurangdari = false;
+        if (running_month - month_now > 0) {
+            less = false;
         } else {
-            kurangdari = true;
+            less = true;
         }
     }
-    jmlbulan = Math.abs(jmlbulan);
-    //console.log("kurang dari: ", kurangdari);
-    let b_calc = bulan_skrg;
-    let to = (jmlbulan + bulan_skrg);
-    if (jmlbulan <= 0)
+    monthCount = Math.abs(monthCount);
+    //console.log("kurang dari: ", less);
+    let current_month = month_now;
+    let endMonth = (monthCount + month_now);
+    if (monthCount <= 0)
         return;
-    if (!kurangdari)
-        ////console.log("bulan skrg",bulan_skrg,"selisih",jmlbulan,"to",to);
+    if (!less)
+        ////console.log("month now",month_now,"diff_year",monthCount,"to",to);
     {
-        for (let b = bulan_skrg + 1; b <= to + 1; b++) {
-            if (b_calc > 11) {
-                b_calc = 0;
+        for (let m = month_now + 1; m <= endMonth + 1; m++) {
+            if (current_month > 11) {
+                current_month = 0;
 
             }
-            bulan_skrg = b_calc;
-            nextmonth();
-            ////console.log("bulan",b_calc,"thn",tahun_skrg);
-            b_calc++;
+            month_now = current_month;
+            nextMonth();
+            ////console.log("month",current_month,"running_year",year_now);
+            current_month++;
         }
-    } else if (kurangdari) {
-        let jmlbulankeblkg = (bulan_skrg) + (selisih > 1 ? ((selisih - 1) * 12) : 0) + (11 - bln);
-        to = (jmlbulankeblkg + bulan_skrg);
-        //console.log("bulan skrg", bulan_skrg, "selisih", jmlbulan, "from", to);
-        let mulai_bulan = bulan_skrg;
-        for (let b = to + 1; b >= mulai_bulan + 1; b--) {
-            if (b_calc < 0) {
-                b_calc = 11;
+    } else if (less) {
+        let pastMonthCount = (month_now) + (diff_year > 1 ? ((diff_year - 1) * 12) : 0) + (11 - running_month);
+        endMonth = (pastMonthCount + month_now);
+        //console.log("month now", month_now, "diff_year", monthCount, "from", to);
+        let begin_month = month_now;
+        for (let b = endMonth + 1; b >= begin_month + 1; b--) {
+            if (current_month < 0) {
+                current_month = 11;
             }
-            bulan_skrg = b_calc;
-            prefmonth();
-            ////console.log("b",b,"bulan",b_calc);
-            b_calc--;
+            month_now = current_month;
+            prevMonth();
+            ////console.log("b",b,"month",current_month);
+            current_month--;
         }
 
     }
 
     fillInfo();
-
+    console.log("==end==")
 }
 
 function fillInfo() {
-    tgl_info.innerHTML = bulan[bulan_skrg].nama + " " + tahun_skrg;
+    date_info.innerHTML = month[month_now].name + " " + year_now;
 }
 
-function detail(hari, bulan, thn) {
-    //console.log(hari, bulan, thn);
+function detail(day, month, year) {
+    console.log("DETAIL", day, month, year);
 }
 
-function prefmonth() {
-    bulan_skrg--;
-    if (bulan_skrg < 0) {
-        bulan_skrg = 11;
-        tahun_skrg--;
-    }
-    let mulai_prev = cariMulai(mulai_lama, mulai_lama.jmlhari);
-    //console.log("LAMA", mulai_lama.hari, mulai_lama.pekan, "prev");
-    //console.log("MULAI_PREV", mulai_prev.hari, mulai_prev.pekan, "prev");
-    mulai_lama = {
-        pekan: mulai_prev.pekan,
-        hari: mulai_prev.hari,
-        jmlhari: mulai_prev.jmlhari,
-    }
-    let switch_ = isiHari(bulan_skrg, false, mulai_prev);
-    mulai = {
-        pekan: switch_.pekan,
-        hari: switch_.hari,
-        jmlhari: switch_.jmlhari
-    }
-
+function prevMonth() {
+    doPrevMonth(false);
 }
 
-function cariMulai(mulai_lama_, totalhari) {
-    let b = bulan_skrg - 1;
-    if (b < 0) {
-        b = 11;
+function doPrevMonth(prev) {
+    month_now--;
+    if (prev) {
+        running_month--;
     }
-    let hari = mulai_lama_.hari;
-    let pekan = 6;
-    let mulai_prev_ = {
-        pekan: 0,
-        hari: 0,
-        jmlhari: bulan[b].hari
-    }
-
-    for (let h = totalhari; h >= 0; h--) {
-        if (hari <= 0) {
-            hari = 7;
-            pekan--;
+    if (month_now < 0) {
+        month_now = 11;
+        year_now--;
+        if (prev) {
+            running_month = 11;
+            running_year--;
         }
-        hari--;
     }
-    mulai_prev_.pekan = pekan;
-    mulai_prev_.hari = hari + 1;
-    return mulai_prev_;
-}
-
-
-function nextmonth() {
-    bulan_skrg++;
-    if (bulan_skrg > 11) {
-        bulan_skrg = 0;
-        tahun_skrg++;
+    let begin_prev = caribegin(begin_old, begin_old.dayCount);
+    //console.log("old", begin_old.day, begin_old.week, "prev");
+    //console.log("begin_PREV", begin_prev.day, begin_prev.week, "prev");
+    begin_old = {
+        week: begin_prev.week,
+        day: begin_prev.day,
+        dayCount: begin_prev.dayCount,
     }
-
-    let switch_ = isiHari(bulan_skrg, true, mulai);
-    mulai_lama = {
-        pekan: mulai.pekan,
-        hari: mulai.hari,
-        jmlhari: mulai.jmlhari,
-    }
-    mulai = {
-        pekan: switch_.pekan,
-        hari: switch_.hari,
-        jmlhari: switch_.jmlhari,
+    let switch_ = fillDay(month_now, false, begin_prev);
+    begin = {
+        week: switch_.week,
+        day: switch_.day,
+        dayCount: switch_.dayCount
     }
 
 }
 
-function setElementByAttr(attr, val, attr2, val2, h) {
-    let dates = document.getElementsByClassName("_tanggal_");
+function nextMonth() {
+    doNextMonth(false);
+}
+
+function doNextMonth(next) {
+    month_now++;
+    if (next) {
+        running_month++;
+    }
+    if (month_now > 11) {
+        month_now = 0;
+        year_now++;
+        if (next) {
+            running_month = 0;
+            running_year++;
+        }
+    }
+
+    let switch_ = fillDay(month_now, true, begin);
+    begin_old = {
+        week: begin.week,
+        day: begin.day,
+        dayCount: begin.dayCount,
+    }
+    begin = {
+        week: switch_.week,
+        day: switch_.day,
+        dayCount: switch_.dayCount,
+    }
+
+}
+
+function caribegin(begin_old_, totalday) {
+    let M = month_now - 1;
+    if (M < 0) {
+        M = 11;
+    }
+    let day = begin_old_.day;
+    let week = 6;
+    let begin_prev_ = {
+        week: 0,
+        day: 0,
+        dayCount: month[M].day
+    }
+
+    for (let D = totalday; D >= 0; D--) {
+        if (day <= 0) {
+            day = 7;
+            week--;
+        }
+        day--;
+    }
+    begin_prev_.week = week;
+    begin_prev_.day = day + 1;
+    return begin_prev_;
+}
+
+function setElementByAttr(attr, val, attr2, val2, day) {
+    let dates = document.getElementsByClassName("date_element");
     let a = 0;
     for (let i = 0; i < dates.length; i++) {
         let cek = dates[i].getAttribute(attr) == val;
-        if (cek) {
-            let cek2 = dates[i].getAttribute(attr2) == val2;
-            if (cek2) {
-                dates[i].innerHTML = h;
-                dates[i].setAttribute("onclick", "detail(" + h + "," + bulan_skrg + "," + tahun_skrg + ")");
-            }
-        }
+        let cek2 = dates[i].getAttribute(attr2) == val2;
+        if (cek && cek2) {
+            dates[i].innerHTML = day;
+            dates[i].id = "date-"+day;
+            dates[i].setAttribute("onclick", "detail(" + day + "," + month_now+1 + "," + year_now + ")");
+        } 
+
     }
 }
 
 function clear() {
-    let dates = document.getElementsByClassName("_tanggal_");
+    let dates = document.getElementsByClassName("date_element");
     let a = 0;
     for (let i = 0; i < dates.length; i++) {
         dates[i].innerHTML = "";
-
     }
-    if (+tahun_skrg % 4 == 0) {
-        bulan[1].hari = 29
-    } else {
-        bulan[1].hari = 28
-    }
-    tahun_label.innerHTML = tahun_skrg;
-    bulan_label.innerHTML = bulan[bulan_skrg].nama;
+    month[1].day = 28 + (+year_now % 4 == 0 ? 1 : 0);
 }
 
-function isiHari(bulan_skrg, next, mulai) {
+function fillDay(current_month, next, begin) {
     clear();
-    let mulai_baru = {
-        pekan: mulai.pekan,
-        hari: mulai.hari,
-        jmlhari: mulai.jmlhari
+    let begin_new = {
+        week: begin.week,
+        day: begin.day,
+        dayCount: begin.dayCount
     };
-    let mulai_lama_ = {
-        pekan: mulai.pekan,
-        hari: mulai.hari,
-        jmlhari: mulai.jmlhari
+    let begin_old_ = {
+        week: begin.week,
+        day: begin.day,
+        dayCount: begin.dayCount
     };
-    let pekan_ = mulai_baru.pekan;
-    let mulai_pekan = pekan_;
-    if (mulai_baru.pekan > 1 && mulai_baru.hari > 1) {
-        pekan_ = 1;
-        mulai_pekan = 1;
+    let week_ = begin_new.week;
+    let begin_week = week_;
+    if (begin_new.week > 1 && begin_new.day > 1) {
+        week_ = 1;
+        begin_week = 1;
     }
-    let hari_ = mulai_baru.hari;
-    let mulai_hari = hari_;
-    for (let h = 1; h <= bulan[bulan_skrg].hari; h++) {
-        if (hari_ > 7) {
-            hari_ = 1;
-            pekan_++;
+    let day_ = begin_new.day;
+    let begin_day = day_;
+    let isNow = running_month == current_month && running_year == year_now;
+    console.log("isNow", isNow,running_month,'=',current_month, running_month == current_month,running_year,'=',year_now, running_year == year_now)
+    for (let d = 1; d <= month[current_month].day; d++) {
+        if (day_ > 7) {
+            day_ = 1;
+            week_++;
         }
-        setElementByAttr("pekan", pekan_, "hari", hari_, h);
-        hari_++;
+        if (isNow) {
+            setElementByAttr("week", week_, "day", day_, d);
+        }
+        day_++;
     }
-    mulai_baru.pekan = pekan_ >= 5 ? 2 : 1;
-    mulai_baru.hari = hari_;
-    mulai_baru.jmlhari = bulan[bulan_skrg].hari;
-    //console.log("LAMA", mulai_lama_.hari, mulai_lama_.pekan);
+    begin_new.week = week_ >= 5 ? 2 : 1;
+    begin_new.day = day_;
+    begin_new.dayCount = month[current_month].day;
+    //console.log("old", begin_old_.day, begin_old_.week);
     //console.log("   ");
-    //console.log("BARU", mulai_baru.hari, mulai_baru.pekan);
+    //console.log("new", begin_new.day, begin_new.week);
     fillInfo();
-    return mulai_baru;
+    return begin_new;
 }

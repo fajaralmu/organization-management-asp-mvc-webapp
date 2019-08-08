@@ -1,27 +1,30 @@
 ﻿<div class="container">
-    <div>
-        bulan<input type="number"  id="bulan"  min=1 max=12 />
-        tahun<input type="number" id="tahun" />
-        <button id="prev" onclick="cari()">Go</button>
-    </div>
-    <div id="kalender" >
-        <p></p>
-        <div class="nav-tanggal">
-            <table class="table" style="table-layout:fixed">
-                <tr>
-                    <td>
-                        <a class="btn" id="prev" onclick="prefmonth(true)">&#10096;</a>
-                    </td>
-                    <td>
-                        <span id="tgl-info"></span>
-                    </td>
-                    <td>
-                        <a class="btn" id="next" onclick="nextmonth(true)">&#10097;</a>
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <table class="table" id="tgl">
+    <div id="calendar-wrapper">
+        <table class="table table-nonfluid" style="table-layout:fixed; width:40%; text-align:center">
+            <tr>
+                <td>
+                    <select id="input_month" class="form-control"></select>
+                </td>
+                <td>
+                    <input class="form-control" type="number" id="input_year" />
+                </td>
+                <td>
+                    <button class="btn btn-default" id="prev" onclick="setCalendar()">Go</button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a class="btn" id="prev" onclick="doPrevMonth(true)">&#10096;</a>
+                </td>
+                <td>
+                    <span id="date-info"></span>
+                </td>
+                <td>
+                    <a class="btn" id="next" onclick="doNextMonth(true)">&#10097;</a>
+                </td>
+            </tr>
+        </table>
+        <table class="table" id="date">
             <thead>
                 <tr>
                     <th>
@@ -49,5 +52,5 @@
             </thead>
         </table>
     </div>
-  
+
 </div>
