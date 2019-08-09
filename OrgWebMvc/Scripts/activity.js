@@ -59,11 +59,13 @@ function createTable() {
             col.setAttribute("class", "date_element");
             col.setAttribute("day", +i);
             col.setAttribute("week", +r);
+            col.style.wordWrap = "normal";
 
             tr.appendChild(col);
         }
         tBody.appendChild(tr);
     }
+    tabel.style.tableLayout = "fixed";
     tabel.appendChild(tBody);
 }
 
@@ -178,7 +180,7 @@ function loadJSON() {
     postReq("/Entity/EventSvc",
          params,
          function (data) {
-         //    console.log("JSON response", data);
+             //    console.log("JSON response", data);
              if (data.code == 0) {
                  fillEventData(data.data);
              }
@@ -190,22 +192,44 @@ function loadJSON() {
 function fillEventData(eventList) {
     let dateCells = document.getElementsByClassName("date_element");
     for (let i = 0; i <= 31; i++) {
-        let cell = document.getElementById("date-list-" + i);
-        if (cell != null)
-            cell.innerHTML = "";
+        if (document.getElementById("date-list-" + i) != null)
+            document.getElementById("date-list-" + i).innerHTML = "";
     }
 
     for (let i = 0; i < eventList.length; i++) {
+
         let event = eventList[i];
-       
         var evDate = event.date.replace('/', '').replace("Date", "").replace('(', '').replace(')', '').replace('/', '');
         let day = +(evDate) / (24 * 60 * 60 * 1000);
         let date = new Date(+evDate);
         let dateCell = document.getElementById("date-list-" + date.getDate());
-      //  console.log("ID: ", "date-list-" + date.getDate(), date)
+
+        if (dateCell.getElementsByTagName("li") != null && dateCell.getElementsByTagName("li").length >= 3) {
+            console.log("more than 3");
+            console.log("-");
+            if (dateCell.getElementsByTagName("kbd").length == 0) {
+                let info = document.createElement("kbd");
+                info.innerHTML = "click to see details..";
+                dateCell.appendChild(info);
+            }
+            continue;
+        }
+        //  console.log("ID: ", "date-list-" + date.getDate(), date)
         //console.log("-");
         let li = document.createElement("li");
-        li.innerHTML = event.name;
+        let evtName = document.createElement("span");
+        evtName.innerHTML = event.name;
+        evtName.className = "text-wrap";
+        evtName.style.fontFamily = "Calibri";
+        evtName.style.color = "black";
+        let isDoneCheck = document.createElement("input");
+        isDoneCheck.type = "checkbox";
+        //  isDoneCheck.readOnly = "true";
+        isDoneCheck.checked = event.done == 1 || event.done == "1";
+        isDoneCheck.disabled = "true";
+        li.appendChild(isDoneCheck);
+        li.appendChild(evtName);
+
         dateCell.appendChild(li);
     }
 }
@@ -321,7 +345,7 @@ function setElementByAttr(attr, val, attr2, val2, day) {
             ul.id = "date-list-" + day;
             dates[i].appendChild(ul);
 
-            
+
 
         }
 
