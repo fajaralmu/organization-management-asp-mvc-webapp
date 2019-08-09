@@ -36,7 +36,7 @@ namespace OrgWebMvc.Main.Util
             Attributes = new List<string>();
             Class = Key;
             Name = "custom-component";
-            ID = DateTime.Now.Millisecond.ToString()+Occ;
+            ID = DateTime.Now.Millisecond.ToString() + Occ;
         }
 
         public HtmlTag()
@@ -58,7 +58,7 @@ namespace OrgWebMvc.Main.Util
         }
         public void Add(List<HtmlTag> Tags)
         {
-            foreach(HtmlTag Tag in Tags)
+            foreach (HtmlTag Tag in Tags)
                 ValueList.Add(Tag);
 
         }
@@ -85,8 +85,50 @@ namespace OrgWebMvc.Main.Util
         }
         public void AddAttribute(string Key, string Value)
         {
+            RemoveIfExist(Key);
             Attributes.Add(Key + "=\"" + Value + "\"");
         }
+        public void AddAttribute(params string[] KeynVal)
+        {
+            if (KeynVal.Length % 2 != 0)
+            {
+                return;
+            }
+            string CurrentKey = "";
+            string CurrentVal = "";
+            for (int i = 0; i < KeynVal.Length; i++)
+            {
 
+                if ((i + 1) % 2 != 0 || (i + 1) == 1) //odd value
+                {
+                    CurrentKey = KeynVal[i];
+                }
+                else //even value
+                {
+                    CurrentVal = KeynVal[i];
+                    RemoveIfExist(CurrentKey);
+                    AddAttribute(CurrentKey, CurrentVal);
+                }
+            }
+        }
+
+        private void RemoveIfExist(string Key)
+        {
+            foreach (string Attr in Attributes)
+                if (Attr.ToLower().StartsWith(Key.ToLower() + "="))
+                {
+                    Attributes.Remove(Attr);
+                    break;
+                }
+
+        }
+
+        public bool HasAttribute(string Key)
+        {
+            foreach (string Attr in Attributes)
+                if (Attr.ToLower().StartsWith(Key.ToLower() + "="))
+                    return true;
+            return false;
+        }
     }
 }

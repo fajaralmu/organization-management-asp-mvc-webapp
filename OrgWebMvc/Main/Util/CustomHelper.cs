@@ -53,23 +53,39 @@ namespace OrgWebMvc.Main.Util
                 }
 
                 //filter
-                HtmlTag FilterBox = new HtmlTag("input");
-                FilterBox.Name = "filter-box";
-                FilterBox.ID = "filter-" + (ClassRef ? ObjName : FieldName);
-                FilterBox.AddAttribute("onkeyup", "filterEntity(this)");
-                FilterBox.Class = "form-control";
+                HtmlTag FilterBox = new InputTag();
+                if (Attribute.FieldType.Equals(AttributeConstant.TYPE_DATE))
+                {
+                    HtmlTag FilterDay = new InputTag() { ID = "filter-day", Class = "form-control", Name = "filter-box" };
+                    FilterDay.AddAttribute("onkeyup", "filterEntity(this)", "style", "width:30%", "placeholder", "Day");
+
+                    HtmlTag FilterMonth = new InputTag() { ID = "filter-month", Class = "form-control", Name = "filter-box" };
+                    FilterMonth.AddAttribute("onkeyup", "filterEntity(this)", "style", "width:30%", "placeholder", "Month");
+
+                    HtmlTag FilterYear = new InputTag() { ID = "filter-year", Class = "form-control", Name = "filter-box" };
+                    FilterYear.AddAttribute("onkeyup", "filterEntity(this)", "style", "width:40%", "placeholder", "Year");
+
+                    FilterBox.Class = "input-group";
+                    FilterBox.Key = "div";
+                    FilterBox.AddAll(FilterDay, FilterMonth, FilterYear);
+                }
+                else
+                {
+                    FilterBox.Name = "filter-box";
+                    FilterBox.ID = "filter-" + (ClassRef ? ObjName : FieldName);
+                    FilterBox.AddAttribute("onkeyup", "filterEntity(this)","class", "form-control","placeholder", (ClassRef ? ObjName : FieldName));
+                }
 
                 //sorting
                 HtmlTag BtnAsc = new HtmlTag("button", "&#8657;");
-                BtnAsc.ID = "asc-" + ObjName + "." + FieldName;
-                BtnAsc.Name = "button-sort";
-                BtnAsc.Class = "btn";
-                BtnAsc.AddAttribute("onclick", "sortEntity('" + ObjName + "." + FieldName + "','asc')");
+                string FullFieldName = ObjName + "." + FieldName;
+                BtnAsc.ID = "asc-" + FullFieldName;
+                BtnAsc.AddAttribute("name", "button-sort",
+                    "class", "btn btn-xs", "onclick", "sortEntity('" + FullFieldName + "','asc')");
                 HtmlTag BtnDesc = new HtmlTag("button", "&#8659;");
-                BtnDesc.ID = "desc-" + ObjName + "." + FieldName;
-                BtnDesc.Name = "button-sort";
-                BtnDesc.Class = "btn";
-                BtnDesc.AddAttribute("onclick", "sortEntity('" + ObjName + "." + FieldName + "','desc')");
+                BtnDesc.ID = "desc-" + FullFieldName;
+                BtnDesc.AddAttribute("name", "button-sort",
+                    "class", "btn btn-xs", "onclick", "sortEntity('" + FullFieldName + "','desc')");
 
                 //    HtmlTag SortWrapper = Wrap("btn-group", BtnAsc, BtnDesc);
                 HtmlTag FilterWrapper = Wrap(null, DivLabel(ClassRef ? ObjName.ToUpper() : FieldName.ToUpper()), FilterBox, BtnAsc, BtnDesc);
@@ -131,11 +147,10 @@ namespace OrgWebMvc.Main.Util
                 Options.Class = "btn-group";
 
                 HtmlTag BtnEdit = new HtmlTag("button", "<span class=\"glyphicon glyphicon-edit\"></span>");
-                BtnEdit.Class = "btn btn-warning";
-                BtnEdit.AddAttribute("onclick", "editEntity(" + ID + ")");
+                BtnEdit.AddAttribute("class", "btn btn-warning","onclick", "editEntity(" + ID + ")");
                 HtmlTag BtnDelete = new HtmlTag("button", "<span class=\"glyphicon glyphicon-trash\"></span>");
-                BtnDelete.Class = "btn btn-danger";
-                BtnDelete.AddAttribute("onclick", "deleteEntity(" + ID + ")");
+                BtnDelete.AddAttribute("class", "btn btn-danger","onclick", "deleteEntity(" + ID + ")");
+
                 Options.AddAll(BtnEdit, BtnDelete);
 
                 Tr.Add(Options);
@@ -183,8 +198,7 @@ namespace OrgWebMvc.Main.Util
             string ObjName = StringUtil.ToUpperCase(0, ObjectType.Name);
             HtmlTag Form = new HtmlTag("form");
             Form.ID = "form-entity";
-            Form.Class = "form";
-            Form.AddAttribute("onsubmit", "return submitEvent(event)");
+            Form.AddAttribute("class","form","onsubmit", "return submitEvent(event)");
 
             List<HtmlTag> InputFields = new List<HtmlTag>();
 
@@ -198,7 +212,7 @@ namespace OrgWebMvc.Main.Util
                     object Value = null;
 
                     FieldAttribute Attribute = (FieldAttribute)Attributes[0];
-                    HtmlTag InputField = new HtmlTag("input");
+                    HtmlTag InputField = new InputTag();
                     HtmlTag InputHelper = null;
                     if (Attribute.FieldType.Contains("id_"))
                     {
@@ -243,11 +257,10 @@ namespace OrgWebMvc.Main.Util
                         {
                             InputField.AddAttribute("multiple", "multiple");
 
-                            InputHelper = new HtmlTag("input");
-                            InputHelper.AddAttribute("autocomplete", "off");
-                            InputHelper.Class = "form-control";
+                            InputHelper = new InputTag();
                             InputHelper.ID = "helper-" + Prop.Name;
-                            InputHelper.AddAttribute("onkeyup", "fillComboBox('" + Prop.Name.Trim() + "','"
+                            InputHelper.AddAttribute("class", "form-control", "autocomplete", "off",
+                                "onkeyup", "fillComboBox('" + Prop.Name.Trim() + "','"
                                 + StringUtil.ToUpperCase(0, Attribute.ClassReference) + "','"
                                 + Attribute.ClassAttributeConverter + "',this)");
 
@@ -260,8 +273,7 @@ namespace OrgWebMvc.Main.Util
                                 {
                                     string ClassAttrValue = ObjectUtil.GetValueFromProp(Attribute.ClassAttributeConverter, ClassVal).ToString();
                                     HtmlTag Option = new HtmlTag("option", ClassAttrValue);
-                                    Option.AddAttribute("selected", "");
-                                    Option.AddAttribute("value", Value.ToString());
+                                    Option.AddAttribute("selected", "", "value", Value.ToString());
                                     InputHelper.AddAttribute("value", ClassAttrValue);
                                     InputField.Add(Option);
                                 }
@@ -277,8 +289,7 @@ namespace OrgWebMvc.Main.Util
                             if (Value != null)
                                 Value = StringUtil.DateAcceptableForHtmlInput((DateTime)Value);
                         }
-                        InputField.AddAttribute("type", type);
-                        InputField.AddAttribute("value", Value == null ? "" : Value.ToString());
+                        InputField.AddAttribute("type", type, "value", Value == null ? "" : Value.ToString());
                     }
 
                     if (Attribute.Required)
@@ -303,17 +314,15 @@ namespace OrgWebMvc.Main.Util
             }
 
             //Action
-            HtmlTag Action = new HtmlTag("input");
+            HtmlTag Action = new InputTag();
             Action.Name = "Action";
-            Action.AddAttribute("type", "hidden");
-            Action.AddAttribute("value", "Post");
+            Action.AddAttribute("type", "hidden", "value", "Post");
 
             InputFields.Add(Action);
 
-            HtmlTag BtnSubmit = new HtmlTag("input");
+            HtmlTag BtnSubmit = new InputTag();
             BtnSubmit.Class = "btn btn-success";
-            BtnSubmit.AddAttribute("type", "submit");
-            BtnSubmit.AddAttribute("value", "Submit");
+            BtnSubmit.AddAttribute("type", "submit", "value", "Submit");
 
             HtmlTag BtnReset = new HtmlTag("a", "reset");
             BtnReset.Class = "btn btn-default";

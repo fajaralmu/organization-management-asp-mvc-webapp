@@ -75,7 +75,7 @@ namespace InstApp.Util.Common
 
             object Value = TAG.Value;
 
-            if (Value != null && Value.GetType().Equals(typeof(HtmlTag)) && TAG.ListValueCount()  == 0)
+            if (Value != null && Value.GetType().Equals(typeof(HtmlTag)) && TAG.ListValueCount() == 0)
             {
                 Value = HtmlTagToString((HtmlTag)Value);
                 innerHTML += Value;
@@ -92,9 +92,12 @@ namespace InstApp.Util.Common
                 innerHTML += Value;
             }
 
-            TAG.AddAttribute("name", TAG.Name);
-            TAG.AddAttribute("id", TAG.ID);
-            TAG.AddAttribute("class", TAG.Class);
+            if (!TAG.HasAttribute("name"))
+                TAG.AddAttribute("name", TAG.Name);
+            if (!TAG.HasAttribute("id"))
+                TAG.AddAttribute("id", TAG.ID);
+            if (!TAG.HasAttribute("class"))
+                TAG.AddAttribute("class", TAG.Class);
             HTML = GenerateHtmlTag(KeyTag, TAG.Attributes.ToArray(), innerHTML);
             return HTML;
         }
@@ -102,6 +105,7 @@ namespace InstApp.Util.Common
         public static string GenerateHtmlTag(string Tag, string[] Attribute, string InnerHTML)
         {
             string Html = "<" + Tag;
+
             if (Attribute != null && Attribute.Length > 0)
             {
                 for (int i = 0; i < Attribute.Length; i++)

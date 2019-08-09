@@ -224,6 +224,7 @@
     <Compile Include="Main\Util\BreakLine.cs" />
     <Compile Include="Main\Util\CustomHelper.cs" />
     <Compile Include="Main\Util\HtmlTag.cs" />
+    <Compile Include="Main\Util\InputTag.cs" />
     <Compile Include="Models\division.cs">
       <DependentUpon>InstitutionEntity.tt</DependentUpon>
     </Compile>

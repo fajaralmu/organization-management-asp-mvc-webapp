@@ -6,14 +6,56 @@
 
 <div>
     <script src="~/Scripts/ajax.js"></script>
+    <script type="text/javascript">
+        let fetchCount = 0;
+        let limit = 5;
+        let offset = 0;
+        let total = 0;
+        let search_params = null;
+        let search_params_obj = {};
+        let lastFilterBoxFocus = "";
+        let currentSortBy = "";
+        let initLoad = true;
+        let callbackWhenLoad = function () {
+
+        };
+        let firstLoad = function () {
+
+        };
+    </script>
     <h2>@ViewData["Entity"] Management</h2>
     <!--@@CustomHelper.GenerateForm((Type)ViewData["EntityType"])-->
-    <button onclick="toggleComponent('entity-form')" class="btn btn-default">Toggle Form</button>
-    <div id="entity-form" style="display:block"></div>
+    <div class="btn-group">
+
+        <button name="button-menu" onclick="showMenu('entity-form',this)" class="btn btn-info ">Form</button>
+        @if (ViewData["Entity"].ToString().Equals("Event"))
+        {
+            <button name="button-menu" onclick="showMenu('timeline-panel',this)" class="btn btn-info active">TimeLine</button>
+        }
+        <button onclick="hideMenu()" class="btn btn-default">Hide</button>
+    </div>
+
+    <div name="menu-panel" id="entity-form" class="menu-panel" ></div>
+    @if (ViewData["Entity"].ToString().Equals("Event"))
+    {
+        <div name="menu-panel" id="timeline-panel"  class="menu-panel">
+            @Html.Partial("~/Views/Shared/_TimeLinePartial.cshtml")
+        </div>
+        <script src="~/Scripts/activity.js"></script>
+        <script>
+            firstLoad = function () {
+                loadCalendar();
+            };
+            callbackWhenLoad = function () {
+                loadJSON();
+            };
+        </script>
+    }
+
     <!-- @@CustomHelper.GenerateTable((Type)ViewData["EntityType"], (List<object>)ViewData["EntityList"])
     -->
-    
-    <div  id="info-list">
+    <hr />
+    <div id="info-list">
         <p style="display:none">Offset: <span id="info-offset"></span></p>
 
         <p style="display:none">Total: <span id="info-total"></span></p>
@@ -30,24 +72,23 @@
     <div id="entity-list">
 
     </div>
+
+
     <script>
-        let limit = 5;
-        let offset = 0;
-        let total = 0;
-        let inputs = document.getElementsByName("input-entity");
+
+        let currentSortType = "";
+        let inputs = document.getElementsByName("input-entity"); //input fields in the form
+        let menuPanels = document.getElementsByName("menu-panel"); //panel that hold like form etc
         let tableList = document.getElementById("entity-list");
         let formPanel = document.getElementById("entity-form");
         let infoLimit = document.getElementById("select-limit");
         let infoOffset = document.getElementById("info-offset");
         let infoTotal = document.getElementById("info-total");
-        let buttonList = document.getElementById("button-list");
+        let buttonList = document.getElementById("button-list"); //pagination btn
+        let buttonMenus = document.getElementsByName("button-menu"); //navigation btn for panel
         let buttonSortList = document.getElementsByName("button-sort");
-        let filterFields = document.getElementsByName("filter-box");
-        let search_params = null;
-        let search_params_obj = {};
-        let lastFilterBoxFocus = "";
-        let currentSortBy = "";
-        let currentSortType = "";
+        let filterFields = document.getElementsByName("filter-box"); //filter in top of column
+
 
         let URL = "/Entity/@ViewData["Entity"]Svc";
         let URLRaw = "/Entity/$name$Svc";
@@ -64,7 +105,7 @@
             for (let i = 0; i < inputs.length; i++) {
                 let field = inputs[i];
                 let value = field.value;
-                console.log("TYPE of FIELD", (field));
+                //  console.log("TYPE of FIELD", (field));
                 fieldParams += field.id + "=" + value;
                 if (i < inputs.length - 1) {
                     fieldParams += ";";
@@ -82,7 +123,7 @@
                 } else {
                     alert("Failed");
                 }
-                console.log("response from api", data);
+                //    console.log("response from api", data);
             }, function (data) {
                 alert("Server Error");
                 console.log("error", data);
@@ -91,26 +132,50 @@
             return false;
         }
 
-        function loadList() {
+        function getParam(key,qryString) {
+            let params = qryString.split(";");
+            if (params == null)
+                return null;
+            for (let i = 0; i < params.length; i++) {
+                if (params[i] == null || params[i] == "")
+                    continue;
+                keyVal = params[i].split('=');
+                if (keyVal[0] == key) {
+                    return keyVal[1];
+                }
+            }
+            return null;
+        }
+
+        function loadList(info) {
             let params = "Action=List&limit=" + limit + "&offset=" + offset;
             if (search_params != null) {
                 params += "&search_param=${" + search_params + "}$";
             }
             postReq(URL, params, function (data) {
+                fetchCount++;
+                console.log("fetch list, initial:", initLoad, "info", info);
+                console.log("-", fetchCount);
                 let jsonResp = data;
-                console.log("JSON", jsonResp);
+                //  console.log("JSON", jsonResp);
                 if (jsonResp.code == 0) {
                     tableList.innerHTML = jsonResp.data;
                     total = jsonResp.count;
                     refreshInfo();
                     generateButton();
+                    if (initLoad) {
+                        firstLoad();
+                        initLoad = false;
+                    } else {
+                        callbackWhenLoad();
+                    }
                 } else {
                     alert("Error loading")
                 }
                 fillFilterBox();
             }, function (data) {
                 alert("Server Error");
-               
+
             });
         }
 
@@ -150,7 +215,7 @@
             for (let i = 0; i < buttonSortList.length; i++) {
                 let btn = buttonSortList[i];
                 if (btn.id == currentSortType + "-" + currentSortBy) {
-                    btn.className = "btn active";
+                    btn.className = "btn btn-xs active";
                     btn.style.fontWeight = "bold";
                 }
             }
@@ -198,7 +263,7 @@
 
         function fillComboBox(cbxId, classReffName, classReffAttr, helper) {
             let value = helper.value;
-            console.log(cbxId, classReffName, classReffAttr, value);
+            //     console.log(cbxId, classReffName, classReffAttr, value);
             let comboBox = document.getElementById(cbxId);
             comboBox.innerHTML = "";
             let CustomUrl = URLRaw.replace("$name$", classReffName);
@@ -231,11 +296,11 @@
         function fillSearchParam() {
             search_params = "";
             for (let key in search_params_obj) {
-                
-                if (search_params_obj.hasOwnProperty(key)){
-                    let param_item =(key + "=" + search_params_obj[key] + ";");
+
+                if (search_params_obj.hasOwnProperty(key)) {
+                    let param_item = (key + "=" + search_params_obj[key] + ";");
                     search_params += param_item;
-                    console.log("key", param_item);
+                    //     console.log("key", param_item);
                 }
             }
             console.log("search param: ", search_params);
@@ -245,8 +310,7 @@
             for (let i = 0; i < filterFields.length; i++) {
                 let filterField = filterFields[i];
                 for (let key in search_params_obj) {
-                    if (filterField.id == "filter-" + key)
-                    {
+                    if (filterField.id == "filter-" + key) {
                         filterField.value = search_params_obj[key];
                     }
                     if (filterField.id == lastFilterBoxFocus) {
@@ -265,14 +329,14 @@
         }
 
         function filterEntity(element, sortBy, sortType) {
-            if(element!=null)
+            if (element != null)
                 lastFilterBoxFocus = element.id;
             search_params = null;
             search_params_obj = {};
             if (sortBy != null && sortType != null) {
                 currentSortBy = sortBy;
                 currentSortType = sortType;
-                
+
             }
             search_params_obj['orderby'] = currentSortBy;
             search_params_obj['ordertype'] = currentSortType;
@@ -293,6 +357,32 @@
             let currentVal = document.getElementById(id).style.display;
             let val = currentVal == "block" ? "none" : "block";
             document.getElementById(id).style.display = val;
+        }
+
+        function srollToElement(id) {
+
+            let element = document.getElementById(id);
+            element.scrollIntoView(true);
+        }
+
+        function hideMenu() {
+            resetActiveElements(buttonMenus);
+            for (let i = 0; i < menuPanels.length; i++) {
+                menuPanels[i].style.display = "none";
+            }
+        }
+
+        function resetActiveElements(elements) {
+            for (let i = 0; i < elements.length; i++) {
+                elements[i].className = elements[i].className.replace("active", "");
+            }
+        }
+
+        function showMenu(id, btn) {
+            hideMenu();
+            document.getElementById(id).style.display = "block";
+            resetActiveElements(buttonMenus);
+            btn.className = btn.className + " active";
         }
 
         generateForm(null);

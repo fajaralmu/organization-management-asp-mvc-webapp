@@ -6,7 +6,7 @@ using System.Web.Mvc;
 
 namespace OrgWebMvc.Controllers
 {
-    public class ActivityController : Controller
+    public class ActivityController : BaseController
     {
         // GET: Activity
         public ActionResult Index()
@@ -15,6 +15,10 @@ namespace OrgWebMvc.Controllers
         }
         public ActionResult TimeLine()
         {
+            if (!UserValid())
+            {
+                return RedirectToAction("Index", "Home");
+            }
             return View();
         }
     }

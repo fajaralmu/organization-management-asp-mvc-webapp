@@ -25,6 +25,10 @@ textarea {
 
 
 /**ENTITY MANAGEMENT**/
+.menu-panel{
+    display:none;
+}
+
 #loading-wrapper2 {
 	bottom: 5%;
 	right: 5%;
@@ -44,6 +48,14 @@ textarea {
     background-color:cadetblue;
     color:white;
 }
+
+.date_element{
+    height : 100px;
+   /* width: 300px;*/
+    color: blue;
+}
+
+
 
 /*SPINNER*/
 @-webkit-keyframes spinner-border {

@@ -14,8 +14,8 @@
 ];
 let month_now = 7;// 0;
 //let begin = { week: 2, day: 1, dayCount: 31 };
-let begin = { week: 1, day: 3, dayCount: 31 };
-let begin_old = { week: 0, day: 0, dayCount: 0 };
+let begin = { week: 1, day: 3, dayCount: 31, info: "" };
+let begin_old = { week: 0, day: 0, dayCount: 0, info: "" };
 let year_now = 1945;
 //let month_label = document.getElementById("month");
 //let year_label = document.getElementById("year");
@@ -26,7 +26,7 @@ let date_info = document.getElementById("date-info");
 let running_month = 7;
 let running_year = 1945;
 
-function load() {
+function loadCalendar() {
     createTable();
     begin_old = begin;
     begin = fillDay(month_now, true, begin);
@@ -40,7 +40,7 @@ function load() {
 function fillInputMonth() {
     input_month.innerHTML = "";
     for (let i = 0; i < month.length; i++) {
-        console.log("option ", i, input_month);
+        //  console.log("option ", i, input_month);
         let opt = document.createElement("option");
         opt.value = i + 1;
         opt.innerHTML = month[i].name;
@@ -59,13 +59,13 @@ function createTable() {
             col.setAttribute("class", "date_element");
             col.setAttribute("day", +i);
             col.setAttribute("week", +r);
+
             tr.appendChild(col);
         }
         tBody.appendChild(tr);
     }
     tabel.appendChild(tBody);
 }
-
 
 function setCalendar() {
     //  loading();
@@ -76,8 +76,8 @@ function setCalendar() {
 function doSetCalendar() {
     console.log("==start==");
 
-     running_month = input_month.value - 1;
-     running_year = input_year.value;
+    running_month = input_month.value - 1;
+    running_year = input_year.value;
     let diff_year = +Math.abs(running_year - year_now);
     // alert("diff_year year:" + diff_year);
     let monthCount = 0;
@@ -112,7 +112,10 @@ function doSetCalendar() {
 
             }
             month_now = current_month;
-            nextMonth();
+            let end = nextMonth();
+            if (end) {
+                break;
+            }
             ////console.log("month",current_month,"running_year",year_now);
             current_month++;
         }
@@ -126,7 +129,10 @@ function doSetCalendar() {
                 current_month = 11;
             }
             month_now = current_month;
-            prevMonth();
+            let end = prevMonth();
+            if (end) {
+                break;
+            }
             ////console.log("b",b,"month",current_month);
             current_month--;
         }
@@ -138,15 +144,74 @@ function doSetCalendar() {
 }
 
 function fillInfo() {
-    date_info.innerHTML = month[month_now].name + " " + year_now;
+    date_info.value = month[month_now].name + " " + year_now;
+}
+
+function clearDateFilter() {
+    detail("", "", "");
 }
 
 function detail(day, month, year) {
+    let filterDay = document.getElementById("filter-day");
+    let filterMonth = document.getElementById("filter-month");
+    let filterYear = document.getElementById("filter-year");
+
     console.log("DETAIL", day, month, year);
+    if (filterDay == null || filterMonth == null || filterYear == null) {
+        return;
+    }
+    filterDay.value = day;
+    filterMonth.value = month;
+    filterYear.value = year;
+
+    filterEntity(null, null, null);
+
+    loadList("from calendar");
+    loadJSON();
+}
+
+function loadJSON() {
+    let params = "Type=JSONList&Action=List&limit=" + limit + "&offset=" + offset;
+    if (search_params != null) {
+        params += "&search_param=${" + search_params + "}$";
+    }
+    postReq("/Entity/EventSvc",
+         params,
+         function (data) {
+         //    console.log("JSON response", data);
+             if (data.code == 0) {
+                 fillEventData(data.data);
+             }
+         }, function (data) {
+             console.log("API error", data);
+         });
+}
+
+function fillEventData(eventList) {
+    let dateCells = document.getElementsByClassName("date_element");
+    for (let i = 0; i <= 31; i++) {
+        let cell = document.getElementById("date-list-" + i);
+        if (cell != null)
+            cell.innerHTML = "";
+    }
+
+    for (let i = 0; i < eventList.length; i++) {
+        let event = eventList[i];
+       
+        var evDate = event.date.replace('/', '').replace("Date", "").replace('(', '').replace(')', '').replace('/', '');
+        let day = +(evDate) / (24 * 60 * 60 * 1000);
+        let date = new Date(+evDate);
+        let dateCell = document.getElementById("date-list-" + date.getDate());
+      //  console.log("ID: ", "date-list-" + date.getDate(), date)
+        //console.log("-");
+        let li = document.createElement("li");
+        li.innerHTML = event.name;
+        dateCell.appendChild(li);
+    }
 }
 
 function prevMonth() {
-    doPrevMonth(false);
+    return doPrevMonth(false);
 }
 
 function doPrevMonth(prev) {
@@ -176,11 +241,11 @@ function doPrevMonth(prev) {
         day: switch_.day,
         dayCount: switch_.dayCount
     }
-
+    return switch_.info == "NOW";
 }
 
 function nextMonth() {
-    doNextMonth(false);
+    return doNextMonth(false);
 }
 
 function doNextMonth(next) {
@@ -208,6 +273,7 @@ function doNextMonth(next) {
         day: switch_.day,
         dayCount: switch_.dayCount,
     }
+    return switch_.info == "NOW";
 
 }
 
@@ -243,12 +309,24 @@ function setElementByAttr(attr, val, attr2, val2, day) {
         let cek = dates[i].getAttribute(attr) == val;
         let cek2 = dates[i].getAttribute(attr2) == val2;
         if (cek && cek2) {
-            dates[i].innerHTML = day;
-            dates[i].id = "date-"+day;
-            dates[i].setAttribute("onclick", "detail(" + day + "," + month_now+1 + "," + year_now + ")");
-        } 
+            dates[i].innerHTML = "";
+            dates[i].id = "date-" + day;
+            dates[i].setAttribute("onclick", "detail(" + day + "," + (+month_now + 1) + "," + year_now + ")");
+
+            let span = document.createElement("span");
+            span.innerHTML = day;
+            dates[i].appendChild(span);
+
+            let ul = document.createElement("ul");
+            ul.id = "date-list-" + day;
+            dates[i].appendChild(ul);
+
+            
+
+        }
 
     }
+
 }
 
 function clear() {
@@ -281,7 +359,7 @@ function fillDay(current_month, next, begin) {
     let day_ = begin_new.day;
     let begin_day = day_;
     let isNow = running_month == current_month && running_year == year_now;
-    console.log("isNow", isNow,running_month,'=',current_month, running_month == current_month,running_year,'=',year_now, running_year == year_now)
+    //  console.log("isNow", isNow,running_month,'=',current_month, running_month == current_month,running_year,'=',year_now, running_year == year_now)
     for (let d = 1; d <= month[current_month].day; d++) {
         if (day_ > 7) {
             day_ = 1;
@@ -299,5 +377,11 @@ function fillDay(current_month, next, begin) {
     //console.log("   ");
     //console.log("new", begin_new.day, begin_new.week);
     fillInfo();
+    if (isNow) {
+        detail(null, (+running_month + 1), running_year);
+        begin_new.info = "NOW";
+    } else {
+        begin_new.info = "SOME-DAY";
+    }
     return begin_new;
 }

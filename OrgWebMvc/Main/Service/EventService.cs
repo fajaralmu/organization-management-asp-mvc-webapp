@@ -124,6 +124,11 @@ namespace OrgWebMvc.Main.Service
             string location = Params.ContainsKey("location") ? (string)Params["location"] : "";
             string participant = Params.ContainsKey("participant") ? Params["participant"].ToString() : "";
             string info = Params.ContainsKey("info") ? (string)Params["info"] : "";
+
+            string day = Params.ContainsKey("day") ? (string)Params["day"] : "";
+            string month = Params.ContainsKey("month") ? (string)Params["month"] : "";
+            string year = Params.ContainsKey("year") ? (string)Params["year"] : "";
+
             string user_id = Params.ContainsKey("user_id") ? Params["user_id"].ToString() : "";
             string orderby = Params.ContainsKey("orderby") ? (string)Params["orderby"] : "";
             string ordertype = Params.ContainsKey("ordertype") ? (string)Params["ordertype"] : "";
@@ -135,7 +140,10 @@ namespace OrgWebMvc.Main.Service
                 " and [event].[location]  like '%" + location + "%' " +
                 " and [event].[participant]  like '%" + participant + "%' " +
                 " and [event].[info]  like '%" + info + "%' " +
-                (StringUtil.NotNullAndNotBlank(user_id) ? " and [division].[user_id] = " + user_id : "");
+                (StringUtil.NotNullAndNotBlank(user_id) ? " and [division].[user_id] = " + user_id : "") +
+                (StringUtil.NotNullAndNotBlank(day) ? " and DAY([event].[date]) = " + day : "") +
+                (StringUtil.NotNullAndNotBlank(month) ? " and MONTH([event].[date]) = " + month : "") +
+                (StringUtil.NotNullAndNotBlank(year) ? " and YEAR([event].[date]) = " + year : "");
             if (!orderby.Equals(""))
             {
                 sql += " ORDER BY " + orderby;
