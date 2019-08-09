@@ -125,9 +125,9 @@ namespace OrgWebMvc.Main.Service
             string participant = Params.ContainsKey("participant") ? Params["participant"].ToString() : "";
             string info = Params.ContainsKey("info") ? (string)Params["info"] : "";
 
-            string day = Params.ContainsKey("day") ? (string)Params["day"] : "";
-            string month = Params.ContainsKey("month") ? (string)Params["month"] : "";
-            string year = Params.ContainsKey("year") ? (string)Params["year"] : "";
+            string day = Params.ContainsKey("date.day") ? (string)Params["date.day"] : "";
+            string month = Params.ContainsKey("date.month") ? (string)Params["date.month"] : "";
+            string year = Params.ContainsKey("date.year") ? (string)Params["date.year"] : "";
 
             string user_id = Params.ContainsKey("user_id") ? Params["user_id"].ToString() : "";
             string orderby = Params.ContainsKey("orderby") ? (string)Params["orderby"] : "";

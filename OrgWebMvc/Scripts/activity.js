@@ -19,7 +19,7 @@ let begin_old = { week: 0, day: 0, dayCount: 0, info: "" };
 let year_now = 1945;
 //let month_label = document.getElementById("month");
 //let year_label = document.getElementById("year");
-let tabel = document.getElementById("date");
+let tabel = document.getElementById("calendarTable");
 let input_month = document.getElementById("input_month");
 let input_year = document.getElementById("input_year");
 let date_info = document.getElementById("date-info");
@@ -65,6 +65,7 @@ function createTable() {
         }
         tBody.appendChild(tr);
     }
+    tabel.className = "table table-bordered";
     tabel.style.tableLayout = "fixed";
     tabel.appendChild(tBody);
 }
@@ -154,9 +155,9 @@ function clearDateFilter() {
 }
 
 function detail(day, month, year) {
-    let filterDay = document.getElementById("filter-day");
-    let filterMonth = document.getElementById("filter-month");
-    let filterYear = document.getElementById("filter-year");
+    let filterDay = document.getElementById("filter-date.day");
+    let filterMonth = document.getElementById("filter-date.month");
+    let filterYear = document.getElementById("filter-date.year");
 
     console.log("DETAIL", day, month, year);
     if (filterDay == null || filterMonth == null || filterYear == null) {
@@ -168,7 +169,7 @@ function detail(day, month, year) {
 
     filterEntity(null, null, null);
 
-    loadList("from calendar");
+    loadList("externalRequest");
     loadJSON();
 }
 
@@ -207,9 +208,9 @@ function fillEventData(eventList) {
         if (dateCell.getElementsByTagName("li") != null && dateCell.getElementsByTagName("li").length >= 3) {
             console.log("more than 3");
             console.log("-");
-            if (dateCell.getElementsByTagName("kbd").length == 0) {
-                let info = document.createElement("kbd");
-                info.innerHTML = "click to see details..";
+            if (dateCell.getElementsByTagName("code").length == 0) {
+                let info = document.createElement("code");
+                info.innerHTML = "click details <br/>to see more";
                 dateCell.appendChild(info);
             }
             continue;
@@ -217,17 +218,16 @@ function fillEventData(eventList) {
         //  console.log("ID: ", "date-list-" + date.getDate(), date)
         //console.log("-");
         let li = document.createElement("li");
+        li.className = "li-custom li-uncheck";
         let evtName = document.createElement("span");
         evtName.innerHTML = event.name;
         evtName.className = "text-wrap";
         evtName.style.fontFamily = "Calibri";
-        evtName.style.color = "black";
-        let isDoneCheck = document.createElement("input");
-        isDoneCheck.type = "checkbox";
-        //  isDoneCheck.readOnly = "true";
-        isDoneCheck.checked = event.done == 1 || event.done == "1";
-        isDoneCheck.disabled = "true";
-        li.appendChild(isDoneCheck);
+        //  evtName.style.color = "black";
+
+        if (event.done == 1 || event.done == "1") {
+            li.className = "li-custom li-checked";
+        }
         li.appendChild(evtName);
 
         dateCell.appendChild(li);
@@ -335,13 +335,33 @@ function setElementByAttr(attr, val, attr2, val2, day) {
         if (cek && cek2) {
             dates[i].innerHTML = "";
             dates[i].id = "date-" + day;
-            dates[i].setAttribute("onclick", "detail(" + day + "," + (+month_now + 1) + "," + year_now + ")");
+
+            let dateStr = addZero(day, 10).concat("-").concat(addZero((+month_now + 1), 10)).concat("-").concat(year_now);
+
+            let addBtn = document.createElement("code");
+            addBtn.innerHTML = "+";
+            addBtn.className = "btn btn-default btn-xs";
+            addBtn.style.cssFloat = "right";
+            addBtn.setAttribute("data-toggle", "tooltip");
+            addBtn.setAttribute("title", "Add an event at " + dateStr + "!");
+            addBtn.setAttribute("onclick", "addNewEvent(" + day + "," + (+month_now + 1) + "," + year_now + ")");
+            dates[i].appendChild(addBtn);
+          
+            let detailBtn = document.createElement("code");
+            detailBtn.innerHTML = "&#10296;";
+            detailBtn.className = "btn btn-default btn-xs";
+            detailBtn.style.cssFloat = "right";
+            detailBtn.setAttribute("data-toggle", "tooltip");
+            detailBtn.setAttribute("title", "See events at " + dateStr + "!");
+            detailBtn.setAttribute("onclick", "detail(" + day + "," + (+month_now + 1) + "," + year_now + ")");
+            dates[i].appendChild(detailBtn);
 
             let span = document.createElement("span");
             span.innerHTML = day;
             dates[i].appendChild(span);
 
             let ul = document.createElement("ul");
+            ul.style.listStyle = "none";
             ul.id = "date-list-" + day;
             dates[i].appendChild(ul);
 
@@ -351,6 +371,30 @@ function setElementByAttr(attr, val, attr2, val2, day) {
 
     }
 
+}
+
+function addNewEvent(day, month, year) {
+    showMenu('entity-form', document.getElementById('btn-show-form'));
+    let strDate = dateAcceptableForHtmlInput(day, month, year);
+    document.getElementById("date").value = strDate;
+}
+
+function dateAcceptableForHtmlInput(day, month, year) {
+    return year + "-" + addZero(month, 10) + "-" + addZero(day, 10);
+}
+
+function addZero(Val, Min) {
+    let N = new String(Val);
+    let MinStr = new String(Min);
+
+    let ValLength = N.length;
+    let MinLength = MinStr.length;
+    let Diff = MinLength - ValLength;
+    for (let i = 1; i <= Diff; i++) {
+        N = new String("0").concat(N);
+    }
+
+    return N;
 }
 
 function clear() {

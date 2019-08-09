@@ -56,13 +56,13 @@ namespace OrgWebMvc.Main.Util
                 HtmlTag FilterBox = new InputTag();
                 if (Attribute.FieldType.Equals(AttributeConstant.TYPE_DATE))
                 {
-                    HtmlTag FilterDay = new InputTag() { ID = "filter-day", Class = "form-control", Name = "filter-box" };
+                    HtmlTag FilterDay = new InputTag() { ID = string.Concat("filter-", FieldName, ".day"), Class = "form-control", Name = "filter-box" };
                     FilterDay.AddAttribute("onkeyup", "filterEntity(this)", "style", "width:30%", "placeholder", "Day");
 
-                    HtmlTag FilterMonth = new InputTag() { ID = "filter-month", Class = "form-control", Name = "filter-box" };
+                    HtmlTag FilterMonth = new InputTag() { ID = string.Concat("filter-", FieldName, ".month"), Class = "form-control", Name = "filter-box" };
                     FilterMonth.AddAttribute("onkeyup", "filterEntity(this)", "style", "width:30%", "placeholder", "Month");
 
-                    HtmlTag FilterYear = new InputTag() { ID = "filter-year", Class = "form-control", Name = "filter-box" };
+                    HtmlTag FilterYear = new InputTag() { ID = string.Concat("filter-", FieldName, ".year"), Class = "form-control", Name = "filter-box" };
                     FilterYear.AddAttribute("onkeyup", "filterEntity(this)", "style", "width:40%", "placeholder", "Year");
 
                     FilterBox.Class = "input-group";
@@ -73,7 +73,7 @@ namespace OrgWebMvc.Main.Util
                 {
                     FilterBox.Name = "filter-box";
                     FilterBox.ID = "filter-" + (ClassRef ? ObjName : FieldName);
-                    FilterBox.AddAttribute("onkeyup", "filterEntity(this)","class", "form-control","placeholder", (ClassRef ? ObjName : FieldName));
+                    FilterBox.AddAttribute("onkeyup", "filterEntity(this)", "class", "form-control", "placeholder", (ClassRef ? ObjName : FieldName));
                 }
 
                 //sorting
@@ -147,9 +147,9 @@ namespace OrgWebMvc.Main.Util
                 Options.Class = "btn-group";
 
                 HtmlTag BtnEdit = new HtmlTag("button", "<span class=\"glyphicon glyphicon-edit\"></span>");
-                BtnEdit.AddAttribute("class", "btn btn-warning","onclick", "editEntity(" + ID + ")");
+                BtnEdit.AddAttribute("class", "btn btn-warning", "onclick", "editEntity(" + ID + ")");
                 HtmlTag BtnDelete = new HtmlTag("button", "<span class=\"glyphicon glyphicon-trash\"></span>");
-                BtnDelete.AddAttribute("class", "btn btn-danger","onclick", "deleteEntity(" + ID + ")");
+                BtnDelete.AddAttribute("class", "btn btn-danger", "onclick", "deleteEntity(" + ID + ")");
 
                 Options.AddAll(BtnEdit, BtnDelete);
 
@@ -198,7 +198,7 @@ namespace OrgWebMvc.Main.Util
             string ObjName = StringUtil.ToUpperCase(0, ObjectType.Name);
             HtmlTag Form = new HtmlTag("form");
             Form.ID = "form-entity";
-            Form.AddAttribute("class","form","onsubmit", "return submitEvent(event)");
+            Form.AddAttribute("class", "form", "onsubmit", "return submitEvent(event)");
 
             List<HtmlTag> InputFields = new List<HtmlTag>();
 

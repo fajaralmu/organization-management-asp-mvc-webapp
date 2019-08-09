@@ -42,9 +42,31 @@ textarea {
 	font-size: 1.5em;
 }
 
+.li-custom:hover{
+    
+}
+
+.li-uncheck::before {
+  content: "\2217";  /* Add content: \2022 is the CSS Code/unicode for a bullet */
+  color: orange; /* Change the color */
+  font-weight: bold; /* If you want it to be bold */
+  display: inline-block; /* Needed to add space between the bullet and the text */ 
+  width: 1em; /* Also needed for space (tweak if needed) */
+  margin-left: -1em; /* Also needed for space (tweak if needed) */
+}
+
+.li-checked::before {
+  content: "\221A";  /* CSS Code/unicode  */
+  color:  orange;/* Change the color */
+  font-weight: bold; /* If you want it to be bold */
+  display: inline-block; /* Needed to add space between the bullet and the text */ 
+  width: 1em; /* Also needed for space (tweak if needed) */
+  margin-left: -1em; /* Also needed for space (tweak if needed) */
+}
+
 /**CALENDAR**/
 .date_element:hover{
-    cursor:pointer;
+   /*cursor:pointer;*/
     background-color:cadetblue;
     color:white;
 }

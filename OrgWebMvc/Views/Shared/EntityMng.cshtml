@@ -1,10 +1,11 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-@using OrgWebMvc.Main.Util
+@using OrgWebMvc.Models
 @using System.Collections.Generic
 
 <div>
+   
     <script src="~/Scripts/ajax.js"></script>
     <script type="text/javascript">
         let fetchCount = 0;
@@ -152,10 +153,14 @@
             if (search_params != null) {
                 params += "&search_param=${" + search_params + "}$";
             }
+
+            if (info == "externalRequest") {
+                lastFilterBoxFocus = null;
+            }
+
             postReq(URL, params, function (data) {
                 fetchCount++;
-                console.log("fetch list, initial:", initLoad, "info", info);
-                console.log("-", fetchCount);
+                console.log(fetchCount,"fetch list, initial:", initLoad, "info", info);
                 let jsonResp = data;
                 //  console.log("JSON", jsonResp);
                 if (jsonResp.code == 0) {

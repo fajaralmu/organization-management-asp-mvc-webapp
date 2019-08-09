@@ -104,22 +104,17 @@ namespace InstApp.Util.Common
 
         public static string GenerateHtmlTag(string Tag, string[] Attribute, string InnerHTML)
         {
-            string Html = "<" + Tag;
-
+            string Html = string.Concat("<", Tag);
             if (Attribute != null && Attribute.Length > 0)
             {
                 for (int i = 0; i < Attribute.Length; i++)
                 {
                     Html += " " + Attribute[i] + " ";
                 }
-                Html += ">";
+               
             }
-            else
-            {
-                Html += ">";
-            }
-            Html += InnerHTML;
-            Html += "</" + Tag + ">";
+
+            Html = string.Concat(Html, ">", InnerHTML, "</", Tag, ">");
             return Html;
         }
 
