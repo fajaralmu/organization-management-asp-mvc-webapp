@@ -13,30 +13,49 @@ namespace OrgWebMvc.Models
     using System;
     using System.Collections.Generic;
 
-    public partial class program
+    public partial class position
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public program()
+        public position()
         {
-            this.events = new HashSet<@event>();
+            this.members = new HashSet<member>();
+            this.position1 = new HashSet<position>();
         }
 
         [FieldAttribute(FieldType = AttributeConstant.TYPE_ID_AI)]
         public int id { get; set; }
         [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX, Required = true)]
         public string name { get; set; }
+        [FieldAttribute(Required = true, FieldType = AttributeConstant.TYPE_DROPDOWN, FieldName = "Section", ClassReference = "section", ClassAttributeConverter = "name")]
+        public int section_id { get; set; }
+        [FieldAttribute(Required = false, FieldType = AttributeConstant.TYPE_DROPDOWN, FieldName = "Parent_Section", ClassRefPropName = "position2", ClassReference = "position", ClassAttributeConverter = "name")]
+        public Nullable<int> parent_position_id { get; set; }
         [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTAREA, Required = true)]
         public string description { get; set; }
-        [FieldAttribute(Required = true, FieldType = AttributeConstant.TYPE_DROPDOWN, FieldName = "Section", ClassReference = "section", ClassAttributeConverter = "name")]
-        public int sect_id { get; set; }
+
+        public position positionParent
+        {
+            get
+            {
+                if (position1.Count > 0)
+                {
+                    return position1.GetEnumerator().Current;
+                }
+                return null;
+            }
+        }
 
         //public int id { get; set; }
         //public string name { get; set; }
+        //public int section_id { get; set; }
+        //public Nullable<int> parent_position_id { get; set; }
         //public string description { get; set; }
-        //public int sect_id { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<@event> events { get; set; }
+        public virtual ICollection<member> members { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<position> position1 { get; set; }
+        public virtual position position2 { get; set; }
         public virtual section section { get; set; }
     }
 }

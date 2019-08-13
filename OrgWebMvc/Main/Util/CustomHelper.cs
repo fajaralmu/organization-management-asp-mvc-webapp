@@ -223,6 +223,7 @@ namespace OrgWebMvc.Main.Util
                     }
 
                     bool IsTextArea = Attribute.FieldType.Equals(AttributeConstant.TYPE_TEXTAREA);
+                    bool IsRTF = Attribute.FieldType.Equals(AttributeConstant.TYPE_RICHTEXT);
                     bool IsDate = Attribute.FieldType.Equals(AttributeConstant.TYPE_DATE);
                     bool IsNumber = Attribute.FieldType.Equals(AttributeConstant.TYPE_NUMBER);
                     bool IsDropDown = Attribute.FieldType.Equals(AttributeConstant.TYPE_DROPDOWN);
@@ -238,6 +239,15 @@ namespace OrgWebMvc.Main.Util
                     {
                         InputField.Key = "textarea";
                         InputField.Value = Value == null ? "" : Value.ToString();
+                    }else if (IsRTF)
+                    {
+
+                        string RFTFile = HtmlConstant.ReadRftFile();
+                        RFTFile.Replace("$ID$", InputField.ID);
+                        RFTFile.Replace("$VALUE$", Value == null ? "" : Value.ToString());
+                        InputField.Key = "div";
+                     //   InputField.AddAttribute("contenteditable", "true");
+                        InputField.Value = RFTFile;
                     }
                     else if (IsDropDown)
                     {

@@ -12,6 +12,7 @@ namespace InstApp.Annotation
         public const string TYPE_ID_AI = "id_ai";
         public const string TYPE_ID_NUMB = "id_number";
         public const string TYPE_TEXTAREA = "textarea";
+        public const string TYPE_RICHTEXT= "richtext";
         public const string TYPE_TEXTBOX = "textbox";
         public const string TYPE_DROPDOWN = "dropdown";
         public const string TYPE_SEARCHLIST = "search_list";

@@ -81,6 +81,36 @@ namespace OrgWebMvc.Controllers
             return View("~/Views/Shared/EntityMng.cshtml");
         }
 
+        public ActionResult Position()
+        {
+            if (!UserValid())
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            PositionService PositionSvc = new PositionService();
+
+            ViewBag.Title = "Position";
+            ViewData["EntityType"] = typeof(position);
+            ViewData["EntityList"] = BaseService.GetObjectList(PositionSvc, Request);
+            ViewData["Entity"] = "Position";
+            return View("~/Views/Shared/EntityMng.cshtml");
+        }
+
+        public ActionResult Section()
+        {
+            if (!UserValid())
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            SectionService SectionSvc = new SectionService();
+
+            ViewBag.Title = "Section";
+            ViewData["EntityType"] = typeof(section);
+            ViewData["EntityList"] = BaseService.GetObjectList(SectionSvc, Request);
+            ViewData["Entity"] = "Section";
+            return View("~/Views/Shared/EntityMng.cshtml");
+        }
+
         public ActionResult Post()
         {
             if (!UserValid())
@@ -208,7 +238,7 @@ namespace OrgWebMvc.Controllers
                     {
                         program Div = (program)ObjectUtil.GetObjectValues(new string[]
                         {
-                            "id","name","description","division_id"
+                            "id","name","description","sect_id"
                         }, P);
                         ListToSend.Add(Div);
                     }
@@ -250,7 +280,7 @@ namespace OrgWebMvc.Controllers
                             return Json(Response);
                         }
                         program toSend = (program)ObjectUtil.GetObjectValues(new string[]{
-                            "id","name","description","division_id"
+                            "id","name","description","sect_id"
                         }, ProgramDB);
                         Response = new WebResponse(0, "Success " + Info, toSend);
                     }
@@ -381,7 +411,7 @@ namespace OrgWebMvc.Controllers
                     {
                         member Mmb = (member)ObjectUtil.GetObjectValues(new string[]
                         {
-                            "id","name","position","division_id"
+                            "id","name","description","position_id"
                         }, Obj);
                         ListToSend.Add(Mmb);
                     }
@@ -424,7 +454,7 @@ namespace OrgWebMvc.Controllers
                             return Json(Response);
                         }
                         member toSend = (member)ObjectUtil.GetObjectValues(new string[]{
-                            "id","name","position","division_id"
+                            "id","name","description","position_id"
                         }, MemberDB);
                         Response = new WebResponse(0, "Success " + Info, toSend);
                     }
@@ -438,6 +468,180 @@ namespace OrgWebMvc.Controllers
                     if (DBmmb != null)
                     {
                         EntitySvc.Delete(DBmmb);
+                        Response = new WebResponse(0, "Success");
+                    }
+                    break;
+                default:
+                    break;
+            }
+            return Json(Response);
+        }
+
+        [HttpPost]
+        public ActionResult SectionSvc()
+        {
+            bool UserIsLoggedIn = UserValid();
+            WebResponse Response = new WebResponse();
+            if (!StringUtil.NotNullAndNotBlank(Request.Form["Action"]))
+            {
+                return Json(Response);
+            }
+            string Action = Request.Form["Action"].ToString();
+            SectionService EntitySvc = new SectionService();
+            switch (Action)
+            {
+                case "List":
+                    List<object> ObjList = BaseService.GetObjectList(EntitySvc, Request, LoggedUser);
+                    List<section> sections = (List<section>)ObjectUtil.ConvertList(ObjList, typeof(List<section>));
+                    List<section> ListToSend = new List<section>();
+                    foreach (section Obj in sections)
+                    {
+                        section Mmb = (section)ObjectUtil.GetObjectValues(new string[]
+                        {
+                            "id","name","description","division_id","parent_section_id"
+                        }, Obj);
+                        ListToSend.Add(Mmb);
+                    }
+                    object ResponseData = null;
+                    if (StringUtil.NotNullAndNotBlank(Request.Form["Type"]) && Request.Form["Type"].ToString().Equals("JSONList"))
+                    {
+                        ResponseData = ListToSend;
+                    }
+                    else
+                    {
+                        ResponseData = CustomHelper.GenerateDataTableString(typeof(section), ObjList);
+                    }
+                    Response = new WebResponse(0, "Success", ResponseData, EntitySvc.count);
+                    break;
+                case "Form":
+                    object Entity = null;
+                    if (StringUtil.NotNullAndNotBlank(Request.Form["Id"]))
+                    {
+                        Entity = EntitySvc.GetById(int.Parse(Request.Form["Id"]));
+                    }
+                    Response = new WebResponse(0, "Success", CustomHelper.GenerateFormString(typeof(section), Entity), EntitySvc.count);
+                    break;
+                case "Post":
+                    section section = (section)ObjectUtil.FillObjectWithMap(new section(), BaseService.ReqToDict(Request));
+                    if (section != null)
+                    {
+                        section sectionDB = null;
+                        string Info = "create";
+                        if (section.id != null && section.id != 0)
+                        {
+                            Info = "update";
+                            sectionDB = (section)EntitySvc.Update(section);
+                        }
+                        else
+                        {
+                            sectionDB = (section)EntitySvc.Add(section);
+                        }
+                        if (sectionDB == null)
+                        {
+                            return Json(Response);
+                        }
+                        section toSend = (section)ObjectUtil.GetObjectValues(new string[]{
+                           "id","name","description","division_id","parent_section_id"
+                        }, sectionDB);
+                        Response = new WebResponse(0, "Success " + Info, toSend);
+                    }
+                    break;
+                case "Delete":
+                    if (!StringUtil.NotNullAndNotBlank(Request.Form["Id"]))
+                    {
+                        return Json(Response);
+                    }
+                    section DBsection = (section)EntitySvc.GetById(int.Parse(Request.Form["Id"]));
+                    if (DBsection != null)
+                    {
+                        EntitySvc.Delete(DBsection);
+                        Response = new WebResponse(0, "Success");
+                    }
+                    break;
+                default:
+                    break;
+            }
+            return Json(Response);
+        }
+
+        [HttpPost]
+        public ActionResult PositionSvc()
+        {
+            bool UserIsLoggedIn = UserValid();
+            WebResponse Response = new WebResponse();
+            if (!StringUtil.NotNullAndNotBlank(Request.Form["Action"]))
+            {
+                return Json(Response);
+            }
+            string Action = Request.Form["Action"].ToString();
+            PositionService EntitySvc = new PositionService();
+            switch (Action)
+            {
+                case "List":
+                    List<object> ObjList = BaseService.GetObjectList(EntitySvc, Request, LoggedUser);
+                    List<position> positions = (List<position>)ObjectUtil.ConvertList(ObjList, typeof(List<position>));
+                    List<position> ListToSend = new List<position>();
+                    foreach (position Obj in positions)
+                    {
+                        position Mmb = (position)ObjectUtil.GetObjectValues(new string[]
+                        {
+                            "id","name","description","section_id","parent_position_id"
+                        }, Obj);
+                        ListToSend.Add(Mmb);
+                    }
+                    object ResponseData = null;
+                    if (StringUtil.NotNullAndNotBlank(Request.Form["Type"]) && Request.Form["Type"].ToString().Equals("JSONList"))
+                    {
+                        ResponseData = ListToSend;
+                    }
+                    else
+                    {
+                        ResponseData = CustomHelper.GenerateDataTableString(typeof(position), ObjList);
+                    }
+                    Response = new WebResponse(0, "Success", ResponseData, EntitySvc.count);
+                    break;
+                case "Form":
+                    object Entity = null;
+                    if (StringUtil.NotNullAndNotBlank(Request.Form["Id"]))
+                    {
+                        Entity = EntitySvc.GetById(int.Parse(Request.Form["Id"]));
+                    }
+                    Response = new WebResponse(0, "Success", CustomHelper.GenerateFormString(typeof(position), Entity), EntitySvc.count);
+                    break;
+                case "Post":
+                    position position = (position)ObjectUtil.FillObjectWithMap(new position(), BaseService.ReqToDict(Request));
+                    if (position != null)
+                    {
+                        position positionDB = null;
+                        string Info = "create";
+                        if (position.id != null && position.id != 0)
+                        {
+                            Info = "update";
+                            positionDB = (position)EntitySvc.Update(position);
+                        }
+                        else
+                        {
+                            positionDB = (position)EntitySvc.Add(position);
+                        }
+                        if (positionDB == null)
+                        {
+                            return Json(Response);
+                        }
+                        position toSend = (position)ObjectUtil.GetObjectValues(new string[]{
+                           "id","name","description","section_id","parent_position_id"
+                        }, positionDB);
+                        Response = new WebResponse(0, "Success " + Info, toSend);
+                    }
+                    break;
+                case "Delete":
+                    if (!StringUtil.NotNullAndNotBlank(Request.Form["Id"]))
+                    {
+                        return Json(Response);
+                    }
+                    position DBposition = (position)EntitySvc.GetById(int.Parse(Request.Form["Id"]));
+                    if (DBposition != null)
+                    {
+                        EntitySvc.Delete(DBposition);
                         Response = new WebResponse(0, "Success");
                     }
                     break;

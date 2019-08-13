@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Schema Namespace="INST_DBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+<Schema Namespace="OrgDbModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
   <EntityType Name="division">
     <Key>
       <PropertyRef Name="id" />
@@ -29,8 +29,18 @@
     </Key>
     <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="name" Type="varchar" MaxLength="100" Nullable="false" />
-    <Property Name="division_id" Type="int" Nullable="false" />
-    <Property Name="position" Type="varchar" MaxLength="200" Nullable="false" />
+    <Property Name="position_id" Type="int" Nullable="false" />
+    <Property Name="description" Type="varchar" MaxLength="200" Nullable="false" />
+  </EntityType>
+  <EntityType Name="position">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="name" Type="varchar" MaxLength="100" Nullable="false" />
+    <Property Name="section_id" Type="int" Nullable="false" />
+    <Property Name="parent_position_id" Type="int" />
+    <Property Name="description" Type="varchar(max)" />
   </EntityType>
   <EntityType Name="post">
     <Key>
@@ -51,17 +61,17 @@
     <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="name" Type="varchar" MaxLength="100" Nullable="false" />
     <Property Name="description" Type="varchar(max)" Nullable="false" />
-    <Property Name="division_id" Type="int" Nullable="false" />
+    <Property Name="sect_id" Type="int" Nullable="false" />
   </EntityType>
-  <EntityType Name="sysdiagrams">
+  <EntityType Name="section">
     <Key>
-      <PropertyRef Name="diagram_id" />
+      <PropertyRef Name="id" />
     </Key>
-    <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
-    <Property Name="principal_id" Type="int" Nullable="false" />
-    <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="version" Type="int" />
-    <Property Name="definition" Type="varbinary(max)" />
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="name" Type="nchar" MaxLength="100" Nullable="false" />
+    <Property Name="division_id" Type="int" Nullable="false" />
+    <Property Name="parent_section_id" Type="int" />
+    <Property Name="description" Type="varchar(max)" />
   </EntityType>
   <EntityType Name="user">
     <Key>
@@ -98,15 +108,39 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK_member_division">
-    <End Role="division" Type="Self.division" Multiplicity="1" />
+  <Association Name="FK_member_position">
+    <End Role="position" Type="Self.position" Multiplicity="1" />
     <End Role="member" Type="Self.member" Multiplicity="*" />
     <ReferentialConstraint>
-      <Principal Role="division">
+      <Principal Role="position">
         <PropertyRef Name="id" />
       </Principal>
       <Dependent Role="member">
-        <PropertyRef Name="division_id" />
+        <PropertyRef Name="position_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_position_position">
+    <End Role="position" Type="Self.position" Multiplicity="0..1" />
+    <End Role="position1" Type="Self.position" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="position">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="position1">
+        <PropertyRef Name="parent_position_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_position_section">
+    <End Role="section" Type="Self.section" Multiplicity="1" />
+    <End Role="position" Type="Self.position" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="section">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="position">
+        <PropertyRef Name="section_id" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -122,25 +156,50 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK_program_division">
-    <End Role="division" Type="Self.division" Multiplicity="1" />
+  <Association Name="FK_program_section">
+    <End Role="section" Type="Self.section" Multiplicity="1" />
     <End Role="program" Type="Self.program" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="section">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="program">
+        <PropertyRef Name="sect_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_section_division">
+    <End Role="division" Type="Self.division" Multiplicity="1" />
+    <End Role="section" Type="Self.section" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="division">
         <PropertyRef Name="id" />
       </Principal>
-      <Dependent Role="program">
+      <Dependent Role="section">
         <PropertyRef Name="division_id" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <EntityContainer Name="INST_DBModelStoreContainer">
+  <Association Name="FK_section_section">
+    <End Role="section" Type="Self.section" Multiplicity="0..1" />
+    <End Role="section1" Type="Self.section" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="section">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="section1">
+        <PropertyRef Name="parent_section_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="OrgDbModelStoreContainer">
     <EntitySet Name="division" EntityType="Self.division" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="event" EntityType="Self.event" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="member" EntityType="Self.member" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="position" EntityType="Self.position" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="post" EntityType="Self.post" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="program" EntityType="Self.program" Schema="dbo" store:Type="Tables" />
-    <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="section" EntityType="Self.section" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="user" EntityType="Self.user" Schema="dbo" store:Type="Tables" />
     <AssociationSet Name="FK_division_user" Association="Self.FK_division_user">
       <End Role="user" EntitySet="user" />
@@ -150,17 +209,33 @@
       <End Role="program" EntitySet="program" />
       <End Role="event" EntitySet="event" />
     </AssociationSet>
-    <AssociationSet Name="FK_member_division" Association="Self.FK_member_division">
-      <End Role="division" EntitySet="division" />
+    <AssociationSet Name="FK_member_position" Association="Self.FK_member_position">
+      <End Role="position" EntitySet="position" />
       <End Role="member" EntitySet="member" />
+    </AssociationSet>
+    <AssociationSet Name="FK_position_position" Association="Self.FK_position_position">
+      <End Role="position" EntitySet="position" />
+      <End Role="position1" EntitySet="position" />
+    </AssociationSet>
+    <AssociationSet Name="FK_position_section" Association="Self.FK_position_section">
+      <End Role="section" EntitySet="section" />
+      <End Role="position" EntitySet="position" />
     </AssociationSet>
     <AssociationSet Name="FK_post_user" Association="Self.FK_post_user">
       <End Role="user" EntitySet="user" />
       <End Role="post" EntitySet="post" />
     </AssociationSet>
-    <AssociationSet Name="FK_program_division" Association="Self.FK_program_division">
-      <End Role="division" EntitySet="division" />
+    <AssociationSet Name="FK_program_section" Association="Self.FK_program_section">
+      <End Role="section" EntitySet="section" />
       <End Role="program" EntitySet="program" />
+    </AssociationSet>
+    <AssociationSet Name="FK_section_division" Association="Self.FK_section_division">
+      <End Role="division" EntitySet="division" />
+      <End Role="section" EntitySet="section" />
+    </AssociationSet>
+    <AssociationSet Name="FK_section_section" Association="Self.FK_section_section">
+      <End Role="section" EntitySet="section" />
+      <End Role="section1" EntitySet="section" />
     </AssociationSet>
   </EntityContainer>
 </Schema>

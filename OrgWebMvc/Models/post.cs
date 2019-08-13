@@ -20,13 +20,13 @@ namespace OrgWebMvc.Models
         public int user_id { get; set; }
         [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX, Required = true)]
         public string title { get; set; }
-        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTAREA, Required = true, SkipInTable =true)]
+        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTAREA, Required = true, SkipInTable = true)]
         public string body { get; set; }
         [FieldAttribute(FieldType = AttributeConstant.TYPE_DATE, Required = true)]
         public System.DateTime date { get; set; }
         public int type { get; set; }
         public Nullable<int> post_id { get; set; }
-    
+
         public virtual user user { get; set; }
     }
 }

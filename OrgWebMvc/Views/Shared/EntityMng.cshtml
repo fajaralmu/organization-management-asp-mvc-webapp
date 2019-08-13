@@ -7,6 +7,7 @@
 <div>
    
     <script src="~/Scripts/ajax.js"></script>
+    <script src="~/Scripts/text-editor.js"></script>
     <script type="text/javascript">
         let fetchCount = 0;
         let limit = 5;
@@ -23,6 +24,10 @@
         let firstLoad = function () {
 
         };
+        document.body.onload = function () {
+            initDoc();
+        }
+
     </script>
     <h2>@ViewData["Entity"] Management</h2>
     <!--@@CustomHelper.GenerateForm((Type)ViewData["EntityType"])-->

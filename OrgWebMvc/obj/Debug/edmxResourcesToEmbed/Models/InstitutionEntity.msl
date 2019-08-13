@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-  <EntityContainerMapping StorageEntityContainer="INST_DBModelStoreContainer" CdmEntityContainer="INST_DBEntities">
+  <EntityContainerMapping StorageEntityContainer="OrgDbModelStoreContainer" CdmEntityContainer="ORG_DBEntities">
     <EntitySetMapping Name="divisions">
-      <EntityTypeMapping TypeName="INST_DBModel.division">
+      <EntityTypeMapping TypeName="OrgDbModel.division">
         <MappingFragment StoreEntitySet="division">
           <ScalarProperty Name="id" ColumnName="id" />
           <ScalarProperty Name="name" ColumnName="name" />
@@ -12,9 +12,8 @@
       </EntityTypeMapping>
     </EntitySetMapping>
     <EntitySetMapping Name="events">
-      <EntityTypeMapping TypeName="INST_DBModel.event">
+      <EntityTypeMapping TypeName="OrgDbModel.event">
         <MappingFragment StoreEntitySet="event">
-          <ScalarProperty Name="name" ColumnName="name" />
           <ScalarProperty Name="id" ColumnName="id" />
           <ScalarProperty Name="program_id" ColumnName="program_id" />
           <ScalarProperty Name="user_id" ColumnName="user_id" />
@@ -23,42 +22,67 @@
           <ScalarProperty Name="participant" ColumnName="participant" />
           <ScalarProperty Name="info" ColumnName="info" />
           <ScalarProperty Name="done" ColumnName="done" />
+          <ScalarProperty Name="name" ColumnName="name" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
     <EntitySetMapping Name="members">
-      <EntityTypeMapping TypeName="INST_DBModel.member">
+      <EntityTypeMapping TypeName="OrgDbModel.member">
         <MappingFragment StoreEntitySet="member">
           <ScalarProperty Name="id" ColumnName="id" />
           <ScalarProperty Name="name" ColumnName="name" />
-          <ScalarProperty Name="division_id" ColumnName="division_id" />
-          <ScalarProperty Name="position" ColumnName="position" />
+          <ScalarProperty Name="position_id" ColumnName="position_id" />
+          <ScalarProperty Name="description" ColumnName="description" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="positions">
+      <EntityTypeMapping TypeName="OrgDbModel.position">
+        <MappingFragment StoreEntitySet="position">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="name" ColumnName="name" />
+          <ScalarProperty Name="section_id" ColumnName="section_id" />
+          <ScalarProperty Name="parent_position_id" ColumnName="parent_position_id" />
+          <ScalarProperty Name="description" ColumnName="description" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="posts">
+      <EntityTypeMapping TypeName="OrgDbModel.post">
+        <MappingFragment StoreEntitySet="post">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="user_id" ColumnName="user_id" />
+          <ScalarProperty Name="title" ColumnName="title" />
+          <ScalarProperty Name="body" ColumnName="body" />
+          <ScalarProperty Name="date" ColumnName="date" />
+          <ScalarProperty Name="type" ColumnName="type" />
+          <ScalarProperty Name="post_id" ColumnName="post_id" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
     <EntitySetMapping Name="programs">
-      <EntityTypeMapping TypeName="INST_DBModel.program">
+      <EntityTypeMapping TypeName="OrgDbModel.program">
         <MappingFragment StoreEntitySet="program">
           <ScalarProperty Name="id" ColumnName="id" />
           <ScalarProperty Name="name" ColumnName="name" />
           <ScalarProperty Name="description" ColumnName="description" />
-          <ScalarProperty Name="division_id" ColumnName="division_id" />
+          <ScalarProperty Name="sect_id" ColumnName="sect_id" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <EntitySetMapping Name="sysdiagrams">
-      <EntityTypeMapping TypeName="INST_DBModel.sysdiagram">
-        <MappingFragment StoreEntitySet="sysdiagrams">
+    <EntitySetMapping Name="sections">
+      <EntityTypeMapping TypeName="OrgDbModel.section">
+        <MappingFragment StoreEntitySet="section">
+          <ScalarProperty Name="id" ColumnName="id" />
           <ScalarProperty Name="name" ColumnName="name" />
-          <ScalarProperty Name="principal_id" ColumnName="principal_id" />
-          <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
-          <ScalarProperty Name="version" ColumnName="version" />
-          <ScalarProperty Name="definition" ColumnName="definition" />
+          <ScalarProperty Name="division_id" ColumnName="division_id" />
+          <ScalarProperty Name="parent_section_id" ColumnName="parent_section_id" />
+          <ScalarProperty Name="description" ColumnName="description" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
     <EntitySetMapping Name="users">
-      <EntityTypeMapping TypeName="INST_DBModel.user">
+      <EntityTypeMapping TypeName="OrgDbModel.user">
         <MappingFragment StoreEntitySet="user">
           <ScalarProperty Name="id" ColumnName="id" />
           <ScalarProperty Name="username" ColumnName="username" />
@@ -66,19 +90,6 @@
           <ScalarProperty Name="password" ColumnName="password" />
           <ScalarProperty Name="email" ColumnName="email" />
           <ScalarProperty Name="admin" ColumnName="admin" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <EntitySetMapping Name="posts">
-      <EntityTypeMapping TypeName="INST_DBModel.post">
-        <MappingFragment StoreEntitySet="post">
-          <ScalarProperty Name="post_id" ColumnName="post_id" />
-          <ScalarProperty Name="type" ColumnName="type" />
-          <ScalarProperty Name="date" ColumnName="date" />
-          <ScalarProperty Name="body" ColumnName="body" />
-          <ScalarProperty Name="title" ColumnName="title" />
-          <ScalarProperty Name="user_id" ColumnName="user_id" />
-          <ScalarProperty Name="id" ColumnName="id" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

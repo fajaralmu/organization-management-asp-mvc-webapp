@@ -124,13 +124,16 @@ namespace OrgWebMvc.Main.Service
             string id = Params.ContainsKey("id") ? (string)Params["id"] : "";
             string user_id = Params.ContainsKey("user_id") ? Params["user_id"].ToString() : "";
             string name = Params.ContainsKey("name") ? (string)Params["name"] : "";
-            string division = Params.ContainsKey("division") ? (string)Params["division"] : "";
+            string section = Params.ContainsKey("section") ? (string)Params["section"] : "";
             string orderby = Params.ContainsKey("orderby") ? (string)Params["orderby"] : "";
             string ordertype = Params.ContainsKey("ordertype") ? (string)Params["ordertype"] : "";
 
-            string sql = "select * from program left join division on division.id = program.division_id where program.id like '%" + id + "%'" +
+            string sql = "select * from program "+
+                " left join section on section.id = program.sect_id "+
+                " left join division on division.id = section.division_id " +
+                " where program.id like '%" + id + "%'" +
                 " and program.name like '%" + name + "%'" +
-                " and division.name like '%" + division + "%'" +
+                " and section.name like '%" + section + "%'" +
                  (StringUtil.NotNullAndNotBlank(user_id) ? " and division.user_id=" + user_id : "");
             if (!orderby.Equals(""))
             {

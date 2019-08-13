@@ -8,63 +8,73 @@ using InstApp.Util.Common;
 
 namespace OrgWebMvc.Main.Service
 {
-    public class EventService
+    public class SectionService
+
         : BaseService
     {
 
         public override List<object> ObjectList(int offset, int limit)
         {
             List<object> ObjList = new List<object>();
-            var Sql = (from p in dbEntities.events orderby p.name select p);
-            List<@event> List = Sql.Skip(offset * limit).Take(limit).ToList();
-            foreach (@event c in List)
+            var Sql = (from p in dbEntities.sections orderby p.name select p);
+            List<section> List = Sql.Skip(offset * limit).Take(limit).ToList();
+            foreach (section c in List)
             {
                 ObjList.Add(c);
             }
-            count = dbEntities.events.Count();
+            count = dbEntities.sections.Count();
             return ObjList;
         }
-
         public override object Update(object Obj)
         {
             Refresh();
-            @event @event = (@event)Obj;
-            @event DBEvent = (@event)GetById(@event.id);
-            if (DBEvent == null)
+            section section = (section)Obj;
+            section DBsection = (section)GetById(section.id);
+            if (DBsection == null)
             {
                 return null;
             }
-            dbEntities.Entry(DBEvent).CurrentValues.SetValues(@event);
-            dbEntities.SaveChanges();
-            return @event;
+            dbEntities.Entry(DBsection).CurrentValues.SetValues(section);
+            try
+            {
+                dbEntities.SaveChanges();
+            }catch(Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
+            return section;
         }
 
         public override object GetById(object Id)
         {
-            @event @event = (from o in dbEntities.events where o.id == (int)Id select o).SingleOrDefault();
-            return @event;
+            section section = (from c in dbEntities.sections where c.id == (int)Id select c).SingleOrDefault();
+            return section;
         }
 
         public override void Delete(object Obj)
         {
-            @event @event = (@event)Obj;
-            dbEntities.events.Remove(@event);
+            section section = (section)Obj;
+            dbEntities.sections.Remove(section);
             dbEntities.SaveChanges();
         }
 
+
+
+
         public override int ObjectCount()
         {
-            return count;// dbEntities.events.Count();
+            return count;// dbEntities.sections.Count();
         }
 
         public override object Add(object Obj)
         {
-            @event @event = (@event)Obj;
-            @event newEvent = dbEntities.events.Add(@event);
+            section section = (section)Obj;
+            section newsection = dbEntities.sections.Add(section);
             try
             {
                 dbEntities.SaveChanges();
-                return newEvent;
+                return newsection;
             }
             catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
             {
@@ -91,25 +101,25 @@ namespace OrgWebMvc.Main.Service
         private List<object> ListWithSql(string sql, int limit = 0, int offset = 0)
         {
             List<object> categoryList = new List<object>();
-            var Events = dbEntities.events
+            var sections = dbEntities.sections
                 .SqlQuery(sql
                 ).
-                Select(@event => new
+                Select(section => new
                 {
-                    @event
+                    section
                 });
             if (limit > 0)
             {
-                Events = Events.Skip(offset * limit).Take(limit).ToList();
+                sections = sections.Skip(offset * limit).Take(limit).ToList();
             }
             else
             {
-                Events = Events.ToList();
+                sections = sections.ToList();
             }
-            foreach (var u in Events)
+            foreach (var u in sections)
             {
-                @event @event = u.@event;
-                categoryList.Add(@event);
+                section section = u.section;
+                categoryList.Add(section);
             }
 
             return categoryList;
@@ -120,31 +130,19 @@ namespace OrgWebMvc.Main.Service
 
             string id = Params.ContainsKey("id") ? Params["id"].ToString() : "";
             string name = Params.ContainsKey("name") ? (string)Params["name"] : "";
-            string program = Params.ContainsKey("program") ? (string)Params["program"] : "";
-            string location = Params.ContainsKey("location") ? (string)Params["location"] : "";
-            string participant = Params.ContainsKey("participant") ? Params["participant"].ToString() : "";
-            string info = Params.ContainsKey("info") ? (string)Params["info"] : "";
-
-            string day = Params.ContainsKey("date.day") ? (string)Params["date.day"] : "";
-            string month = Params.ContainsKey("date.month") ? (string)Params["date.month"] : "";
-            string year = Params.ContainsKey("date.year") ? (string)Params["date.year"] : "";
-
+            string division = Params.ContainsKey("division") ? (string)Params["division"] : "";
             string user_id = Params.ContainsKey("user_id") ? Params["user_id"].ToString() : "";
             string orderby = Params.ContainsKey("orderby") ? (string)Params["orderby"] : "";
             string ordertype = Params.ContainsKey("ordertype") ? (string)Params["ordertype"] : "";
 
-            string sql = "select * from [event] left join [program] on [program].[id]=[event].[program_id] " +
-                " left join [section] on [section].[id] = [program].[sect_id] "+
-                " left join [division] on [division].[id] = [section].[division_id] where [event].[id] like '%" + id + "%'" +
-                " and [event].[name] like '%" + name + "%' " +
-                " and [program].[name]  like '%" + program + "%' " +
-                " and [event].[location]  like '%" + location + "%' " +
-                " and [event].[participant]  like '%" + participant + "%' " +
-                " and [event].[info]  like '%" + info + "%' " +
-                (StringUtil.NotNullAndNotBlank(user_id) ? " and [division].[user_id] = " + user_id : "") +
-                (StringUtil.NotNullAndNotBlank(day) ? " and DAY([event].[date]) = " + day : "") +
-                (StringUtil.NotNullAndNotBlank(month) ? " and MONTH([event].[date]) = " + month : "") +
-                (StringUtil.NotNullAndNotBlank(year) ? " and YEAR([event].[date]) = " + year : "");
+            string sql = "select * from section " +
+          //      " left join section on section.id = section.section_id " +
+         //        " left join section on section.id = section.section_id " +
+                " left join division on division.id = section.division_id " +
+                " where section.id like '%" + id + "%'" +
+                " and section.name like '%" + name + "%' " +
+                " and division.name like '%" + division + "%' " +
+                (StringUtil.NotNullAndNotBlank(user_id) ? " and division.user_id=" + user_id : "");
             if (!orderby.Equals(""))
             {
                 sql += " ORDER BY " + orderby;
@@ -153,14 +151,14 @@ namespace OrgWebMvc.Main.Service
                     sql += " " + ordertype;
                 }
             }
-            count = countSQL(sql, dbEntities.events);
+            count = countSQL(sql, dbEntities.sections);
             return ListWithSql(sql, limit, offset);
         }
 
 
         public override int countSQL(string sql, object dbSet)
         {
-            return ((DbSet<@event>)dbSet)
+            return ((DbSet<section>)dbSet)
                 .SqlQuery(sql).Count();
         }
 

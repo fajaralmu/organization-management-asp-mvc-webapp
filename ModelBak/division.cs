@@ -18,23 +18,20 @@ namespace OrgWebMvc.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public division()
         {
-            this.members = new HashSet<member>();
-            this.programs = new HashSet<program>();
+            this.sections = new HashSet<section>();
         }
-    
-        [FieldAttribute(FieldType =AttributeConstant.TYPE_ID_AI)]
+
+        [FieldAttribute(FieldType = AttributeConstant.TYPE_ID_AI, Required = true)]
         public int id { get; set; }
-        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX)]
+        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX, Required = true)]
         public string name { get; set; }
-        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTAREA)]
+        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTAREA, Required = true)]
         public string description { get; set; }
-      //  [FieldAttribute(FieldType = AttributeConstant.)]
+        //  [FieldAttribute(FieldType = AttributeConstant.)]
         public int user_id { get; set; }
-    
+
         public virtual user user { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<member> members { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<program> programs { get; set; }
+        public virtual ICollection<section> sections { get; set; }
     }
 }

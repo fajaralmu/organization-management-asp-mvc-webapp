@@ -8,63 +8,66 @@ using InstApp.Util.Common;
 
 namespace OrgWebMvc.Main.Service
 {
-    public class EventService
+    public class PositionService
+
         : BaseService
     {
 
         public override List<object> ObjectList(int offset, int limit)
         {
             List<object> ObjList = new List<object>();
-            var Sql = (from p in dbEntities.events orderby p.name select p);
-            List<@event> List = Sql.Skip(offset * limit).Take(limit).ToList();
-            foreach (@event c in List)
+            var Sql = (from p in dbEntities.positions orderby p.name select p);
+            List<position> List = Sql.Skip(offset * limit).Take(limit).ToList();
+            foreach (position c in List)
             {
                 ObjList.Add(c);
             }
-            count = dbEntities.events.Count();
+            count = dbEntities.positions.Count();
             return ObjList;
         }
-
         public override object Update(object Obj)
         {
             Refresh();
-            @event @event = (@event)Obj;
-            @event DBEvent = (@event)GetById(@event.id);
-            if (DBEvent == null)
+            position position = (position)Obj;
+            position DBposition = (position)GetById(position.id);
+            if (DBposition == null)
             {
                 return null;
             }
-            dbEntities.Entry(DBEvent).CurrentValues.SetValues(@event);
+            dbEntities.Entry(DBposition).CurrentValues.SetValues(position);
             dbEntities.SaveChanges();
-            return @event;
+            return position;
         }
 
         public override object GetById(object Id)
         {
-            @event @event = (from o in dbEntities.events where o.id == (int)Id select o).SingleOrDefault();
-            return @event;
+            position position = (from c in dbEntities.positions where c.id == (int)Id select c).SingleOrDefault();
+            return position;
         }
 
         public override void Delete(object Obj)
         {
-            @event @event = (@event)Obj;
-            dbEntities.events.Remove(@event);
+            position position = (position)Obj;
+            dbEntities.positions.Remove(position);
             dbEntities.SaveChanges();
         }
 
+
+
+
         public override int ObjectCount()
         {
-            return count;// dbEntities.events.Count();
+            return count;// dbEntities.positions.Count();
         }
 
         public override object Add(object Obj)
         {
-            @event @event = (@event)Obj;
-            @event newEvent = dbEntities.events.Add(@event);
+            position position = (position)Obj;
+            position newposition = dbEntities.positions.Add(position);
             try
             {
                 dbEntities.SaveChanges();
-                return newEvent;
+                return newposition;
             }
             catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
             {
@@ -91,25 +94,25 @@ namespace OrgWebMvc.Main.Service
         private List<object> ListWithSql(string sql, int limit = 0, int offset = 0)
         {
             List<object> categoryList = new List<object>();
-            var Events = dbEntities.events
+            var positions = dbEntities.positions
                 .SqlQuery(sql
                 ).
-                Select(@event => new
+                Select(position => new
                 {
-                    @event
+                    position
                 });
             if (limit > 0)
             {
-                Events = Events.Skip(offset * limit).Take(limit).ToList();
+                positions = positions.Skip(offset * limit).Take(limit).ToList();
             }
             else
             {
-                Events = Events.ToList();
+                positions = positions.ToList();
             }
-            foreach (var u in Events)
+            foreach (var u in positions)
             {
-                @event @event = u.@event;
-                categoryList.Add(@event);
+                position position = u.position;
+                categoryList.Add(position);
             }
 
             return categoryList;
@@ -120,31 +123,19 @@ namespace OrgWebMvc.Main.Service
 
             string id = Params.ContainsKey("id") ? Params["id"].ToString() : "";
             string name = Params.ContainsKey("name") ? (string)Params["name"] : "";
-            string program = Params.ContainsKey("program") ? (string)Params["program"] : "";
-            string location = Params.ContainsKey("location") ? (string)Params["location"] : "";
-            string participant = Params.ContainsKey("participant") ? Params["participant"].ToString() : "";
-            string info = Params.ContainsKey("info") ? (string)Params["info"] : "";
-
-            string day = Params.ContainsKey("date.day") ? (string)Params["date.day"] : "";
-            string month = Params.ContainsKey("date.month") ? (string)Params["date.month"] : "";
-            string year = Params.ContainsKey("date.year") ? (string)Params["date.year"] : "";
-
+            string section = Params.ContainsKey("section") ? (string)Params["section"] : "";
             string user_id = Params.ContainsKey("user_id") ? Params["user_id"].ToString() : "";
             string orderby = Params.ContainsKey("orderby") ? (string)Params["orderby"] : "";
             string ordertype = Params.ContainsKey("ordertype") ? (string)Params["ordertype"] : "";
 
-            string sql = "select * from [event] left join [program] on [program].[id]=[event].[program_id] " +
-                " left join [section] on [section].[id] = [program].[sect_id] "+
-                " left join [division] on [division].[id] = [section].[division_id] where [event].[id] like '%" + id + "%'" +
-                " and [event].[name] like '%" + name + "%' " +
-                " and [program].[name]  like '%" + program + "%' " +
-                " and [event].[location]  like '%" + location + "%' " +
-                " and [event].[participant]  like '%" + participant + "%' " +
-                " and [event].[info]  like '%" + info + "%' " +
-                (StringUtil.NotNullAndNotBlank(user_id) ? " and [division].[user_id] = " + user_id : "") +
-                (StringUtil.NotNullAndNotBlank(day) ? " and DAY([event].[date]) = " + day : "") +
-                (StringUtil.NotNullAndNotBlank(month) ? " and MONTH([event].[date]) = " + month : "") +
-                (StringUtil.NotNullAndNotBlank(year) ? " and YEAR([event].[date]) = " + year : "");
+            string sql = "select * from position " +
+               // " left join position on position.id = position.parent_position_id " +
+                 " left join section on section.id = position.section_id " +
+                " left join division on division.id = section.division_id " +
+                " where position.id like '%" + id + "%' " +
+                " and position.name like '%" + name + "%' " +
+                " and section.name like '%" + section + "%' " +
+                (StringUtil.NotNullAndNotBlank(user_id) ? " and division.user_id=" + user_id : "");
             if (!orderby.Equals(""))
             {
                 sql += " ORDER BY " + orderby;
@@ -153,14 +144,14 @@ namespace OrgWebMvc.Main.Service
                     sql += " " + ordertype;
                 }
             }
-            count = countSQL(sql, dbEntities.events);
+            count = countSQL(sql, dbEntities.positions);
             return ListWithSql(sql, limit, offset);
         }
 
 
         public override int countSQL(string sql, object dbSet)
         {
-            return ((DbSet<@event>)dbSet)
+            return ((DbSet<position>)dbSet)
                 .SqlQuery(sql).Count();
         }
 

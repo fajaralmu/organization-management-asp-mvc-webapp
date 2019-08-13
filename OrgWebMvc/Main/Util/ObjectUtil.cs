@@ -60,7 +60,7 @@ namespace InstApp.Util.Common
             {
                 return null;
             }
-            for(int i = 0; i < Values.Length; i++)
+            for (int i = 0; i < Values.Length; i++)
             {
                 if (Value.Equals(Values[i]))
                 {
@@ -72,6 +72,10 @@ namespace InstApp.Util.Common
 
         public static object GetValueFromProp(string propname, object Object)
         {
+            if(Object == null)
+            {
+                return null;
+            }
             return Object.GetType().GetProperty(propname).GetValue(Object);
         }
 
@@ -137,8 +141,9 @@ namespace InstApp.Util.Common
         }
 
         public static List<object> ICollectionToListObj(ICollection Collection)
-        {   List<object> List = new List<object>();
-            foreach(var item in Collection)
+        {
+            List<object> List = new List<object>();
+            foreach (var item in Collection)
             {
                 if (item == null)
                     continue;
@@ -153,7 +158,7 @@ namespace InstApp.Util.Common
             {
                 return null;
             }
-                foreach (string key in ObjMap.Keys)
+            foreach (string key in ObjMap.Keys)
             {
                 object keyVal = ObjMap[key];
                 if (null != keyVal && HasProperty(key, OBJ))
@@ -162,7 +167,7 @@ namespace InstApp.Util.Common
 
                     object Value = null;
                     Type KeyType = keyVal.GetType();
-                    
+
 
 
                     if (KeyType.Equals(typeof(Int64)))
@@ -198,14 +203,21 @@ namespace InstApp.Util.Common
                         }
                         Value = ObjList;
                     }
-                    if(Value == null || Value.ToString() == "")
+                    if (Value == null || Value.ToString() == "")
                     {
                         continue;
                     }
                     if (PropInfo.PropertyType.Equals(typeof(System.Int32)))
                     {
                         Value = int.Parse(Value.ToString());
-                    }else if (PropInfo.PropertyType.Equals(typeof(System.DateTime)))
+                    }
+                    else if (PropInfo.PropertyType.Equals(typeof(Nullable<System.Int32>)))
+                    {
+                        int IntVal = int.Parse(Value.ToString());
+                        Value = new Nullable<int>(IntVal);
+
+                    }
+                    else if (PropInfo.PropertyType.Equals(typeof(System.DateTime)))
                     {
                         string DateStr = Value.ToString();
                         DateTime Date = DateTime.Now;
@@ -220,18 +232,18 @@ namespace InstApp.Util.Common
         }
 
 
-        public static string ListToDelimitedString(object ListOfObject, string Delimiter,string ValDelimiter, params string[] Props)
+        public static string ListToDelimitedString(object ListOfObject, string Delimiter, string ValDelimiter, params string[] Props)
         {
             String ListString = "";
-            if (ListOfObject == null )
+            if (ListOfObject == null)
                 return "";
             List<object> List = ICollectionToListObj((ICollection)ListOfObject);
-            if(List == null || List.Count == 0)
+            if (List == null || List.Count == 0)
             {
                 return "";
             }
             string[] ValidProps = ValidateProps(Props, List.ElementAt(0));
-           
+
             for (int i = 0; i < List.Count; i++)
 
             {

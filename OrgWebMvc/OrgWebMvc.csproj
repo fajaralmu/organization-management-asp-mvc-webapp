@@ -216,24 +216,39 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Main\API\WebResponse.cs" />
     <Compile Include="Main\Service\EventService.cs" />
+    <Compile Include="Main\Service\SectionService.cs" />
+    <Compile Include="Main\Service\PositionService.cs" />
     <Compile Include="Main\Service\PostService.cs" />
     <Compile Include="Main\Service\MemberService.cs" />
     <Compile Include="Main\Service\ProgramService.cs" />
     <Compile Include="Main\Service\LoggedUserIdentity.cs" />
     <Compile Include="Main\Service\DivisionService.cs" />
+    <Compile Include="Main\TxtResources\MainDir.cs" />
     <Compile Include="Main\Util\BreakLine.cs" />
     <Compile Include="Main\Util\CustomHelper.cs" />
+    <Compile Include="Main\Util\HtmlConstant.cs" />
     <Compile Include="Main\Util\HtmlTag.cs" />
     <Compile Include="Main\Util\InputTag.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Main\Annotation\AttributeConstant.cs" />
+    <Compile Include="Main\Annotation\FieldAttribute.cs" />
+    <Compile Include="Main\Service\BaseService.cs" />
+    <Compile Include="Main\Service\UserService.cs" />
+    <Compile Include="Main\Util\ControlUtil.cs" />
+    <Compile Include="Main\Util\DateUtil.cs" />
+    <Compile Include="Main\Util\JSONUtil.cs" />
+    <Compile Include="Main\Util\ObjectUtil.cs" />
+    <Compile Include="Main\Util\StringUtil.cs" />
+    <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\division.cs">
       <DependentUpon>InstitutionEntity.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\event.cs">
       <DependentUpon>InstitutionEntity.tt</DependentUpon>
     </Compile>
-    <Compile Include="Global.asax.cs">
-      <DependentUpon>Global.asax</DependentUpon>
-    </Compile>
+    <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\InstitutionEntity.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -249,35 +264,27 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>InstitutionEntity.edmx</DependentUpon>
     </Compile>
-    <Compile Include="Main\Annotation\AttributeConstant.cs" />
-    <Compile Include="Main\Annotation\FieldAttribute.cs" />
-    <Compile Include="Main\Service\BaseService.cs" />
-    <Compile Include="Main\Service\UserService.cs" />
-    <Compile Include="Main\Util\ControlUtil.cs" />
-    <Compile Include="Main\Util\DateUtil.cs" />
-    <Compile Include="Main\Util\JSONUtil.cs" />
-    <Compile Include="Main\Util\ObjectUtil.cs" />
-    <Compile Include="Main\Util\StringUtil.cs" />
+    <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\member.cs">
       <DependentUpon>InstitutionEntity.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\IdentityModels.cs" />
-    <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\position.cs">
+      <DependentUpon>InstitutionEntity.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\post.cs">
       <DependentUpon>InstitutionEntity.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\program.cs">
       <DependentUpon>InstitutionEntity.tt</DependentUpon>
     </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Startup.cs" />
-    <Compile Include="Models\sysdiagram.cs">
+    <Compile Include="Models\section.cs">
       <DependentUpon>InstitutionEntity.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\user.cs">
       <DependentUpon>InstitutionEntity.tt</DependentUpon>
     </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Img\loading-disk.gif" />
@@ -293,6 +300,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Main\TxtResources\Rtf.txt" />
     <Content Include="Models\InstitutionEntity.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>InstitutionEntity.edmx</DependentUpon>
@@ -315,6 +323,7 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Scripts\bootstrap.min.js.map" />
     <EntityDeploy Include="Models\InstitutionEntity.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>InstitutionEntity.Designer.cs</LastGenOutput>
@@ -322,7 +331,6 @@
     <Content Include="Models\InstitutionEntity.edmx.diagram">
       <DependentUpon>InstitutionEntity.edmx</DependentUpon>
     </Content>
-    <Content Include="Scripts\bootstrap.min.js.map" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
@@ -339,6 +347,7 @@
     <Content Include="Scripts\popper.min.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\text-editor.js" />
     <Content Include="Scripts\util.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config" />

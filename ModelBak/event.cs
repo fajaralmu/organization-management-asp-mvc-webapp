@@ -15,24 +15,30 @@ namespace OrgWebMvc.Models
 
     public partial class @event
     {
-        [FieldAttribute(FieldType = AttributeConstant.TYPE_ID_AI)]
+        public @event()
+        {
+            done = 0;
+        }
+
+        [FieldAttribute(FieldType = AttributeConstant.TYPE_ID_AI, Required = true)]
         public int id { get; set; }
-        [FieldAttribute(Required = true, FieldType = AttributeConstant.TYPE_DROPDOWN, FieldName = "Program Name", ClassReference = "program", ClassAttributeConverter = "name")]
+        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX, Required = true)]
+        public string name { get; set; }
+        [FieldAttribute(Required = true, FieldType = AttributeConstant.TYPE_DROPDOWN, FieldName = "Program Name", ClassRefPropName = "program1", ClassReference = "program", ClassAttributeConverter = "name")]
         public int program_id { get; set; }
         public int user_id { get; set; }
-        [FieldAttribute(FieldType = AttributeConstant.TYPE_DATE)]
+        [FieldAttribute(FieldType = AttributeConstant.TYPE_DATE, Required = true)]
         public System.DateTime date { get; set; }
-        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX)]
+        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX, Required = true)]
         public string location { get; set; }
-        [FieldAttribute(FieldType = AttributeConstant.TYPE_NUMBER)]
+        [FieldAttribute(FieldType = AttributeConstant.TYPE_NUMBER, Required = true)]
         public int participant { get; set; }
         [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTAREA)]
         public string info { get; set; }
-        [FieldAttribute(Required = true, FieldType = AttributeConstant.TYPE_DROPDOWN, DropDownValues = new object[] { 0, 1 }, DropDownItemName = new object[] { "not done", "done" })]
+        [FieldAttribute(Required = true, FieldType = AttributeConstant.TYPE_DROPDOWN, Values = new object[] { 0, 1 }, ItemNames = new object[] { "not done", "done" })]
         public int done { get; set; }
-        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX)]
-        public string name { get; set; }
 
-        public virtual program program { get; set; }
+
+        public virtual program program1 { get; set; }
     }
 }

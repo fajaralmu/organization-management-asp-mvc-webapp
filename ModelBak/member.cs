@@ -17,13 +17,19 @@ namespace OrgWebMvc.Models
     {
         [FieldAttribute(FieldType = AttributeConstant.TYPE_ID_AI)]
         public int id { get; set; }
-        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX)]
+        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX, Required = true)]
         public string name { get; set; }
-        [FieldAttribute(Required = true, FieldType = AttributeConstant.TYPE_DROPDOWN, FieldName = "Division", ClassReference = "division", ClassAttributeConverter = "name")]
-        public int division_id { get; set; }
-        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX)]
-        public string position { get; set; }
+        [FieldAttribute(Required = true, FieldType = AttributeConstant.TYPE_DROPDOWN, FieldName = "Position", ClassReference = "position1", ClassAttributeConverter = "name")]
+        public int position_id { get; set; }
+        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX, Required = true)]
+        public string description { get; set; }
+
+
+        //public int id { get; set; }
+        //public string name { get; set; }
+        //public int position_id { get; set; }
+        //public string description { get; set; }
     
-        public virtual division division { get; set; }
+        public virtual position position1 { get; set; }
     }
 }

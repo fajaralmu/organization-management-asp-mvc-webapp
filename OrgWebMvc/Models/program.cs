@@ -15,18 +15,28 @@ namespace OrgWebMvc.Models
 
     public partial class program
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public program()
+        {
+            this.events = new HashSet<@event>();
+        }
+
         [FieldAttribute(FieldType = AttributeConstant.TYPE_ID_AI)]
         public int id { get; set; }
         [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX, Required = true)]
         public string name { get; set; }
         [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTAREA, Required = true)]
         public string description { get; set; }
-        [FieldAttribute(Required = true, FieldType = AttributeConstant.TYPE_DROPDOWN, FieldName = "Division", ClassReference = "division", ClassAttributeConverter = "name")]
-        public int division_id { get; set; }
+        [FieldAttribute(Required = true, FieldType = AttributeConstant.TYPE_DROPDOWN, FieldName = "Section", ClassReference = "section", ClassAttributeConverter = "name")]
+        public int sect_id { get; set; }
+
+        //public int id { get; set; }
+        //public string name { get; set; }
+        //public string description { get; set; }
+        //public int sect_id { get; set; }
     
-        public virtual division division { get; set; }
-        public virtual @event @event { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<@event> events { get; set; }
+        public virtual section section { get; set; }
     }
 }

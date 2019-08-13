@@ -10,7 +10,7 @@ namespace OrgWebMvc.Main.Service
     public class BaseService
     {
         public int count = 0;
-        protected static INST_DBEntities dbEntities;
+        protected static ORG_DBEntities dbEntities;
 
         public BaseService()
         {
@@ -116,7 +116,7 @@ namespace OrgWebMvc.Main.Service
         {
             if (dbEntities != null)
                 dbEntities.Dispose();
-            dbEntities = INST_DBEntities.Instance();
+            dbEntities = ORG_DBEntities.Instance();
 
         }
 
