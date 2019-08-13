@@ -126,27 +126,11 @@ namespace OrgWebMvc.Controllers
             switch (Action)
             {
                 case "List":
-                    List<object> ObjList = BaseService.GetObjectList(EntitySvc, Request, LoggedUser);
-                    List<division> Divisions = (List<division>)ObjectUtil.ConvertList(ObjList, typeof(List<division>));
-                    List<division> ListToSend = new List<division>();
-                    foreach (division D in Divisions)
-                    {
-                        division Div = (division)ObjectUtil.GetObjectValues(new string[]
-                        {
+                    Response = MVCUtil.generateResponseList(EntitySvc, Request, LoggedUser, new string[]
+                            {
                             "id","name","description","user_id"
-                        }, D);
-                        ListToSend.Add(Div);
-                    }
-                    object ResponseData = null;
-                    if (StringUtil.NotNullAndNotBlank(Request.Form["Type"]) && Request.Form["Type"].ToString().Equals("JSONList"))
-                    {
-                        ResponseData = ListToSend;
-                    }
-                    else
-                    {
-                        ResponseData = CustomHelper.GenerateDataTableString(typeof(division), ObjList);
-                    }
-                    Response = new WebResponse(0, "Success", ResponseData, EntitySvc.count);
+                            }, typeof(division));
+
                     break;
                 case "Form":
                     Response = MVCUtil.generateResponseWithForm(typeof(division), EntitySvc, Request);
@@ -187,27 +171,11 @@ namespace OrgWebMvc.Controllers
             switch (Action)
             {
                 case "List":
-                    List<object> ObjList = BaseService.GetObjectList(EntitySvc, Request, LoggedUser);
-                    List<program> programs = (List<program>)ObjectUtil.ConvertList(ObjList, typeof(List<program>));
-                    List<program> ListToSend = new List<program>();
-                    foreach (program P in programs)
-                    {
-                        program Div = (program)ObjectUtil.GetObjectValues(new string[]
-                        {
+                    Response = MVCUtil.generateResponseList(EntitySvc, Request, LoggedUser, new string[]
+                            {
                             "id","name","description","sect_id"
-                        }, P);
-                        ListToSend.Add(Div);
-                    }
-                    object ResponseData = null;
-                    if (StringUtil.NotNullAndNotBlank(Request.Form["Type"]) && Request.Form["Type"].ToString().Equals("JSONList"))
-                    {
-                        ResponseData = ListToSend;
-                    }
-                    else
-                    {
-                        ResponseData = CustomHelper.GenerateDataTableString(typeof(program), ObjList);
-                    }
-                    Response = new WebResponse(0, "Success", ResponseData, EntitySvc.count); break;
+                         }, typeof(program));
+                    break;
                 case "Form":
                     Response = MVCUtil.generateResponseWithForm(typeof(program), EntitySvc, Request);
                     break;
@@ -244,27 +212,11 @@ namespace OrgWebMvc.Controllers
             switch (Action)
             {
                 case "List":
-                    List<object> ObjList = BaseService.GetObjectList(EntitySvc, Request, LoggedUser);
-                    List<@event> Events = (List<@event>)ObjectUtil.ConvertList(ObjList, typeof(List<@event>));
-                    List<@event> ListToSend = new List<@event>();
-                    foreach (@event E in Events)
-                    {
-                        @event Ev = (@event)ObjectUtil.GetObjectValues(new string[]
-                        {
+                    Response = MVCUtil.generateResponseList(EntitySvc, Request, LoggedUser, new string[]
+                           {
                             "id","program_id","user_id","date","location","participant","info","done","name"
-                        }, E);
-                        ListToSend.Add(Ev);
-                    }
-                    object ResponseData = null;
-                    if (StringUtil.NotNullAndNotBlank(Request.Form["Type"]) && Request.Form["Type"].ToString().Equals("JSONList"))
-                    {
-                        ResponseData = ListToSend;
-                    }
-                    else
-                    {
-                        ResponseData = CustomHelper.GenerateDataTableString(typeof(@event), ObjList);
-                    }
-                    Response = new WebResponse(0, "Success", ResponseData, EntitySvc.count); break;
+                        }, typeof(@event));
+                    break;
                 case "Form":
                     Response = MVCUtil.generateResponseWithForm(typeof(@event), EntitySvc, Request);
                     break;
@@ -303,27 +255,10 @@ namespace OrgWebMvc.Controllers
             switch (Action)
             {
                 case "List":
-                    List<object> ObjList = BaseService.GetObjectList(EntitySvc, Request, LoggedUser);
-                    List<member> Members = (List<member>)ObjectUtil.ConvertList(ObjList, typeof(List<member>));
-                    List<member> ListToSend = new List<member>();
-                    foreach (member Obj in Members)
-                    {
-                        member Mmb = (member)ObjectUtil.GetObjectValues(new string[]
-                        {
+                    Response = MVCUtil.generateResponseList(EntitySvc, Request, LoggedUser, new string[]
+                           {
                             "id","name","description","position_id"
-                        }, Obj);
-                        ListToSend.Add(Mmb);
-                    }
-                    object ResponseData = null;
-                    if (StringUtil.NotNullAndNotBlank(Request.Form["Type"]) && Request.Form["Type"].ToString().Equals("JSONList"))
-                    {
-                        ResponseData = ListToSend;
-                    }
-                    else
-                    {
-                        ResponseData = CustomHelper.GenerateDataTableString(typeof(member), ObjList);
-                    }
-                    Response = new WebResponse(0, "Success", ResponseData, EntitySvc.count);
+                        }, typeof(member));
                     break;
                 case "Form":
                     Response = MVCUtil.generateResponseWithForm(typeof(member), EntitySvc, Request);
@@ -360,27 +295,10 @@ namespace OrgWebMvc.Controllers
             switch (Action)
             {
                 case "List":
-                    List<object> ObjList = BaseService.GetObjectList(EntitySvc, Request, LoggedUser);
-                    List<section> sections = (List<section>)ObjectUtil.ConvertList(ObjList, typeof(List<section>));
-                    List<section> ListToSend = new List<section>();
-                    foreach (section Obj in sections)
+                    Response = MVCUtil.generateResponseList(EntitySvc, Request, LoggedUser, new string[]
                     {
-                        section Mmb = (section)ObjectUtil.GetObjectValues(new string[]
-                        {
                             "id","name","description","division_id","parent_section_id"
-                        }, Obj);
-                        ListToSend.Add(Mmb);
-                    }
-                    object ResponseData = null;
-                    if (StringUtil.NotNullAndNotBlank(Request.Form["Type"]) && Request.Form["Type"].ToString().Equals("JSONList"))
-                    {
-                        ResponseData = ListToSend;
-                    }
-                    else
-                    {
-                        ResponseData = CustomHelper.GenerateDataTableString(typeof(section), ObjList);
-                    }
-                    Response = new WebResponse(0, "Success", ResponseData, EntitySvc.count);
+                    }, typeof(section));
                     break;
                 case "Form":
                     Response = MVCUtil.generateResponseWithForm(typeof(section), EntitySvc, Request);
@@ -417,27 +335,10 @@ namespace OrgWebMvc.Controllers
             switch (Action)
             {
                 case "List":
-                    List<object> ObjList = BaseService.GetObjectList(EntitySvc, Request, LoggedUser);
-                    List<position> positions = (List<position>)ObjectUtil.ConvertList(ObjList, typeof(List<position>));
-                    List<position> ListToSend = new List<position>();
-                    foreach (position Obj in positions)
+                    Response = MVCUtil.generateResponseList(EntitySvc, Request, LoggedUser, new string[]
                     {
-                        position Mmb = (position)ObjectUtil.GetObjectValues(new string[]
-                        {
                             "id","name","description","section_id","parent_position_id"
-                        }, Obj);
-                        ListToSend.Add(Mmb);
-                    }
-                    object ResponseData = null;
-                    if (StringUtil.NotNullAndNotBlank(Request.Form["Type"]) && Request.Form["Type"].ToString().Equals("JSONList"))
-                    {
-                        ResponseData = ListToSend;
-                    }
-                    else
-                    {
-                        ResponseData = CustomHelper.GenerateDataTableString(typeof(position), ObjList);
-                    }
-                    Response = new WebResponse(0, "Success", ResponseData, EntitySvc.count);
+                    }, typeof(position));
                     break;
                 case "Form":
                     Response = MVCUtil.generateResponseWithForm(typeof(position), EntitySvc, Request);
@@ -474,27 +375,10 @@ namespace OrgWebMvc.Controllers
             switch (Action)
             {
                 case "List":
-                    List<object> ObjList = BaseService.GetObjectList(EntitySvc, Request, LoggedUser);
-                    List<post> posts = (List<post>)ObjectUtil.ConvertList(ObjList, typeof(List<post>));
-                    List<post> ListToSend = new List<post>();
-                    foreach (post Obj in posts)
+                    Response = MVCUtil.generateResponseList(EntitySvc, Request, LoggedUser, new string[]
                     {
-                        post Post = (post)ObjectUtil.GetObjectValues(new string[]
-                        {
-                            "id","user_id","title","body","date","type","post_id"
-                        }, Obj);
-                        ListToSend.Add(Post);
-                    }
-                    object ResponseData = null;
-                    if (StringUtil.NotNullAndNotBlank(Request.Form["Type"]) && Request.Form["Type"].ToString().Equals("JSONList"))
-                    {
-                        ResponseData = ListToSend;
-                    }
-                    else
-                    {
-                        ResponseData = CustomHelper.GenerateDataTableString(typeof(post), ObjList);
-                    }
-                    Response = new WebResponse(0, "Success", ResponseData, EntitySvc.count);
+                        "id","user_id","title","body","date","type","post_id"
+                    }, typeof(position));
                     break;
                 case "Form":
                     Response = MVCUtil.generateResponseWithForm(typeof(post), EntitySvc, Request);

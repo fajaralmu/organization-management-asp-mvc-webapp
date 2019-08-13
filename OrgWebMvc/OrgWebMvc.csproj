@@ -241,7 +241,7 @@
     <Compile Include="Main\Util\JSONUtil.cs" />
     <Compile Include="Main\Util\ObjectUtil.cs" />
     <Compile Include="Main\Util\StringUtil.cs" />
-    <Compile Include="Main\Util\ViewUtil.cs" />
+    <Compile Include="Main\Util\MVCUtil.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\division.cs">
       <DependentUpon>InstitutionEntity.tt</DependentUpon>

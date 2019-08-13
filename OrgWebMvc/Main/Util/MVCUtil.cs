@@ -72,5 +72,28 @@ namespace OrgWebMvc.Main.Util
             object toSend = ObjectUtil.GetObjectValues(objParamToSend, DBObject);
             return new WebResponse(0, "Success " + Info, toSend);
         }
+
+        internal static WebResponse generateResponseList(BaseService EntitySvc, HttpRequestBase request, user loggedUser, string[] objParamToSend, Type type)
+        {
+            List<object> ObjList = BaseService.GetObjectList(EntitySvc, request, loggedUser);
+          //  List<division> Divisions = (List<division>)ObjectUtil.ConvertList(ObjList, typeof(List<division>));
+            List<object> ListToSend = new List<object>();
+            foreach (object D in ObjList)
+            {
+                object Obj = ObjectUtil.GetObjectValues(objParamToSend, D);
+                ListToSend.Add(Obj);
+            }
+            object ResponseData = null;
+            if (StringUtil.NotNullAndNotBlank(request.Form["Type"]) && request.Form["Type"].ToString().Equals("JSONList"))
+            {
+                ResponseData = ListToSend;
+            }
+            else
+            {
+                ResponseData = CustomHelper.GenerateDataTableString(type, ObjList);
+            }
+            return new WebResponse(0, "Success", ResponseData, EntitySvc.count);
+            
+        }
     }
 }
