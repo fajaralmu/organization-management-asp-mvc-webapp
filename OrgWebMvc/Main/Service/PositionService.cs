@@ -45,11 +45,20 @@ namespace OrgWebMvc.Main.Service
             return position;
         }
 
-        public override void Delete(object Obj)
+        public override bool Delete(object Obj)
         {
-            position position = (position)Obj;
-            dbEntities.positions.Remove(position);
-            dbEntities.SaveChanges();
+            try
+            {
+                position position = (position)Obj;
+                dbEntities.positions.Remove(position);
+                dbEntities.SaveChanges();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
         }
 
 
@@ -129,7 +138,7 @@ namespace OrgWebMvc.Main.Service
             string ordertype = Params.ContainsKey("ordertype") ? (string)Params["ordertype"] : "";
 
             string sql = "select * from position " +
-               // " left join position on position.id = position.parent_position_id " +
+                 // " left join position on position.id = position.parent_position_id " +
                  " left join section on section.id = position.section_id " +
                 " left join division on division.id = section.division_id " +
                 " where position.id like '%" + id + "%' " +

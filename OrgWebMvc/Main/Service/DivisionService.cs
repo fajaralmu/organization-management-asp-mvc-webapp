@@ -51,11 +51,19 @@ namespace OrgWebMvc.Main.Service
 
         }
 
-        public override void Delete(object Obj)
+        public override bool Delete(object Obj)
         {
-            division division = (division)Obj;
-            dbEntities.divisions.Remove(division);
-            dbEntities.SaveChanges();
+            try
+            {
+                division division = (division)Obj;
+                dbEntities.divisions.Remove(division);
+                dbEntities.SaveChanges();
+                return true;
+            }catch(Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
         }
 
 

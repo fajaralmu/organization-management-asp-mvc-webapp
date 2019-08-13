@@ -45,11 +45,20 @@ namespace OrgWebMvc.Main.Service
             return member;
         }
 
-        public override void Delete(object Obj)
+        public override bool Delete(object Obj)
         {
-            member member = (member)Obj;
-            dbEntities.members.Remove(member);
-            dbEntities.SaveChanges();
+            try
+            {
+                member member = (member)Obj;
+                dbEntities.members.Remove(member);
+                dbEntities.SaveChanges();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
         }
 
 

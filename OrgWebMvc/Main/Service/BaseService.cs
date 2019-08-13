@@ -32,9 +32,9 @@ namespace OrgWebMvc.Main.Service
             return null;
         }
 
-        public virtual void Delete(object obj)
+        public virtual bool Delete(object obj)
         {
-
+            return false;
         }
 
         public virtual int ObjectCount()

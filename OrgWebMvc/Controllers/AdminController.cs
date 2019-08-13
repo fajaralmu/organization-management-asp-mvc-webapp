@@ -18,6 +18,15 @@ namespace OrgWebMvc.Controllers
             return View();
         }
 
+        public ActionResult Stucture()
+        {
+            if (!base.UserValid())
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            return View();
+        }
+
         // GET: Admin/Details/5
         public ActionResult Details(int id)
         {

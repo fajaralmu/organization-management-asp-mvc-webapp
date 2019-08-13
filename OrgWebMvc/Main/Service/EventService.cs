@@ -45,11 +45,20 @@ namespace OrgWebMvc.Main.Service
             return @event;
         }
 
-        public override void Delete(object Obj)
+        public override bool Delete(object Obj)
         {
-            @event @event = (@event)Obj;
-            dbEntities.events.Remove(@event);
-            dbEntities.SaveChanges();
+            try
+            {
+                @event @event = (@event)Obj;
+                dbEntities.events.Remove(@event);
+                dbEntities.SaveChanges();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
         }
 
         public override int ObjectCount()
@@ -134,7 +143,7 @@ namespace OrgWebMvc.Main.Service
             string ordertype = Params.ContainsKey("ordertype") ? (string)Params["ordertype"] : "";
 
             string sql = "select * from [event] left join [program] on [program].[id]=[event].[program_id] " +
-                " left join [section] on [section].[id] = [program].[sect_id] "+
+                " left join [section] on [section].[id] = [program].[sect_id] " +
                 " left join [division] on [division].[id] = [section].[division_id] where [event].[id] like '%" + id + "%'" +
                 " and [event].[name] like '%" + name + "%' " +
                 " and [program].[name]  like '%" + program + "%' " +

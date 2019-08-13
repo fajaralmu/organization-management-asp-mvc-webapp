@@ -11,7 +11,7 @@ namespace OrgWebMvc.Main.Service
     public class PostService
         : BaseService
     {
-        
+
         public override List<object> ObjectList(int offset, int limit)
         {
             List<object> ObjList = new List<object>();
@@ -40,19 +40,28 @@ namespace OrgWebMvc.Main.Service
 
         public override object GetById(object Id)
         {
-            post post = (from c in dbEntities.posts where c.id==(int)Id select c).SingleOrDefault();
+            post post = (from c in dbEntities.posts where c.id == (int)Id select c).SingleOrDefault();
             return post;
         }
 
-        public override void Delete(object Obj)
+        public override bool Delete(object Obj)
         {
-            post post = (post)Obj;
-            dbEntities.posts.Remove(post);
-            dbEntities.SaveChanges();
+            try
+            {
+                post post = (post)Obj;
+                dbEntities.posts.Remove(post);
+                dbEntities.SaveChanges();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
         }
 
 
-        
+
 
         public override int ObjectCount()
         {
@@ -62,7 +71,7 @@ namespace OrgWebMvc.Main.Service
         public override object Add(object Obj)
         {
             post post = (post)Obj;
-           
+
             post newpost = dbEntities.posts.Add(post);
             try
             {
@@ -128,7 +137,7 @@ namespace OrgWebMvc.Main.Service
             string ordertype = Params.ContainsKey("ordertype") ? (string)Params["ordertype"] : "";
 
             string sql = "select * from post where post.id like '%" + id + "%'" +
-                " and post.title like '%" + title + "%' "+
+                " and post.title like '%" + title + "%' " +
                  (StringUtil.NotNullAndNotBlank(user_id) ? " and post.user_id=" + user_id : "");
             if (!orderby.Equals(""))
             {

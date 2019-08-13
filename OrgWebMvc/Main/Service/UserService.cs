@@ -42,11 +42,20 @@ namespace OrgWebMvc.Main.Service
             return user;
         }
 
-        public override void Delete(object Obj)
+        public override bool Delete(object Obj)
         {
-            user user = (user)Obj;
-            dbEntities.users.Remove(user);
-            dbEntities.SaveChanges();
+            try
+            {
+                user user = (user)Obj;
+                dbEntities.users.Remove(user);
+                dbEntities.SaveChanges();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
         }
 
 

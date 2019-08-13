@@ -44,11 +44,20 @@ namespace OrgWebMvc.Main.Service
             return program;
         }
 
-        public override void Delete(object Obj)
+        public override bool Delete(object Obj)
         {
-            program program = (program)Obj;
-            dbEntities.programs.Remove(program);
-            dbEntities.SaveChanges();
+            try
+            {
+                program program = (program)Obj;
+                dbEntities.programs.Remove(program);
+                dbEntities.SaveChanges();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
         }
 
 
@@ -128,8 +137,8 @@ namespace OrgWebMvc.Main.Service
             string orderby = Params.ContainsKey("orderby") ? (string)Params["orderby"] : "";
             string ordertype = Params.ContainsKey("ordertype") ? (string)Params["ordertype"] : "";
 
-            string sql = "select * from program "+
-                " left join section on section.id = program.sect_id "+
+            string sql = "select * from program " +
+                " left join section on section.id = program.sect_id " +
                 " left join division on division.id = section.division_id " +
                 " where program.id like '%" + id + "%'" +
                 " and program.name like '%" + name + "%'" +

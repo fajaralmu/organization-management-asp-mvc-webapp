@@ -72,11 +72,23 @@ namespace InstApp.Util.Common
 
         public static object GetValueFromProp(string propname, object Object)
         {
-            if(Object == null)
+            if (Object == null)
             {
                 return null;
             }
             return Object.GetType().GetProperty(propname).GetValue(Object);
+        }
+
+
+
+        public static object GetIDVal(object Object)
+        {
+            string IDField = GetIDProps(Object.GetType());
+            if (IDField != null)
+            {
+                return GetValueFromProp(IDField, Object);
+            }
+            return null;
         }
 
         public static string GetIDProps(Type t)

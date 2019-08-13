@@ -241,6 +241,7 @@
     <Compile Include="Main\Util\JSONUtil.cs" />
     <Compile Include="Main\Util\ObjectUtil.cs" />
     <Compile Include="Main\Util\StringUtil.cs" />
+    <Compile Include="Main\Util\ViewUtil.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\division.cs">
       <DependentUpon>InstitutionEntity.tt</DependentUpon>
@@ -389,6 +390,7 @@
     <Content Include="Views\Shared\EntityMng.cshtml" />
     <Content Include="Views\Activity\TimeLine.cshtml" />
     <Content Include="Views\Shared\_TimeLinePartial.cshtml" />
+    <Content Include="Views\Admin\Stucture.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

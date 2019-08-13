@@ -38,7 +38,8 @@ namespace OrgWebMvc.Main.Service
             try
             {
                 dbEntities.SaveChanges();
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 Console.WriteLine(e);
                 return null;
@@ -52,11 +53,20 @@ namespace OrgWebMvc.Main.Service
             return section;
         }
 
-        public override void Delete(object Obj)
+        public override bool Delete(object Obj)
         {
-            section section = (section)Obj;
-            dbEntities.sections.Remove(section);
-            dbEntities.SaveChanges();
+            try
+            {
+                section section = (section)Obj;
+                dbEntities.sections.Remove(section);
+                dbEntities.SaveChanges();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
         }
 
 
@@ -136,8 +146,8 @@ namespace OrgWebMvc.Main.Service
             string ordertype = Params.ContainsKey("ordertype") ? (string)Params["ordertype"] : "";
 
             string sql = "select * from section " +
-          //      " left join section on section.id = section.section_id " +
-         //        " left join section on section.id = section.section_id " +
+                //      " left join section on section.id = section.section_id " +
+                //        " left join section on section.id = section.section_id " +
                 " left join division on division.id = section.division_id " +
                 " where section.id like '%" + id + "%'" +
                 " and section.name like '%" + name + "%' " +
