@@ -29,7 +29,7 @@ namespace OrgWebMvc.Models
         public string name { get; set; }
         [FieldAttribute(Required = true, FieldType = AttributeConstant.TYPE_DROPDOWN, FieldName = "Division", ClassReference = "division", ClassAttributeConverter = "name")]
         public int division_id { get; set; }
-        [FieldAttribute(Required = true, FieldType = AttributeConstant.TYPE_DROPDOWN, FieldName = "Parent_Section", ClassReference = "sectionParent", ClassAttributeConverter = "name")]
+        [FieldAttribute(Required = false, FieldType = AttributeConstant.TYPE_DROPDOWN, FieldName = "Parent_Section",ClassRefPropName ="section2", ClassReference = "section", ClassAttributeConverter = "name")]
         public Nullable<int> parent_section_id { get; set; }
         [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTAREA, Required = true)]
         public string description { get; set; }
@@ -46,6 +46,12 @@ namespace OrgWebMvc.Models
             }
         }
 
+        //public int id { get; set; }
+        //public string name { get; set; }
+        //public int division_id { get; set; }
+        //public Nullable<int> parent_section_id { get; set; }
+        //public string description { get; set; }
+    
         public virtual division division { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<position> positions { get; set; }

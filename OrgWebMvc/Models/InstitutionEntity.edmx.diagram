@@ -5,15 +5,14 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="503460a3d48747ca984c5ef064a000d2" Name="Diagram1">
-        <EntityTypeShape EntityType="OrgDbModel.division" Width="1.5" PointX="3" PointY="3.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="OrgDbModel.division" Width="1.5" PointX="2.875" PointY="5.25" IsExpanded="true" />
         <EntityTypeShape EntityType="OrgDbModel.event" Width="1.5" PointX="9.75" PointY="4.75" IsExpanded="true" />
         <EntityTypeShape EntityType="OrgDbModel.member" Width="1.5" PointX="9.75" PointY="1.75" IsExpanded="true" />
         <EntityTypeShape EntityType="OrgDbModel.position" Width="1.5" PointX="7.5" PointY="1.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="OrgDbModel.post" Width="1.5" PointX="3" PointY="8.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="OrgDbModel.post" Width="1.5" PointX="4.875" PointY="7.375" IsExpanded="true" />
         <EntityTypeShape EntityType="OrgDbModel.program" Width="1.5" PointX="7.5" PointY="5.25" IsExpanded="true" />
         <EntityTypeShape EntityType="OrgDbModel.section" Width="1.5" PointX="5.25" PointY="3" IsExpanded="true" />
-        <EntityTypeShape EntityType="OrgDbModel.user" Width="1.5" PointX="0.75" PointY="4.875" IsExpanded="true" />
-        <AssociationConnector Association="OrgDbModel.FK_division_user" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="OrgDbModel.user" Width="1.5" PointX="0.875" PointY="7" IsExpanded="true" />
         <AssociationConnector Association="OrgDbModel.FK_section_division" ManuallyRouted="false" />
         <AssociationConnector Association="OrgDbModel.FK_event_program" ManuallyRouted="false" />
         <AssociationConnector Association="OrgDbModel.FK_member_position" ManuallyRouted="false" />
@@ -22,6 +21,10 @@
         <AssociationConnector Association="OrgDbModel.FK_post_user" ManuallyRouted="false" />
         <AssociationConnector Association="OrgDbModel.FK_program_section" ManuallyRouted="false" />
         <AssociationConnector Association="OrgDbModel.FK_section_section" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="OrgDbModel.institution" Width="1.5" PointX="0.5" PointY="4" />
+        <EntityTypeShape EntityType="OrgDbModel.sysdiagram" Width="1.5" PointX="2.625" PointY="0.75" />
+        <AssociationConnector Association="OrgDbModel.FK_division_institution" />
+        <AssociationConnector Association="OrgDbModel.FK_user_institution" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

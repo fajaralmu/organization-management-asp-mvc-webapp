@@ -27,11 +27,11 @@ namespace OrgWebMvc.Models
         public string name { get; set; }
         [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTAREA, Required = true)]
         public string description { get; set; }
-        //  [FieldAttribute(FieldType = AttributeConstant.)]
-        public int user_id { get; set; }
-
-        public virtual user user { get; set; }
+        public int institution_id { get; set; }
+        public Nullable<System.DateTime> created_date { get; set; }
+    
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<section> sections { get; set; }
+        public virtual institution institution { get; set; }
     }
 }

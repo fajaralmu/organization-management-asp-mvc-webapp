@@ -28,7 +28,7 @@ namespace OrgWebMvc.Models
         //    public string name { get; set; }
         //    public int position_id { get; set; }
         //    public string description { get; set; }
-
+        public Nullable<System.DateTime> created_date { get; set; }
         public virtual position position { get; set; }
     }
 }

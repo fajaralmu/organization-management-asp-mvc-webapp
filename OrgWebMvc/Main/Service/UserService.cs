@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using OrgWebMvc.Models;
+using InstApp.Util.Common;
 
 namespace OrgWebMvc.Main.Service
 {
@@ -59,14 +60,14 @@ namespace OrgWebMvc.Main.Service
         }
 
 
-        public user GetUser(string Email, string Password)
+        public user GetUser(string Username, string Password)
         {
-            if (dbEntities == null || Email == null || Password == null)
+            if (dbEntities == null || Username == null || Password == null)
             {
                 return null;
             }
             user User = (from u in dbEntities.users
-                         where u.email.Equals(Email) && u.password.Equals(Password)
+                         where u.username.Equals(Username) && u.password.Equals(Password)
                          select u).SingleOrDefault();
             if (User != null)
             {
@@ -148,11 +149,13 @@ namespace OrgWebMvc.Main.Service
 
             string id = Params.ContainsKey("id") ? (string)Params["id"] : "";
             string name = Params.ContainsKey("name") ? (string)Params["name"] : "";
+            string institution_id = Params.ContainsKey("institution_id") ? Params["institution_id"].ToString() : "";
             string orderby = Params.ContainsKey("orderby") ? (string)Params["orderby"] : "";
             string ordertype = Params.ContainsKey("ordertype") ? (string)Params["ordertype"] : "";
 
-            string sql = "select * from user where id like '%" + id + "%'" +
-                " and name like '%" + name + "%'";
+            string sql = "select * from [user] where id like '%" + id + "%'" +
+                " and name like '%" + name + "%' " + (StringUtil.NotNullAndNotBlank(institution_id) ? " and institution_id=" + institution_id + " " : "");
+            ;
             if (!orderby.Equals(""))
             {
                 sql += " ORDER BY " + orderby;

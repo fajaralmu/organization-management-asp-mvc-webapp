@@ -24,7 +24,7 @@ namespace OrgWebMvc.Models
         public int id { get; set; }
         [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX, Required = true)]
         public string name { get; set; }
-        [FieldAttribute(Required = true, FieldType = AttributeConstant.TYPE_DROPDOWN, FieldName = "Program Name", ClassRefPropName = "program1", ClassReference = "program", ClassAttributeConverter = "name")]
+        [FieldAttribute(Required = true, FieldType = AttributeConstant.TYPE_DROPDOWN, FieldName = "Program Name",  ClassReference = "program", ClassAttributeConverter = "name")]
         public int program_id { get; set; }
         public int user_id { get; set; }
         [FieldAttribute(FieldType = AttributeConstant.TYPE_DATE, Required = true)]
@@ -38,7 +38,6 @@ namespace OrgWebMvc.Models
         [FieldAttribute(Required = true, FieldType = AttributeConstant.TYPE_DROPDOWN, Values = new object[] { 0, 1 }, ItemNames = new object[] { "not done", "done" })]
         public int done { get; set; }
 
-
-        public virtual program program1 { get; set; }
+        public virtual program program { get; set; }
     }
 }

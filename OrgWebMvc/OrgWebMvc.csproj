@@ -239,6 +239,7 @@
     <Compile Include="Main\Util\ControlUtil.cs" />
     <Compile Include="Main\Util\DateUtil.cs" />
     <Compile Include="Main\Util\JSONUtil.cs" />
+    <Compile Include="Main\Util\Mock.cs" />
     <Compile Include="Main\Util\ObjectUtil.cs" />
     <Compile Include="Main\Util\StringUtil.cs" />
     <Compile Include="Main\Util\MVCUtil.cs" />
@@ -250,6 +251,9 @@
       <DependentUpon>InstitutionEntity.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\institution.cs">
+      <DependentUpon>InstitutionEntity.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\InstitutionEntity.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -279,6 +283,9 @@
       <DependentUpon>InstitutionEntity.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\section.cs">
+      <DependentUpon>InstitutionEntity.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\sysdiagram.cs">
       <DependentUpon>InstitutionEntity.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\user.cs">

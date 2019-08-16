@@ -48,10 +48,15 @@ namespace OrgWebMvc.Models
 
     public class LoginViewModel
     {
-        [Required]
+       // [Required]
         [Display(Name = "Email")]
         [EmailAddress]
         public string Email { get; set; }
+
+        [Required]
+        [Display(Name = "Username")]
+        [DataType(DataType.Text)]
+        public string Username { get; set; }
 
         [Required]
         [DataType(DataType.Password)]

@@ -54,6 +54,13 @@ namespace OrgWebMvc.Controllers
             }
             EventService EventSvc = new EventService();
 
+            //enable timeline
+            ViewData = MVCUtil.EnableTimeLine("Event","name", "date", ViewData);
+            //ViewData["EnableTimeLine"] = true;
+            //ViewData["Entity"] = "Event";
+            //ViewData["DateId"] = "date";
+            //
+
             ViewBag.Title = "Event";
             ViewData = MVCUtil.PopulateCRUDViewData(typeof(@event), "Event", EventSvc, Request, ViewData);
             return View("~/Views/Shared/EntityMng.cshtml");
@@ -105,8 +112,23 @@ namespace OrgWebMvc.Controllers
             }
             PostService PostSvc = new PostService();
 
+            ViewData = MVCUtil.EnableTimeLine("Post","title", "date", ViewData);
+
             ViewBag.Title = "Post";
             ViewData = MVCUtil.PopulateCRUDViewData(typeof(post), "Post", PostSvc, Request, ViewData);
+            return View("~/Views/Shared/EntityMng.cshtml");
+        }
+
+        public ActionResult User()
+        {
+            if (!UserValid())
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            UserService UserSvc = new UserService();
+
+            ViewBag.Title = "User";
+            ViewData = MVCUtil.PopulateCRUDViewData(typeof(user), "User", UserSvc, Request, ViewData);
             return View("~/Views/Shared/EntityMng.cshtml");
         }
 
@@ -117,7 +139,7 @@ namespace OrgWebMvc.Controllers
         {
             bool UserIsLoggedIn = UserValid();
             WebResponse Response = new WebResponse();
-            if (!StringUtil.NotNullAndNotBlank(Request.Form["Action"]))
+            if (!UserIsLoggedIn || !StringUtil.NotNullAndNotBlank(Request.Form["Action"]))
             {
                 return Json(Response);
             }
@@ -128,7 +150,7 @@ namespace OrgWebMvc.Controllers
                 case "List":
                     Response = MVCUtil.generateResponseList(EntitySvc, Request, LoggedUser, new string[]
                             {
-                            "id","name","description","user_id"
+                            "id","name","description","institution_id"
                             }, typeof(division));
 
                     break;
@@ -139,10 +161,10 @@ namespace OrgWebMvc.Controllers
                     division Division = (division)ObjectUtil.FillObjectWithMap(new division(), BaseService.ReqToDict(Request));
                     if (Division != null)
                     {
-                        Division.user_id = LoggedUser.id;
+                        Division.institution_id = LoggedUser.institution_id;
 
                         string[] ObjParamToSend = new string[]{
-                            "id","name","description","user_id"
+                            "id","name","description","institution_id"
                         };
                         Response = MVCUtil.UpdateEntity(EntitySvc, Division, ObjParamToSend, Response);
 
@@ -162,7 +184,7 @@ namespace OrgWebMvc.Controllers
         {
             bool UserIsLoggedIn = UserValid();
             WebResponse Response = new WebResponse();
-            if (!StringUtil.NotNullAndNotBlank(Request.Form["Action"]))
+            if (!UserIsLoggedIn || !StringUtil.NotNullAndNotBlank(Request.Form["Action"]))
             {
                 return Json(Response);
             }
@@ -203,7 +225,7 @@ namespace OrgWebMvc.Controllers
         {
             bool UserIsLoggedIn = UserValid();
             WebResponse Response = new WebResponse();
-            if (!StringUtil.NotNullAndNotBlank(Request.Form["Action"]))
+            if (!UserIsLoggedIn || !StringUtil.NotNullAndNotBlank(Request.Form["Action"]))
             {
                 return Json(Response);
             }
@@ -286,7 +308,7 @@ namespace OrgWebMvc.Controllers
         {
             bool UserIsLoggedIn = UserValid();
             WebResponse Response = new WebResponse();
-            if (!StringUtil.NotNullAndNotBlank(Request.Form["Action"]))
+            if (!UserIsLoggedIn || !StringUtil.NotNullAndNotBlank(Request.Form["Action"]))
             {
                 return Json(Response);
             }
@@ -326,7 +348,7 @@ namespace OrgWebMvc.Controllers
         {
             bool UserIsLoggedIn = UserValid();
             WebResponse Response = new WebResponse();
-            if (!StringUtil.NotNullAndNotBlank(Request.Form["Action"]))
+            if (!UserIsLoggedIn || !StringUtil.NotNullAndNotBlank(Request.Form["Action"]))
             {
                 return Json(Response);
             }
@@ -366,7 +388,7 @@ namespace OrgWebMvc.Controllers
         {
             bool UserIsLoggedIn = UserValid();
             WebResponse Response = new WebResponse();
-            if (!StringUtil.NotNullAndNotBlank(Request.Form["Action"]))
+            if (!UserIsLoggedIn || !StringUtil.NotNullAndNotBlank(Request.Form["Action"]))
             {
                 return Json(Response);
             }
@@ -378,17 +400,59 @@ namespace OrgWebMvc.Controllers
                     Response = MVCUtil.generateResponseList(EntitySvc, Request, LoggedUser, new string[]
                     {
                         "id","user_id","title","body","date","type","post_id"
-                    }, typeof(position));
+                    }, typeof(post));
                     break;
                 case "Form":
                     Response = MVCUtil.generateResponseWithForm(typeof(post), EntitySvc, Request);
                     break;
                 case "Post":
                     post post = (post)ObjectUtil.FillObjectWithMap(new post(), BaseService.ReqToDict(Request));
+                    post.user_id = LoggedUser.id;
                     if (post != null)
                     {
                         Response = MVCUtil.UpdateEntity(EntitySvc, post, new string[]{
                            "id","user_id","title","body","date","type","post_id"
+                        }, Response);
+                    }
+                    break;
+                case "Delete":
+                    Response = MVCUtil.DeleteEntity(EntitySvc, Request, Response);
+                    break;
+                default:
+                    break;
+            }
+            return Json(Response);
+        }
+
+        [HttpPost]
+        public ActionResult UserSvc()
+        {
+            bool UserIsLoggedIn = UserValid();
+            WebResponse Response = new WebResponse();
+            if (LoggedUser.admin != 1 ||!UserIsLoggedIn || !StringUtil.NotNullAndNotBlank(Request.Form["Action"]))
+            {
+                return Json(Response);
+            }
+            string Action = Request.Form["Action"].ToString();
+            UserService EntitySvc = new UserService();
+            switch (Action)
+            {
+                case "List":
+                    Response = MVCUtil.generateResponseList(EntitySvc, Request, LoggedUser, new string[]
+                    {
+                        "id","name","username","password","email"
+                    }, typeof(user));
+                    break;
+                case "Form":
+                    Response = MVCUtil.generateResponseWithForm(typeof(user), EntitySvc, Request);
+                    break;
+                case "Post":
+                    user User = (user)ObjectUtil.FillObjectWithMap(new user(), BaseService.ReqToDict(Request));
+                    User.institution_id = LoggedUser.institution_id;
+                    if (User != null)
+                    {
+                        Response = MVCUtil.UpdateEntity(EntitySvc, User, new string[]{
+                          "id","name","username","password","email"
                         }, Response);
                     }
                     break;

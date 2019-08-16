@@ -36,15 +36,18 @@ namespace OrgWebMvc.Controllers
                 object ObjSession = Session["loggedUser"];
 
                 user UserCheck = (user)ObjSession;
-                object UserDB = UserService.GetUser(UserCheck.email, UserCheck.password);
+                object UserDB = UserService.GetUser(UserCheck.username, UserCheck.password);
                 if (UserDB != null)
                 {
                     LoggedUser = (user)UserDB;
                     ViewData["Name"] = LoggedUser.name;
+                    ViewData["IsAdmin"] = LoggedUser.admin == 1;
+                    ViewData["InstitutionName"] = LoggedUser.institution.name;
                     return true;
                 }
                 else
                 {
+                    ViewData.Clear();
                     LoggedUser = null;
                     return false;
                 }

@@ -7,7 +7,8 @@
     <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="name" Type="varchar" MaxLength="100" Nullable="false" />
     <Property Name="description" Type="varchar(max)" Nullable="false" />
-    <Property Name="user_id" Type="int" Nullable="false" />
+    <Property Name="institution_id" Type="int" Nullable="false" />
+    <Property Name="created_date" Type="datetime" />
   </EntityType>
   <EntityType Name="event">
     <Key>
@@ -22,6 +23,16 @@
     <Property Name="info" Type="varchar(max)" />
     <Property Name="done" Type="int" Nullable="false" />
     <Property Name="name" Type="varchar" MaxLength="100" Nullable="false" />
+    <Property Name="created_date" Type="datetime" />
+  </EntityType>
+  <EntityType Name="institution">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="name" Type="nchar" MaxLength="200" Nullable="false" />
+    <Property Name="description" Type="varchar(max)" Nullable="false" />
+    <Property Name="created_date" Type="datetime" />
   </EntityType>
   <EntityType Name="member">
     <Key>
@@ -31,6 +42,7 @@
     <Property Name="name" Type="varchar" MaxLength="100" Nullable="false" />
     <Property Name="position_id" Type="int" Nullable="false" />
     <Property Name="description" Type="varchar" MaxLength="200" Nullable="false" />
+    <Property Name="created_date" Type="datetime" />
   </EntityType>
   <EntityType Name="position">
     <Key>
@@ -41,6 +53,7 @@
     <Property Name="section_id" Type="int" Nullable="false" />
     <Property Name="parent_position_id" Type="int" />
     <Property Name="description" Type="varchar(max)" />
+    <Property Name="created_date" Type="datetime" />
   </EntityType>
   <EntityType Name="post">
     <Key>
@@ -53,6 +66,7 @@
     <Property Name="date" Type="date" Nullable="false" />
     <Property Name="type" Type="int" Nullable="false" />
     <Property Name="post_id" Type="int" />
+    <Property Name="created_date" Type="datetime" />
   </EntityType>
   <EntityType Name="program">
     <Key>
@@ -62,6 +76,7 @@
     <Property Name="name" Type="varchar" MaxLength="100" Nullable="false" />
     <Property Name="description" Type="varchar(max)" Nullable="false" />
     <Property Name="sect_id" Type="int" Nullable="false" />
+    <Property Name="created_date" Type="datetime" />
   </EntityType>
   <EntityType Name="section">
     <Key>
@@ -72,6 +87,17 @@
     <Property Name="division_id" Type="int" Nullable="false" />
     <Property Name="parent_section_id" Type="int" />
     <Property Name="description" Type="varchar(max)" />
+    <Property Name="created_date" Type="datetime" />
+  </EntityType>
+  <EntityType Name="sysdiagrams">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+    <Property Name="principal_id" Type="int" Nullable="false" />
+    <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="version" Type="int" />
+    <Property Name="definition" Type="varbinary(max)" />
   </EntityType>
   <EntityType Name="user">
     <Key>
@@ -83,16 +109,18 @@
     <Property Name="password" Type="varchar" MaxLength="100" Nullable="false" />
     <Property Name="email" Type="varchar" MaxLength="100" Nullable="false" />
     <Property Name="admin" Type="int" Nullable="false" />
+    <Property Name="created_date" Type="datetime" />
+    <Property Name="institution_id" Type="int" Nullable="false" />
   </EntityType>
-  <Association Name="FK_division_user">
-    <End Role="user" Type="Self.user" Multiplicity="1" />
+  <Association Name="FK_division_institution">
+    <End Role="institution" Type="Self.institution" Multiplicity="1" />
     <End Role="division" Type="Self.division" Multiplicity="*" />
     <ReferentialConstraint>
-      <Principal Role="user">
+      <Principal Role="institution">
         <PropertyRef Name="id" />
       </Principal>
       <Dependent Role="division">
-        <PropertyRef Name="user_id" />
+        <PropertyRef Name="institution_id" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -192,17 +220,31 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_user_institution">
+    <End Role="institution" Type="Self.institution" Multiplicity="1" />
+    <End Role="user" Type="Self.user" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="institution">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="user">
+        <PropertyRef Name="institution_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <EntityContainer Name="OrgDbModelStoreContainer">
     <EntitySet Name="division" EntityType="Self.division" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="event" EntityType="Self.event" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="institution" EntityType="Self.institution" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="member" EntityType="Self.member" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="position" EntityType="Self.position" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="post" EntityType="Self.post" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="program" EntityType="Self.program" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="section" EntityType="Self.section" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="user" EntityType="Self.user" Schema="dbo" store:Type="Tables" />
-    <AssociationSet Name="FK_division_user" Association="Self.FK_division_user">
-      <End Role="user" EntitySet="user" />
+    <AssociationSet Name="FK_division_institution" Association="Self.FK_division_institution">
+      <End Role="institution" EntitySet="institution" />
       <End Role="division" EntitySet="division" />
     </AssociationSet>
     <AssociationSet Name="FK_event_program" Association="Self.FK_event_program">
@@ -236,6 +278,10 @@
     <AssociationSet Name="FK_section_section" Association="Self.FK_section_section">
       <End Role="section" EntitySet="section" />
       <End Role="section1" EntitySet="section" />
+    </AssociationSet>
+    <AssociationSet Name="FK_user_institution" Association="Self.FK_user_institution">
+      <End Role="institution" EntitySet="institution" />
+      <End Role="user" EntitySet="user" />
     </AssociationSet>
   </EntityContainer>
 </Schema>

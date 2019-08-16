@@ -51,7 +51,7 @@ namespace OrgWebMvc.Models
         //public int division_id { get; set; }
         //public Nullable<int> parent_section_id { get; set; }
         //public string description { get; set; }
-    
+        public Nullable<System.DateTime> created_date { get; set; }
         public virtual division division { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<position> positions { get; set; }

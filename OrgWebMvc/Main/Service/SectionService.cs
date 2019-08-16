@@ -141,7 +141,7 @@ namespace OrgWebMvc.Main.Service
             string id = Params.ContainsKey("id") ? Params["id"].ToString() : "";
             string name = Params.ContainsKey("name") ? (string)Params["name"] : "";
             string division = Params.ContainsKey("division") ? (string)Params["division"] : "";
-            string user_id = Params.ContainsKey("user_id") ? Params["user_id"].ToString() : "";
+            string institution_id = Params.ContainsKey("institution_id") ? Params["institution_id"].ToString() : "";
             string orderby = Params.ContainsKey("orderby") ? (string)Params["orderby"] : "";
             string ordertype = Params.ContainsKey("ordertype") ? (string)Params["ordertype"] : "";
 
@@ -152,7 +152,7 @@ namespace OrgWebMvc.Main.Service
                 " where section.id like '%" + id + "%'" +
                 " and section.name like '%" + name + "%' " +
                 " and division.name like '%" + division + "%' " +
-                (StringUtil.NotNullAndNotBlank(user_id) ? " and division.user_id=" + user_id : "");
+                (StringUtil.NotNullAndNotBlank(institution_id) ? " and division.institution_id=" + institution_id : "");
             if (!orderby.Equals(""))
             {
                 sql += " ORDER BY " + orderby;

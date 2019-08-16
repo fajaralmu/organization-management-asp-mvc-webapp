@@ -25,6 +25,26 @@ let input_year = document.getElementById("input_year");
 let date_info = document.getElementById("date-info");
 let running_month = 7;
 let running_year = 1945;
+var filterDayId, filterMonthId, filterYearId;
+var entity_Name, entity_Prop, dateFormId;
+
+
+function initEntity(entityName, propName, dateID) {
+    this.entity_Name = entityName;
+    this.entity_Prop = propName;
+    console.log("entity Name and prop ", entity_Name, entity_Prop);
+    setDateElementId(dateID);
+
+}
+
+function setDateElementId(dateID) {
+    console.log("Set date id field ",dateID);
+    dateFormId = dateID;
+    let filterStr = "filter-" + dateID;
+    filterDayId = (filterStr+".day");
+    filterMonthId = (filterStr + ".month");
+    filterYearId = (filterStr + ".year");
+}
 
 function loadCalendar() {
     createTable();
@@ -155,12 +175,13 @@ function clearDateFilter() {
 }
 
 function detail(day, month, year) {
-    let filterDay = document.getElementById("filter-date.day");
-    let filterMonth = document.getElementById("filter-date.month");
-    let filterYear = document.getElementById("filter-date.year");
+    let filterDay = document.getElementById(filterDayId);
+    let filterMonth = document.getElementById(filterMonthId);
+    let filterYear = document.getElementById(filterYearId);
 
     console.log("DETAIL", day, month, year);
     if (filterDay == null || filterMonth == null || filterYear == null) {
+        console.log("NULL", filterDayId, filterMonthId, filterYearId)
         return;
     }
     filterDay.value = day;
@@ -178,7 +199,9 @@ function loadJSON() {
     if (search_params != null) {
         params += "&search_param=${" + search_params + "}$";
     }
-    postReq("/Entity/EventSvc",
+    let svcURL = "/Entity/" + entity_Name + "Svc";
+    console.log("Svc URL", svcURL);
+    postReq(svcURL,
          params,
          function (data) {
              //    console.log("JSON response", data);
@@ -220,7 +243,7 @@ function fillEventData(eventList) {
         let li = document.createElement("li");
         li.className = "li-custom li-uncheck";
         let evtName = document.createElement("span");
-        evtName.innerHTML = event.name;
+        evtName.innerHTML = event[entity_Prop];
         evtName.className = "text-wrap";
         evtName.style.fontFamily = "Calibri";
         //  evtName.style.color = "black";
@@ -335,7 +358,13 @@ function setElementByAttr(attr, val, attr2, val2, day) {
         if (cek && cek2) {
             dates[i].innerHTML = "";
             dates[i].id = "date-" + day;
-
+            if (new Date().getDate() == day && new Date().getMonth() == month_now && new Date().getYear() + 1900 == year_now) {
+                console.log("NOW", i);
+                dates[i].setAttribute("style", "background-color:yellow");
+            } else {
+                dates[i].setAttribute("style", "background-color:white");
+                console.log("NOT NOW", i);
+            }
             let dateStr = addZero(day, 10).concat("-").concat(addZero((+month_now + 1), 10)).concat("-").concat(year_now);
 
             let addBtn = document.createElement("code");
@@ -346,7 +375,7 @@ function setElementByAttr(attr, val, attr2, val2, day) {
             addBtn.setAttribute("title", "Add an event at " + dateStr + "!");
             addBtn.setAttribute("onclick", "addNewEvent(" + day + "," + (+month_now + 1) + "," + year_now + ")");
             dates[i].appendChild(addBtn);
-          
+
             let detailBtn = document.createElement("code");
             detailBtn.innerHTML = "&#10296;";
             detailBtn.className = "btn btn-default btn-xs";
@@ -376,7 +405,7 @@ function setElementByAttr(attr, val, attr2, val2, day) {
 function addNewEvent(day, month, year) {
     showMenu('entity-form', document.getElementById('btn-show-form'));
     let strDate = dateAcceptableForHtmlInput(day, month, year);
-    document.getElementById("date").value = strDate;
+    document.getElementById(dateFormId).value = strDate;
 }
 
 function dateAcceptableForHtmlInput(day, month, year) {

@@ -27,7 +27,7 @@ namespace OrgWebMvc.Main.Util
             {
                 Entity = entitySvc.GetById(int.Parse(request.Form["Id"]));
             }
-            return new WebResponse(0, "Success", CustomHelper.GenerateFormString(type, Entity), entitySvc.count); 
+            return new WebResponse(0, "Success", CustomHelper.GenerateFormString(type, Entity), entitySvc.count);
         }
 
 
@@ -44,10 +44,20 @@ namespace OrgWebMvc.Main.Util
                     return new WebResponse(0, "Success");
                 else
                     return (response);
-            }else
+            }
+            else
             {
                 return (response);
             }
+        }
+
+        internal static ViewDataDictionary EnableTimeLine(string EnityName, string EntityProp, string DateFieldId, ViewDataDictionary viewData)
+        {
+            viewData["EnableTimeLine"] = true;
+            viewData["Entity"] = EnityName;
+            viewData["EntityProp"] = EntityProp;
+            viewData["DateId"] = DateFieldId;
+            return viewData;
         }
 
         internal static WebResponse UpdateEntity(BaseService EntitySvc, object Entity, string[] objParamToSend, WebResponse response)
@@ -55,7 +65,7 @@ namespace OrgWebMvc.Main.Util
             object DBObject = null;
             string Info = "create";
             object IDVal = ObjectUtil.GetIDVal(Entity);
-            if (IDVal != null && IDVal.ToString() !="" && IDVal.ToString() != "0")
+            if (IDVal != null && IDVal.ToString() != "" && IDVal.ToString() != "0")
             {
                 Info = "update";
                 DBObject = EntitySvc.Update(Entity);
@@ -76,7 +86,7 @@ namespace OrgWebMvc.Main.Util
         internal static WebResponse generateResponseList(BaseService EntitySvc, HttpRequestBase request, user loggedUser, string[] objParamToSend, Type type)
         {
             List<object> ObjList = BaseService.GetObjectList(EntitySvc, request, loggedUser);
-          //  List<division> Divisions = (List<division>)ObjectUtil.ConvertList(ObjList, typeof(List<division>));
+            //  List<division> Divisions = (List<division>)ObjectUtil.ConvertList(ObjList, typeof(List<division>));
             List<object> ListToSend = new List<object>();
             foreach (object D in ObjList)
             {
@@ -93,7 +103,7 @@ namespace OrgWebMvc.Main.Util
                 ResponseData = CustomHelper.GenerateDataTableString(type, ObjList);
             }
             return new WebResponse(0, "Success", ResponseData, EntitySvc.count);
-            
+
         }
     }
 }

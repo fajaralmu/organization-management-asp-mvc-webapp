@@ -37,7 +37,7 @@ namespace OrgWebMvc.Models
         public string info { get; set; }
         [FieldAttribute(Required = true, FieldType = AttributeConstant.TYPE_DROPDOWN, Values = new object[] { 0, 1 }, ItemNames = new object[] { "not done", "done" })]
         public int done { get; set; }
-
+        public Nullable<System.DateTime> created_date { get; set; }
         public virtual program program { get; set; }
     }
 }

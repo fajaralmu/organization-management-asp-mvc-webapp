@@ -9,34 +9,26 @@
 
 namespace OrgWebMvc.Models
 {
-    using InstApp.Annotation;
     using System;
     using System.Collections.Generic;
-
-    public partial class user
+    
+    public partial class institution
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public user()
+        public institution()
         {
-            this.posts = new HashSet<post>();
+            this.divisions = new HashSet<division>();
+            this.users = new HashSet<user>();
         }
-
-        [FieldAttribute(FieldType = AttributeConstant.TYPE_ID_AI)]
+    
         public int id { get; set; }
-        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX, Required = true)]
-        public string username { get; set; }
-        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX, Required = true)]
         public string name { get; set; }
-        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX, Required = true)]
-        public string password { get; set; }
-        [FieldAttribute(FieldType = AttributeConstant.TYPE_TEXTBOX, Required = true)]
-        public string email { get; set; }
-        public int admin { get; set; }
+        public string description { get; set; }
         public Nullable<System.DateTime> created_date { get; set; }
-        public int institution_id { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<post> posts { get; set; }
-        public virtual institution institution { get; set; }
+        public virtual ICollection<division> divisions { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<user> users { get; set; }
     }
 }

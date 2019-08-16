@@ -136,9 +136,17 @@ namespace OrgWebMvc.Main.Service
             string orderby = Params.ContainsKey("orderby") ? (string)Params["orderby"] : "";
             string ordertype = Params.ContainsKey("ordertype") ? (string)Params["ordertype"] : "";
 
+            string day = Params.ContainsKey("date.day") ? Params["date.day"].ToString() : "";
+            string month = Params.ContainsKey("date.month") ? (string)Params["date.month"].ToString() : "";
+            string year = Params.ContainsKey("date.year") ? (string)Params["date.year"].ToString() : "";
+
+
             string sql = "select * from post where post.id like '%" + id + "%'" +
                 " and post.title like '%" + title + "%' " +
-                 (StringUtil.NotNullAndNotBlank(user_id) ? " and post.user_id=" + user_id : "");
+                 (StringUtil.NotNullAndNotBlank(user_id) ? " and post.user_id=" + user_id : "") +
+                 (StringUtil.NotNullAndNotBlank(day) ? " and DAY([post].[date]) = " + day : "") +
+                (StringUtil.NotNullAndNotBlank(month) ? " and MONTH([post].[date]) = " + month : "") +
+                (StringUtil.NotNullAndNotBlank(year) ? " and YEAR([post].[date]) = " + year : ""); 
             if (!orderby.Equals(""))
             {
                 sql += " ORDER BY " + orderby;

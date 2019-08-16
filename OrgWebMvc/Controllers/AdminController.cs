@@ -1,4 +1,7 @@
-﻿using System;
+﻿using InstApp.Util.Common;
+using OrgWebMvc.Main.Service;
+using OrgWebMvc.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -11,10 +14,22 @@ namespace OrgWebMvc.Controllers
         // GET: Admin
         public ActionResult Index()
         {
-            if (!base.UserValid())
+            if (!UserValid())
             {
                 return RedirectToAction("Index", "Home");
             }
+
+            EventService EventSvc = new EventService();
+            Dictionary<string, object> Params = new Dictionary<string, object>();
+            DateTime Now = DateTime.Now;
+            Params.Add("date.day", Now.Day);
+            Params.Add("date.year", Now.Year);
+            Params.Add("date.month", Now.Month);
+            Params.Add("user_id", LoggedUser.id);
+
+            List<@event> ToDayEvents = (List<@event>)ObjectUtil.ConvertList(EventSvc.SearchAdvanced(Params, 10), typeof(List<@event>));
+            ViewData["TodayEvents"] = ToDayEvents;
+
             return View();
         }
 

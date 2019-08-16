@@ -50,7 +50,7 @@ namespace OrgWebMvc.Models
         //public int section_id { get; set; }
         //public Nullable<int> parent_position_id { get; set; }
         //public string description { get; set; }
-    
+        public Nullable<System.DateTime> created_date { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<member> members { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

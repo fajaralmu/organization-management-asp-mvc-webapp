@@ -139,13 +139,13 @@ namespace OrgWebMvc.Main.Service
             string id = Params.ContainsKey("id") ? Params["id"].ToString() : "";
             string name = Params.ContainsKey("name") ? (string)Params["name"] : "";
             string desc = Params.ContainsKey("description") ? (string)Params["description"] : "";
-            string user_id = Params.ContainsKey("user_id") ? Params["user_id"].ToString() : "";
+            string institution_id = Params.ContainsKey("institution_id") ? Params["institution_id"].ToString() : "";
             string orderby = Params.ContainsKey("orderby") ? (string)Params["orderby"] : "";
             string ordertype = Params.ContainsKey("ordertype") ? (string)Params["ordertype"] : "";
 
             string sql = "select * from division where id like '%" + id + "%'" +
                 " and name like '%" + name + "%' and description like '%" + desc + "%'" +
-                (StringUtil.NotNullAndNotBlank(user_id) ? " and user_id=" + user_id + " " : "");
+                (StringUtil.NotNullAndNotBlank(institution_id) ? " and institution_id=" + institution_id + " " : "");
             if (!orderby.Equals(""))
             {
                 sql += " ORDER BY " + orderby;

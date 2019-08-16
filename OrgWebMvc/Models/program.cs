@@ -34,7 +34,7 @@ namespace OrgWebMvc.Models
         //public string name { get; set; }
         //public string description { get; set; }
         //public int sect_id { get; set; }
-    
+        public Nullable<System.DateTime> created_date { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<@event> events { get; set; }
         public virtual section section { get; set; }

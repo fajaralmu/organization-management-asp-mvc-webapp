@@ -5,7 +5,7 @@
 @using System.Collections.Generic
 
 <div>
-   
+
     <script src="~/Scripts/ajax.js"></script>
     <script src="~/Scripts/text-editor.js"></script>
     <script type="text/javascript">
@@ -25,7 +25,7 @@
 
         };
         document.body.onload = function () {
-            initDoc();
+         //   initDoc();
         }
 
     </script>
@@ -34,27 +34,29 @@
     <div class="btn-group">
 
         <button name="button-menu" onclick="showMenu('entity-form',this)" id="btn-show-form" class="btn btn-info ">Form</button>
-        @if (ViewData["Entity"].ToString().Equals("Event"))
+        @if (ViewData["EnableTimeLine"] != null && (bool)ViewData["EnableTimeLine"] == true)
         {
             <button name="button-menu" onclick="showMenu('timeline-panel',this)" id="btn-show-timeline" class="btn btn-info active">TimeLine</button>
         }
         <button onclick="hideMenu()" class="btn btn-default">Hide</button>
     </div>
 
-    <div name="menu-panel" id="entity-form" class="menu-panel" ></div>
-    @if (ViewData["Entity"].ToString().Equals("Event"))
+    <div name="menu-panel" id="entity-form" class="menu-panel"></div>
+    @if (ViewData["EnableTimeLine"] != null && (bool)ViewData["EnableTimeLine"] == true)
     {
-        <div name="menu-panel" id="timeline-panel" style="display:block"  class="menu-panel">
+        <div name="menu-panel" id="timeline-panel" style="display:block" class="menu-panel">
             @Html.Partial("~/Views/Shared/_TimeLinePartial.cshtml")
         </div>
         <script src="~/Scripts/activity.js"></script>
         <script>
             firstLoad = function () {
                 loadCalendar();
-            };
+             };
             callbackWhenLoad = function () {
                 loadJSON();
             };
+            initEntity('@ViewData["Entity"]', '@ViewData["EntityProp"]', '@ViewData["DateId"]'); //the filter textbox should be "filter-"+elementId
+
         </script>
     }
 
@@ -138,7 +140,7 @@
             return false;
         }
 
-        function getParam(key,qryString) {
+        function getParam(key, qryString) {
             let params = qryString.split(";");
             if (params == null)
                 return null;
@@ -165,7 +167,7 @@
 
             postReq(URL, params, function (data) {
                 fetchCount++;
-                console.log(fetchCount,"fetch list, initial:", initLoad, "info", info);
+                console.log(fetchCount, "fetch list, initial:", initLoad, "info", info);
                 let jsonResp = data;
                 //  console.log("JSON", jsonResp);
                 if (jsonResp.code == 0) {
@@ -266,6 +268,8 @@
                 if (response.code == 0) {
                     alert("Success");
                     loadList();
+                } else {
+                    alert("Failed delete :" + response.code);
                 }
             }, function (response) {
                 alert("server error");

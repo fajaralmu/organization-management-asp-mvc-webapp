@@ -1,4 +1,5 @@
 ﻿using OrgWebMvc.Main.Service;
+using OrgWebMvc.Main.Util;
 using OrgWebMvc.Models;
 using System;
 using System.Collections.Generic;
@@ -68,6 +69,36 @@ namespace OrgWebMvc.Controllers
             {
                 return RedirectToAction("Index", "Home");
             }
+            /*
+            MemberService MemberSvc = new MemberService();
+            int pId = 0;
+            for(int i = 0; i < Mock.Names.Length; i++)
+            {
+                if(pId >= Mock.PosId.Length)
+                {
+                    pId = 0;
+                }
+                member Member = new member()
+                {
+                    name = Mock.Names[i],
+                    position_id = Mock.PosId[pId],
+                    description = "MEMBER " + pId
+                };
+                MemberSvc.Add(Member);
+                pId++;
+            }
+
+            for(int i = 0; i < Mock.PosMngId.Length; i++)
+            {
+                member Member = new member()
+                {
+                    name = Mock.MngNames[i],
+                    position_id = Mock.PosMngId[i],
+                    description = "MEMBER " + Mock.PosMngId[i]
+                };
+                MemberSvc.Add(Member);
+            }
+            */
             return View();
         }
 

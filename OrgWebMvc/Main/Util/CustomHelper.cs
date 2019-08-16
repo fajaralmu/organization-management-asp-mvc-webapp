@@ -115,14 +115,15 @@ namespace OrgWebMvc.Main.Util
                 {
                     if (Prop.Name.Equals(IDProp))
                     {
-                        ID = Prop.GetValue(Obj);
+                        ID = ObjectUtil.GetIDVal(Obj);
+                    //    ID = Prop.GetValue(Obj);
                     }
                     FieldAttribute Attribute = (FieldAttribute)Prop.GetCustomAttributes(typeof(FieldAttribute), true)[0];
 
                     if (Attribute.SkipInTable)
                         continue;
 
-                    object Value = ObjectType.GetProperty(Prop.Name).GetValue(Obj);
+                    object Value = ObjectUtil.GetValueFromProp(Prop.Name, Obj);// ObjectType.GetProperty(Prop.Name).GetValue(Obj);
 
                     if (Attribute.FieldType.Equals(AttributeConstant.TYPE_DROPDOWN) && Value != null)
                     {

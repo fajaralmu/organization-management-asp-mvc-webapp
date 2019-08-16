@@ -26,7 +26,7 @@ namespace OrgWebMvc.Models
         public System.DateTime date { get; set; }
         public int type { get; set; }
         public Nullable<int> post_id { get; set; }
-
+        public Nullable<System.DateTime> created_date { get; set; }
         public virtual user user { get; set; }
     }
 }

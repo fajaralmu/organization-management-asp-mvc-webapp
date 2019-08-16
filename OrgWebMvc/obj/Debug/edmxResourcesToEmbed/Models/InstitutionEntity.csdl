@@ -7,9 +7,10 @@
     <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
     <Property Name="description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
-    <Property Name="user_id" Type="Int32" Nullable="false" />
-    <NavigationProperty Name="user" Relationship="Self.FK_division_user" FromRole="division" ToRole="user" />
     <NavigationProperty Name="sections" Relationship="Self.FK_section_division" FromRole="division" ToRole="section" />
+    <Property Name="institution_id" Type="Int32" Nullable="false" />
+    <Property Name="created_date" Type="DateTime" Precision="3" />
+    <NavigationProperty Name="institution" Relationship="OrgDbModel.FK_division_institution" FromRole="division" ToRole="institution" />
   </EntityType>
   <EntityType Name="event">
     <Key>
@@ -25,6 +26,7 @@
     <Property Name="done" Type="Int32" Nullable="false" />
     <Property Name="name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
     <NavigationProperty Name="program" Relationship="Self.FK_event_program" FromRole="event" ToRole="program" />
+    <Property Name="created_date" Type="DateTime" Precision="3" />
   </EntityType>
   <EntityType Name="member">
     <Key>
@@ -35,6 +37,7 @@
     <Property Name="position_id" Type="Int32" Nullable="false" />
     <Property Name="description" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
     <NavigationProperty Name="position" Relationship="Self.FK_member_position" FromRole="member" ToRole="position" />
+    <Property Name="created_date" Type="DateTime" Precision="3" />
   </EntityType>
   <EntityType Name="position">
     <Key>
@@ -49,6 +52,7 @@
     <NavigationProperty Name="position1" Relationship="Self.FK_position_position" FromRole="position" ToRole="position1" />
     <NavigationProperty Name="position2" Relationship="Self.FK_position_position" FromRole="position1" ToRole="position" />
     <NavigationProperty Name="section" Relationship="Self.FK_position_section" FromRole="position" ToRole="section" />
+    <Property Name="created_date" Type="DateTime" Precision="3" />
   </EntityType>
   <EntityType Name="post">
     <Key>
@@ -62,6 +66,7 @@
     <Property Name="type" Type="Int32" Nullable="false" />
     <Property Name="post_id" Type="Int32" />
     <NavigationProperty Name="user" Relationship="Self.FK_post_user" FromRole="post" ToRole="user" />
+    <Property Name="created_date" Type="DateTime" Precision="3" />
   </EntityType>
   <EntityType Name="program">
     <Key>
@@ -73,6 +78,7 @@
     <Property Name="sect_id" Type="Int32" Nullable="false" />
     <NavigationProperty Name="events" Relationship="Self.FK_event_program" FromRole="program" ToRole="event" />
     <NavigationProperty Name="section" Relationship="Self.FK_program_section" FromRole="program" ToRole="section" />
+    <Property Name="created_date" Type="DateTime" Precision="3" />
   </EntityType>
   <EntityType Name="section">
     <Key>
@@ -88,6 +94,7 @@
     <NavigationProperty Name="programs" Relationship="Self.FK_program_section" FromRole="section" ToRole="program" />
     <NavigationProperty Name="section1" Relationship="Self.FK_section_section" FromRole="section" ToRole="section1" />
     <NavigationProperty Name="section2" Relationship="Self.FK_section_section" FromRole="section1" ToRole="section" />
+    <Property Name="created_date" Type="DateTime" Precision="3" />
   </EntityType>
   <EntityType Name="user">
     <Key>
@@ -99,21 +106,11 @@
     <Property Name="password" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
     <Property Name="email" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
     <Property Name="admin" Type="Int32" Nullable="false" />
-    <NavigationProperty Name="divisions" Relationship="Self.FK_division_user" FromRole="user" ToRole="division" />
     <NavigationProperty Name="posts" Relationship="Self.FK_post_user" FromRole="user" ToRole="post" />
+    <Property Name="created_date" Type="DateTime" Precision="3" />
+    <Property Name="institution_id" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="institution" Relationship="OrgDbModel.FK_user_institution" FromRole="user" ToRole="institution" />
   </EntityType>
-  <Association Name="FK_division_user">
-    <End Role="user" Type="Self.user" Multiplicity="1" />
-    <End Role="division" Type="Self.division" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="user">
-        <PropertyRef Name="id" />
-      </Principal>
-      <Dependent Role="division">
-        <PropertyRef Name="user_id" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
   <Association Name="FK_section_division">
     <End Role="division" Type="Self.division" Multiplicity="1" />
     <End Role="section" Type="Self.section" Multiplicity="*" />
@@ -219,10 +216,6 @@
     <EntitySet Name="programs" EntityType="Self.program" />
     <EntitySet Name="sections" EntityType="Self.section" />
     <EntitySet Name="users" EntityType="Self.user" />
-    <AssociationSet Name="FK_division_user" Association="Self.FK_division_user">
-      <End Role="user" EntitySet="users" />
-      <End Role="division" EntitySet="divisions" />
-    </AssociationSet>
     <AssociationSet Name="FK_section_division" Association="Self.FK_section_division">
       <End Role="division" EntitySet="divisions" />
       <End Role="section" EntitySet="sections" />
@@ -255,5 +248,60 @@
       <End Role="section" EntitySet="sections" />
       <End Role="section1" EntitySet="sections" />
     </AssociationSet>
+    <EntitySet Name="institutions" EntityType="OrgDbModel.institution" />
+    <EntitySet Name="sysdiagrams" EntityType="OrgDbModel.sysdiagram" />
+    <AssociationSet Name="FK_division_institution" Association="OrgDbModel.FK_division_institution">
+      <End Role="institution" EntitySet="institutions" />
+      <End Role="division" EntitySet="divisions" />
+    </AssociationSet>
+    <AssociationSet Name="FK_user_institution" Association="OrgDbModel.FK_user_institution">
+      <End Role="institution" EntitySet="institutions" />
+      <End Role="user" EntitySet="users" />
+    </AssociationSet>
   </EntityContainer>
+  <EntityType Name="institution">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="name" Type="String" Nullable="false" MaxLength="200" FixedLength="true" Unicode="true" />
+    <Property Name="description" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="created_date" Type="DateTime" Precision="3" />
+    <NavigationProperty Name="divisions" Relationship="OrgDbModel.FK_division_institution" FromRole="institution" ToRole="division" />
+    <NavigationProperty Name="users" Relationship="OrgDbModel.FK_user_institution" FromRole="institution" ToRole="user" />
+  </EntityType>
+  <EntityType Name="sysdiagram">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="principal_id" Type="Int32" Nullable="false" />
+    <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="version" Type="Int32" />
+    <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+  </EntityType>
+  <Association Name="FK_division_institution">
+    <End Type="OrgDbModel.institution" Role="institution" Multiplicity="1" />
+    <End Type="OrgDbModel.division" Role="division" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="institution">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="division">
+        <PropertyRef Name="institution_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_user_institution">
+    <End Type="OrgDbModel.institution" Role="institution" Multiplicity="1" />
+    <End Type="OrgDbModel.user" Role="user" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="institution">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="user">
+        <PropertyRef Name="institution_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
 </Schema>

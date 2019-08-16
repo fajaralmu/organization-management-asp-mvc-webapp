@@ -4,16 +4,18 @@
     <EntitySetMapping Name="divisions">
       <EntityTypeMapping TypeName="OrgDbModel.division">
         <MappingFragment StoreEntitySet="division">
+          <ScalarProperty Name="created_date" ColumnName="created_date" />
+          <ScalarProperty Name="institution_id" ColumnName="institution_id" />
           <ScalarProperty Name="id" ColumnName="id" />
           <ScalarProperty Name="name" ColumnName="name" />
           <ScalarProperty Name="description" ColumnName="description" />
-          <ScalarProperty Name="user_id" ColumnName="user_id" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
     <EntitySetMapping Name="events">
       <EntityTypeMapping TypeName="OrgDbModel.event">
         <MappingFragment StoreEntitySet="event">
+          <ScalarProperty Name="created_date" ColumnName="created_date" />
           <ScalarProperty Name="id" ColumnName="id" />
           <ScalarProperty Name="program_id" ColumnName="program_id" />
           <ScalarProperty Name="user_id" ColumnName="user_id" />
@@ -29,6 +31,7 @@
     <EntitySetMapping Name="members">
       <EntityTypeMapping TypeName="OrgDbModel.member">
         <MappingFragment StoreEntitySet="member">
+          <ScalarProperty Name="created_date" ColumnName="created_date" />
           <ScalarProperty Name="id" ColumnName="id" />
           <ScalarProperty Name="name" ColumnName="name" />
           <ScalarProperty Name="position_id" ColumnName="position_id" />
@@ -39,6 +42,7 @@
     <EntitySetMapping Name="positions">
       <EntityTypeMapping TypeName="OrgDbModel.position">
         <MappingFragment StoreEntitySet="position">
+          <ScalarProperty Name="created_date" ColumnName="created_date" />
           <ScalarProperty Name="id" ColumnName="id" />
           <ScalarProperty Name="name" ColumnName="name" />
           <ScalarProperty Name="section_id" ColumnName="section_id" />
@@ -50,6 +54,7 @@
     <EntitySetMapping Name="posts">
       <EntityTypeMapping TypeName="OrgDbModel.post">
         <MappingFragment StoreEntitySet="post">
+          <ScalarProperty Name="created_date" ColumnName="created_date" />
           <ScalarProperty Name="id" ColumnName="id" />
           <ScalarProperty Name="user_id" ColumnName="user_id" />
           <ScalarProperty Name="title" ColumnName="title" />
@@ -63,6 +68,7 @@
     <EntitySetMapping Name="programs">
       <EntityTypeMapping TypeName="OrgDbModel.program">
         <MappingFragment StoreEntitySet="program">
+          <ScalarProperty Name="created_date" ColumnName="created_date" />
           <ScalarProperty Name="id" ColumnName="id" />
           <ScalarProperty Name="name" ColumnName="name" />
           <ScalarProperty Name="description" ColumnName="description" />
@@ -73,6 +79,7 @@
     <EntitySetMapping Name="sections">
       <EntityTypeMapping TypeName="OrgDbModel.section">
         <MappingFragment StoreEntitySet="section">
+          <ScalarProperty Name="created_date" ColumnName="created_date" />
           <ScalarProperty Name="id" ColumnName="id" />
           <ScalarProperty Name="name" ColumnName="name" />
           <ScalarProperty Name="division_id" ColumnName="division_id" />
@@ -84,12 +91,35 @@
     <EntitySetMapping Name="users">
       <EntityTypeMapping TypeName="OrgDbModel.user">
         <MappingFragment StoreEntitySet="user">
+          <ScalarProperty Name="institution_id" ColumnName="institution_id" />
+          <ScalarProperty Name="created_date" ColumnName="created_date" />
           <ScalarProperty Name="id" ColumnName="id" />
           <ScalarProperty Name="username" ColumnName="username" />
           <ScalarProperty Name="name" ColumnName="name" />
           <ScalarProperty Name="password" ColumnName="password" />
           <ScalarProperty Name="email" ColumnName="email" />
           <ScalarProperty Name="admin" ColumnName="admin" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="institutions">
+      <EntityTypeMapping TypeName="OrgDbModel.institution">
+        <MappingFragment StoreEntitySet="institution">
+          <ScalarProperty Name="created_date" ColumnName="created_date" />
+          <ScalarProperty Name="description" ColumnName="description" />
+          <ScalarProperty Name="name" ColumnName="name" />
+          <ScalarProperty Name="id" ColumnName="id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="sysdiagrams">
+      <EntityTypeMapping TypeName="OrgDbModel.sysdiagram">
+        <MappingFragment StoreEntitySet="sysdiagrams">
+          <ScalarProperty Name="definition" ColumnName="definition" />
+          <ScalarProperty Name="version" ColumnName="version" />
+          <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+          <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+          <ScalarProperty Name="name" ColumnName="name" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

@@ -58,7 +58,7 @@ namespace OrgWebMvc.Controllers
             //    var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
 
             var result = SignInStatus.Failure;
-            user User = UserService.GetUser(model.Email, model.Password);
+            user User = UserService.GetUser(model.Username, model.Password);
             if (User != null)
             {
 

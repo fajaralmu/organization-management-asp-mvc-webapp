@@ -134,11 +134,11 @@ namespace OrgWebMvc.Main.Service
             string participant = Params.ContainsKey("participant") ? Params["participant"].ToString() : "";
             string info = Params.ContainsKey("info") ? (string)Params["info"] : "";
 
-            string day = Params.ContainsKey("date.day") ? (string)Params["date.day"] : "";
-            string month = Params.ContainsKey("date.month") ? (string)Params["date.month"] : "";
-            string year = Params.ContainsKey("date.year") ? (string)Params["date.year"] : "";
+            string day = Params.ContainsKey("date.day") ? Params["date.day"].ToString() : "";
+            string month = Params.ContainsKey("date.month") ? (string)Params["date.month"].ToString() : "";
+            string year = Params.ContainsKey("date.year") ? (string)Params["date.year"].ToString() : "";
 
-            string user_id = Params.ContainsKey("user_id") ? Params["user_id"].ToString() : "";
+            string institution_id = Params.ContainsKey("institution_id") ? Params["institution_id"].ToString() : "";
             string orderby = Params.ContainsKey("orderby") ? (string)Params["orderby"] : "";
             string ordertype = Params.ContainsKey("ordertype") ? (string)Params["ordertype"] : "";
 
@@ -150,7 +150,7 @@ namespace OrgWebMvc.Main.Service
                 " and [event].[location]  like '%" + location + "%' " +
                 " and [event].[participant]  like '%" + participant + "%' " +
                 " and [event].[info]  like '%" + info + "%' " +
-                (StringUtil.NotNullAndNotBlank(user_id) ? " and [division].[user_id] = " + user_id : "") +
+                (StringUtil.NotNullAndNotBlank(institution_id) ? " and [division].[institution_id] = " + institution_id : "") +
                 (StringUtil.NotNullAndNotBlank(day) ? " and DAY([event].[date]) = " + day : "") +
                 (StringUtil.NotNullAndNotBlank(month) ? " and MONTH([event].[date]) = " + month : "") +
                 (StringUtil.NotNullAndNotBlank(year) ? " and YEAR([event].[date]) = " + year : "");

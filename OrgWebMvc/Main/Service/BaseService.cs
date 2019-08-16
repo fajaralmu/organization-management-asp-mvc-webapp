@@ -93,7 +93,7 @@ namespace OrgWebMvc.Main.Service
             }
             if (LoggedUser != null)
             {
-                Params.Add("user_id", LoggedUser.id);
+                Params.Add("institution_id", LoggedUser.institution_id);
             }
             return Service.SearchAdvanced(Params, Limit, Offset);
 

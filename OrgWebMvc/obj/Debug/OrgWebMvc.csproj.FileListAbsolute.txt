@@ -1,3 +1,4 @@
+C:\Users\fajar\Documents\Visual Studio 2015\Projects\OrgWebMvc\OrgWebMvc\obj\Debug\OrgWebMvc.csprojResolveAssemblyReference.cache
 C:\Users\fajar\Documents\Visual Studio 2015\Projects\OrgWebMvc\OrgWebMvc\bin\ApplicationInsights.config
 C:\Users\fajar\Documents\Visual Studio 2015\Projects\OrgWebMvc\OrgWebMvc\bin\roslyn\csc.exe
 C:\Users\fajar\Documents\Visual Studio 2015\Projects\OrgWebMvc\OrgWebMvc\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
@@ -83,6 +84,5 @@ C:\Users\fajar\Documents\Visual Studio 2015\Projects\OrgWebMvc\OrgWebMvc\bin\Mic
 C:\Users\fajar\Documents\Visual Studio 2015\Projects\OrgWebMvc\OrgWebMvc\bin\Microsoft.Owin.Security.Google.xml
 C:\Users\fajar\Documents\Visual Studio 2015\Projects\OrgWebMvc\OrgWebMvc\bin\Microsoft.Owin.Security.Twitter.xml
 C:\Users\fajar\Documents\Visual Studio 2015\Projects\OrgWebMvc\OrgWebMvc\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
-C:\Users\fajar\Documents\Visual Studio 2015\Projects\OrgWebMvc\OrgWebMvc\obj\Debug\OrgWebMvc.csprojResolveAssemblyReference.cache
 C:\Users\fajar\Documents\Visual Studio 2015\Projects\OrgWebMvc\OrgWebMvc\obj\Debug\OrgWebMvc.dll
 C:\Users\fajar\Documents\Visual Studio 2015\Projects\OrgWebMvc\OrgWebMvc\obj\Debug\OrgWebMvc.pdb
