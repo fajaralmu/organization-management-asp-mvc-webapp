@@ -12,12 +12,17 @@ namespace OrgWebMvc.Models
     using InstApp.Annotation;
     using System;
     using System.Collections.Generic;
-
+    [Entity]
     public partial class @event
     {
         public @event()
         {
             done = 0;
+            participant = 0;
+            info = "";
+            created_date = DateTime.Now;
+            location = "";
+
         }
 
         [FieldAttribute(FieldType = AttributeConstant.TYPE_ID_AI, Required = true)]

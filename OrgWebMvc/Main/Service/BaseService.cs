@@ -14,7 +14,7 @@ namespace OrgWebMvc.Main.Service
 
         public BaseService()
         {
-            Refresh();
+            //Refresh();
         }
 
         public virtual List<object> ObjectList(int offset, int limit)
@@ -47,7 +47,7 @@ namespace OrgWebMvc.Main.Service
             return null;
         }
 
-        public virtual List<object> SearchAdvanced(Dictionary<string, object> Params, int limit = 0, int offset = 0)
+        public virtual List<object> SearchAdvanced(Dictionary<string, object> Params, int limit = 0, int offset = 0, bool updateCount = true)
         {
             return null;
         }
@@ -64,7 +64,7 @@ namespace OrgWebMvc.Main.Service
 
         public static List<object> GetObjectList( BaseService Service, HttpRequestBase Req, user LoggedUser = null)
         {
-            Service.Refresh();
+            //Service.Refresh();
             int Offset = 0;
             int Limit = 0;
             Dictionary<string, object> Params = new Dictionary<string, object>();
@@ -101,24 +101,27 @@ namespace OrgWebMvc.Main.Service
 
         public static Dictionary<string, object> ReqToDict(HttpRequestBase Req)
         {
-            if (StringUtil.NotNullAndNotBlank(Req.Form["field_param"]))
+            Dictionary<string, object> Map = new Dictionary<string, object>();
+            foreach (string Key in Req.Form.Keys)
             {
-                string Param = Req.Form["field_param"].ToString();
-                Param = Param.Replace("${", "");
-                Param = Param.Replace("}$", "");
-                Param = Param.Replace(";", "&");
-                return StringUtil.QUeryStringToDict(Param);
+                if (Key.StartsWith("field-param-"))
+                {
+                    string DictKey = Key.Replace("field-param-", "");
+                    Map.Add(DictKey, Req.Form[Key]);
+                }
             }
-            return null;
+
+           
+            return Map;
         }
 
-        protected void Refresh()
-        {
-            if (dbEntities != null)
-                dbEntities.Dispose();
-            dbEntities = ORG_DBEntities.Instance();
+        //protected void Refresh()
+        //{
+        //    if (dbEntities != null)
+        //        dbEntities.Dispose();
+        //    dbEntities = ORG_DBEntities.Instance();
 
-        }
+        //}
 
     }
 }

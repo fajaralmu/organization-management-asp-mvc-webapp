@@ -14,6 +14,7 @@ namespace OrgWebMvc.Main.Service
 
         public override List<object> ObjectList(int offset, int limit)
         {
+            dbEntities = new ORG_DBEntities();
             List<object> ObjList = new List<object>();
             var Sql = (from p in dbEntities.events orderby p.name select p);
             List<@event> List = Sql.Skip(offset * limit).Take(limit).ToList();
@@ -27,8 +28,9 @@ namespace OrgWebMvc.Main.Service
 
         public override object Update(object Obj)
         {
-            Refresh();
+            dbEntities = new ORG_DBEntities();
             @event @event = (@event)Obj;
+            @event.created_date = DateTime.Now;
             @event DBEvent = (@event)GetById(@event.id);
             if (DBEvent == null)
             {
@@ -41,6 +43,7 @@ namespace OrgWebMvc.Main.Service
 
         public override object GetById(object Id)
         {
+            dbEntities = new ORG_DBEntities();
             @event @event = (from o in dbEntities.events where o.id == (int)Id select o).SingleOrDefault();
             return @event;
         }
@@ -49,6 +52,7 @@ namespace OrgWebMvc.Main.Service
         {
             try
             {
+                dbEntities = new ORG_DBEntities();
                 @event @event = (@event)Obj;
                 dbEntities.events.Remove(@event);
                 dbEntities.SaveChanges();
@@ -69,6 +73,9 @@ namespace OrgWebMvc.Main.Service
         public override object Add(object Obj)
         {
             @event @event = (@event)Obj;
+            dbEntities = new ORG_DBEntities();
+            @event.created_date = DateTime
+                .Now;
             @event newEvent = dbEntities.events.Add(@event);
             try
             {
@@ -100,6 +107,7 @@ namespace OrgWebMvc.Main.Service
         private List<object> ListWithSql(string sql, int limit = 0, int offset = 0)
         {
             List<object> categoryList = new List<object>();
+            dbEntities = new ORG_DBEntities();
             var Events = dbEntities.events
                 .SqlQuery(sql
                 ).
@@ -124,7 +132,7 @@ namespace OrgWebMvc.Main.Service
             return categoryList;
         }
 
-        public override List<object> SearchAdvanced(Dictionary<string, object> Params, int limit = 0, int offset = 0)
+        public override List<object> SearchAdvanced(Dictionary<string, object> Params, int limit = 0, int offset = 0, bool updateCount = true)
         {
 
             string id = Params.ContainsKey("id") ? Params["id"].ToString() : "";
@@ -134,14 +142,12 @@ namespace OrgWebMvc.Main.Service
             string participant = Params.ContainsKey("participant") ? Params["participant"].ToString() : "";
             string info = Params.ContainsKey("info") ? (string)Params["info"] : "";
 
-            string day = Params.ContainsKey("date.day") ? Params["date.day"].ToString() : "";
-            string month = Params.ContainsKey("date.month") ? (string)Params["date.month"].ToString() : "";
-            string year = Params.ContainsKey("date.year") ? (string)Params["date.year"].ToString() : "";
-
+           
             string institution_id = Params.ContainsKey("institution_id") ? Params["institution_id"].ToString() : "";
             string orderby = Params.ContainsKey("orderby") ? (string)Params["orderby"] : "";
             string ordertype = Params.ContainsKey("ordertype") ? (string)Params["ordertype"] : "";
 
+            string dateFilterQuery = StringUtil.AddDateFilterQuery(Params, "event", "date", true);
             string sql = "select * from [event] left join [program] on [program].[id]=[event].[program_id] " +
                 " left join [section] on [section].[id] = [program].[sect_id] " +
                 " left join [division] on [division].[id] = [section].[division_id] where [event].[id] like '%" + id + "%'" +
@@ -151,17 +157,13 @@ namespace OrgWebMvc.Main.Service
                 " and [event].[participant]  like '%" + participant + "%' " +
                 " and [event].[info]  like '%" + info + "%' " +
                 (StringUtil.NotNullAndNotBlank(institution_id) ? " and [division].[institution_id] = " + institution_id : "") +
-                (StringUtil.NotNullAndNotBlank(day) ? " and DAY([event].[date]) = " + day : "") +
+                dateFilterQuery;
+            /* (StringUtil.NotNullAndNotBlank(day) ? " and DAY([event].[date]) = " + day : "") +
                 (StringUtil.NotNullAndNotBlank(month) ? " and MONTH([event].[date]) = " + month : "") +
                 (StringUtil.NotNullAndNotBlank(year) ? " and YEAR([event].[date]) = " + year : "");
-            if (!orderby.Equals(""))
-            {
-                sql += " ORDER BY " + orderby;
-                if (!ordertype.Equals(""))
-                {
-                    sql += " " + ordertype;
-                }
-            }
+          */
+            sql += StringUtil.AddSortQuery(orderby, ordertype);
+            dbEntities = new ORG_DBEntities();
             count = countSQL(sql, dbEntities.events);
             return ListWithSql(sql, limit, offset);
         }

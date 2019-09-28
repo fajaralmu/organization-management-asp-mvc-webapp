@@ -73,7 +73,7 @@ namespace InstApp.Util.Common
             string innerHTML = "";
             List<string> Attrs = new List<string>();
 
-            object Value = TAG.Value;
+            object Value = TAG.innerHTML;
 
             if (Value != null && Value.GetType().Equals(typeof(HtmlTag)) && TAG.ListValueCount() == 0)
             {

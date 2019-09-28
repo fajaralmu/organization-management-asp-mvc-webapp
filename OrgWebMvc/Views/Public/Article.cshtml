@@ -1,0 +1,112 @@
+﻿
+@{
+    ViewBag.Title = "Article";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div>
+    <script src="~/Scripts/component.js"></script>
+    <script src="~/Scripts/ajax.js"></script>
+    <h2>Article<small id="latest-article"></small></h2>
+    <hr />
+    <div id="article-wrapper" class="row">
+       
+    </div>
+    <br />
+    <br />
+    <span id="end-list">--</span>
+    <script>
+        let latestArticleCount = 0;
+        let totalArticleCount = 0;
+        let loadedArticleCount = 0;
+        let offset = 0;
+        let limit = 3;
+        let articleWrapper = document.getElementById("article-wrapper");
+        let endList = document.getElementById("end-list");
+        let latestArticleCountInfo = document.getElementById("latest-article");
+        let loadCount = 0;
+        let isLoading = false;
+
+        function loadArticle() {
+            isLoading = true;
+            let param = "Action=List&Scope=Public&Type=JSONList&offset=" + offset + "&limit=" + limit;
+            let Url = "/Entity/PostSvc";
+            postReq(Url, param, function (response) {
+                appendArticle(response.data);
+                totalArticleCount = response.count;
+                offset++;
+                isLoading = false;
+            }, function (response) {
+                isLoading = false;
+
+            });
+        }
+
+        function appendArticle(articles) {
+            loadedArticleCount += articles.length;
+            console.log("append", articles.length, "articles");
+            for (let i = 0; i < articles.length; i++) {
+                let article = articles[i]; 
+                let body = article.body.split("\\>\\").join('>').split("\\<\\").join('<');
+
+                let itemDiv = document.createElement("div");
+                itemDiv.className = "col-md-12";
+                itemDiv.innerHTML = "<h3><b>" + article.title + "  </b> <small>"+article.user.name+"</small></h3><p>" + body + "</p>";
+
+
+                articleWrapper.appendChild(itemDiv);
+            }
+        }
+
+        window.onscroll = function (e) {
+            // console.log("window scroll ", e);
+            let isVisible = isElementVisible(endList);
+            if (isVisible && !isLoading && loadedArticleCount < totalArticleCount) {
+                console.log("will load more",limit,"article, page ",offset);
+                loadArticle();
+            }
+        };
+        let NOW = new Date();
+        let timeStamp = new Date(NOW.getTime() - (NOW.getTimezoneOffset() * 6000)).toISOString(true);// NOW.getFullYear()+"-"+NOW.getMonth()+"-"+NOW.getDate()+" "+NOW.getHours()+":"+NOW.getMinutes()+":"+NOW.getSeconds();
+
+        function updateTimeStamp(dateStr) {
+            console.log("update timestamp ", dateStr);
+            let date = new Date(dateStr);
+            timeStamp = dateStr;
+            console.log("timestamp ", timeStamp);
+        }
+
+        function loadLatestPost() {
+            let param = "Action=Latest&timestamp=" + timeStamp;
+            let Url = "/Entity/PostSvc";
+
+            console.log("check update ", timeStamp);
+
+            
+            postReqV2(Url, param, function (response) {
+                if (response.code == 0) {
+                    latestArticleCount++;
+                    latestArticleCountInfo.innerHTML = latestArticleCount;
+                    console.log("LATEST", response);
+                    console.log("latest_time", response.message);
+                    updateTimeStamp(response.message);
+
+                } else {
+
+                    console.log("NO_UPDATE", response);
+                    updateTimeStamp(response.message);
+                }
+               
+
+            }, function (response) {
+                if (response.type == "timeout") {
+                    console.log(response.type, new Date())
+                }
+            }, 5000);
+
+        }
+        setInterval(loadLatestPost, 10000);
+        loadLatestPost();
+        loadArticle();
+    </script>
+</div>
+

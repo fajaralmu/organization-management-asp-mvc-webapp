@@ -15,6 +15,7 @@ namespace OrgWebMvc.Main.Service
 
         public override List<object> ObjectList(int offset, int limit)
         {
+            dbEntities = new ORG_DBEntities();
             List<object> ObjList = new List<object>();
             var Sql = (from p in dbEntities.members orderby p.name select p);
             List<member> List = Sql.Skip(offset * limit).Take(limit).ToList();
@@ -27,7 +28,7 @@ namespace OrgWebMvc.Main.Service
         }
         public override object Update(object Obj)
         {
-            Refresh();
+            dbEntities = new ORG_DBEntities();
             member member = (member)Obj;
             member DBmember = (member)GetById(member.id);
             if (DBmember == null)
@@ -41,6 +42,7 @@ namespace OrgWebMvc.Main.Service
 
         public override object GetById(object Id)
         {
+            dbEntities = new ORG_DBEntities();
             member member = (from c in dbEntities.members where c.id == (int)Id select c).SingleOrDefault();
             return member;
         }
@@ -49,6 +51,7 @@ namespace OrgWebMvc.Main.Service
         {
             try
             {
+                dbEntities = new ORG_DBEntities();
                 member member = (member)Obj;
                 dbEntities.members.Remove(member);
                 dbEntities.SaveChanges();
@@ -72,9 +75,11 @@ namespace OrgWebMvc.Main.Service
         public override object Add(object Obj)
         {
             member member = (member)Obj;
-            member newmember = dbEntities.members.Add(member);
             try
             {
+                dbEntities = new ORG_DBEntities();
+                member newmember = dbEntities.members.Add(member);
+
                 dbEntities.SaveChanges();
                 return newmember;
             }
@@ -103,6 +108,8 @@ namespace OrgWebMvc.Main.Service
         private List<object> ListWithSql(string sql, int limit = 0, int offset = 0)
         {
             List<object> categoryList = new List<object>();
+            dbEntities = new ORG_DBEntities();
+
             var members = dbEntities.members
                 .SqlQuery(sql
                 ).
@@ -127,7 +134,7 @@ namespace OrgWebMvc.Main.Service
             return categoryList;
         }
 
-        public override List<object> SearchAdvanced(Dictionary<string, object> Params, int limit = 0, int offset = 0)
+        public override List<object> SearchAdvanced(Dictionary<string, object> Params, int limit = 0, int offset = 0, bool updateCount = true)
         {
 
             string id = Params.ContainsKey("id") ? Params["id"].ToString() : "";
@@ -137,22 +144,16 @@ namespace OrgWebMvc.Main.Service
             string orderby = Params.ContainsKey("orderby") ? (string)Params["orderby"] : "";
             string ordertype = Params.ContainsKey("ordertype") ? (string)Params["ordertype"] : "";
 
-            string sql = "select * from member " +
-                " left join position on position.id = member.position_id " +
-                 " left join section on section.id = position.section_id " +
-                " left join division on division.id = section.division_id " +
-                " where member.id like '%" + id + "%'" +
-                " and member.name like '%" + name + "%' " +
-                " and position.name like '%" + position + "%' " +
-                (StringUtil.NotNullAndNotBlank(institution_id) ? " and division.institution_id=" + institution_id : "");
-            if (!orderby.Equals(""))
-            {
-                sql += " ORDER BY " + orderby;
-                if (!ordertype.Equals(""))
-                {
-                    sql += " " + ordertype;
-                }
-            }
+            string sql = "select * from [member] " +
+                " left join [position] on [position].[id] = [member].[position_id] " +
+                 " left join [section] on [section].[id] = [position].[section_id] " +
+                " left join [division] on [division].[id] = [section].[division_id] " +
+                " where [member].[id] like '%" + id + "%'" +
+                " and [member].[name] like '%" + name + "%' " +
+                " and [position].[name] like '%" + position + "%' " +
+                (StringUtil.NotNullAndNotBlank(institution_id) ? " and [division].[institution_id] =" + institution_id : "");
+            sql += StringUtil.AddSortQuery(orderby, ordertype);
+            dbEntities = new ORG_DBEntities();
             count = countSQL(sql, dbEntities.members);
             return ListWithSql(sql, limit, offset);
         }

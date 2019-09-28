@@ -43,22 +43,26 @@ function iImage() {
 }
 function iCodeView() {
     var html = prompt('HTML?');
+    
     richTextfield.document.execCommand('inserthtml', false, html);
 }
 
-var oDoc, sDefTxt;
+var oDoc, sDefTxt, switchMode;
 
 function initDoc() {
-    oDoc = document.getElementsByName("textBox-rtf")[0];
-    sDefTxt = oDoc.innerHTML;
-    if (document.compForm.switchMode.checked) { setDocMode(true); }
+    oDoc = document.getElementsByClassName("textBox-rtf")[0];
+    if (oDoc != null) {
+        switchMode = document.getElementById("switchBox");
+        sDefTxt = oDoc.innerHTML;
+        if (switchMode.checked) { setDocMode(true); }
+    }
 }
 
 function formatDoc(sCmd, sValue) {
     if (validateMode()) { document.execCommand(sCmd, false, sValue); oDoc.focus(); }
 }
 function validateMode() {
-    if (!document.compForm.switchMode.checked) {
+    if (!switchMode.checked) {
 
         return true;
 

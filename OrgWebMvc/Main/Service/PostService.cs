@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using OrgWebMvc.Models;
 using InstApp.Util.Common;
+using System.Threading.Tasks;
 
 namespace OrgWebMvc.Main.Service
 {
@@ -14,6 +15,7 @@ namespace OrgWebMvc.Main.Service
 
         public override List<object> ObjectList(int offset, int limit)
         {
+            dbEntities = new ORG_DBEntities();
             List<object> ObjList = new List<object>();
             var Sql = (from p in dbEntities.posts orderby p.title select p);
             List<post> List = Sql.Skip(offset * limit).Take(limit).ToList();
@@ -26,7 +28,7 @@ namespace OrgWebMvc.Main.Service
         }
         public override object Update(object Obj)
         {
-            Refresh();
+            dbEntities = new ORG_DBEntities();
             post post = (post)Obj;
             post DBpost = (post)GetById(post.id);
             if (DBpost == null)
@@ -40,6 +42,7 @@ namespace OrgWebMvc.Main.Service
 
         public override object GetById(object Id)
         {
+            dbEntities = new ORG_DBEntities();
             post post = (from c in dbEntities.posts where c.id == (int)Id select c).SingleOrDefault();
             return post;
         }
@@ -49,6 +52,7 @@ namespace OrgWebMvc.Main.Service
             try
             {
                 post post = (post)Obj;
+                dbEntities = new ORG_DBEntities();
                 dbEntities.posts.Remove(post);
                 dbEntities.SaveChanges();
                 return true;
@@ -72,6 +76,8 @@ namespace OrgWebMvc.Main.Service
         {
             post post = (post)Obj;
 
+            dbEntities = new ORG_DBEntities();
+            post.created_date = DateTime.Now;
             post newpost = dbEntities.posts.Add(post);
             try
             {
@@ -100,9 +106,26 @@ namespace OrgWebMvc.Main.Service
 
         }
 
-        private List<object> ListWithSql(string sql, int limit = 0, int offset = 0)
+        public post findLatestPost()
+        {
+            dbEntities = new ORG_DBEntities();
+            Dictionary<string, object> filter = new Dictionary<string, object>();
+            filter.Add("orderby", "post.created_date");
+            filter.Add("ordertype", "DESC");
+            List<object> posts = SearchAdvanced(filter, 1, 0 ,false);
+            if (posts == null || posts.Count == 0)
+            {
+                return null;
+            }
+            post Post = (post)posts[0];//.SingleOrDefault();
+                                       //    return postObj.SingleOrDefault();
+            return Post;
+        }
+
+        private async Task<List<object>> ListWithSql(string sql, int limit = 0, int offset = 0)
         {
             List<object> categoryList = new List<object>();
+            dbEntities = new ORG_DBEntities();
             var posts = dbEntities.posts
                 .SqlQuery(sql
                 ).
@@ -110,24 +133,34 @@ namespace OrgWebMvc.Main.Service
                 {
                     post
                 });
-            if (limit > 0)
+            if (posts != null)
             {
-                posts = posts.Skip(offset * limit).Take(limit).ToList();
-            }
-            else
-            {
-                posts = posts.ToList();
-            }
-            foreach (var u in posts)
-            {
-                post post = u.post;
-                categoryList.Add(post);
+                if (limit > 0)
+                {
+                    posts = posts.Skip(offset * limit).Take(limit);
+                    if(posts == null)
+                    {
+
+                        return new List<object>();
+                    }
+                    posts = posts.ToList();
+                }
+                else posts = posts.ToList();
+
+                foreach (var u in posts)
+                {
+                    post post = u.post;
+                    categoryList.Add(post);
+                }
+
+                return categoryList;
             }
 
-            return categoryList;
+            return new List<object>();
+
         }
 
-        public override List<object> SearchAdvanced(Dictionary<string, object> Params, int limit = 0, int offset = 0)
+        public override List<object> SearchAdvanced(Dictionary<string, object> Params, int limit = 0, int offset = 0, bool updateCount = true)
         {
 
             string id = Params.ContainsKey("id") ? Params["id"].ToString() : "";
@@ -135,28 +168,24 @@ namespace OrgWebMvc.Main.Service
             string title = Params.ContainsKey("title") ? (string)Params["title"] : "";
             string orderby = Params.ContainsKey("orderby") ? (string)Params["orderby"] : "";
             string ordertype = Params.ContainsKey("ordertype") ? (string)Params["ordertype"] : "";
+            string institution_id = Params.ContainsKey("institution_id") ? Params["institution_id"].ToString() : "";
 
-            string day = Params.ContainsKey("date.day") ? Params["date.day"].ToString() : "";
-            string month = Params.ContainsKey("date.month") ? (string)Params["date.month"].ToString() : "";
-            string year = Params.ContainsKey("date.year") ? (string)Params["date.year"].ToString() : "";
+            string dateFilterQuery = StringUtil.AddDateFilterQuery(Params, "post", "date", true);
 
-
-            string sql = "select * from post where post.id like '%" + id + "%'" +
-                " and post.title like '%" + title + "%' " +
-                 (StringUtil.NotNullAndNotBlank(user_id) ? " and post.user_id=" + user_id : "") +
-                 (StringUtil.NotNullAndNotBlank(day) ? " and DAY([post].[date]) = " + day : "") +
-                (StringUtil.NotNullAndNotBlank(month) ? " and MONTH([post].[date]) = " + month : "") +
-                (StringUtil.NotNullAndNotBlank(year) ? " and YEAR([post].[date]) = " + year : ""); 
-            if (!orderby.Equals(""))
+            string sql = "select * from [post] left join [user] on [user].[id] = [post].[user_id] where [post].[id] like '%" + id + "%'" +
+                " and [post].[title] like '%" + title + "%' " +
+                 (StringUtil.NotNullAndNotBlank(user_id) ? " and [post].[user_id]=" + user_id : "") +
+                  (StringUtil.NotNullAndNotBlank(institution_id) ? " and [user].[institution_id]=" + institution_id : "") +
+                 dateFilterQuery;
+            sql += StringUtil.AddSortQuery(orderby, ordertype);
+            dbEntities = new ORG_DBEntities();
+           if(updateCount) count = countSQL(sql, dbEntities.posts);
+            Task<List<object>> task =  ListWithSql(sql, limit, offset);
+            if(task != null && !task.IsFaulted && task.IsCompleted )
             {
-                sql += " ORDER BY " + orderby;
-                if (!ordertype.Equals(""))
-                {
-                    sql += " " + ordertype;
-                }
+                return task.Result;
             }
-            count = countSQL(sql, dbEntities.posts);
-            return ListWithSql(sql, limit, offset);
+            return new List<object>();
         }
 
 

@@ -12,7 +12,7 @@ namespace OrgWebMvc.Models
     using InstApp.Annotation;
     using System;
     using System.Collections.Generic;
-
+    [Entity]
     public partial class position
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]

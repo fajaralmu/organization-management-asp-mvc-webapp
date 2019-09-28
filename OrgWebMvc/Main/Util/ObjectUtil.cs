@@ -102,7 +102,10 @@ namespace InstApp.Util.Common
                 if (Attributes.Length > 0)
                 {
                     FieldAttribute Attribute = (FieldAttribute)Attributes[0];
-                    if (Attribute.FieldType != null && Attribute.FieldType.Contains("id_"))
+                    if (Attribute.FieldType.Equals(AttributeConstant.TYPE_ID_AI) ||
+                       Attribute.FieldType.Equals(AttributeConstant.TYPE_ID_NUMB) ||
+                       Attribute.FieldType.Equals(AttributeConstant.TYPE_ID_STR_NUMB))
+
                     {
                         return PropsInfo.Name;
                     }
@@ -123,6 +126,30 @@ namespace InstApp.Util.Common
                     NewObject.GetType().GetProperty(PropName).SetValue(NewObject, val);
                 }
             }
+            return NewObject;
+        }
+
+        public static object GetObjectValues(Dictionary<string, object> Props, object OriginalObj)
+        {
+            object NewObject = Activator.CreateInstance(OriginalObj.GetType());
+
+            foreach (string Key in Props.Keys)
+            {
+                string PropName = Key;
+                object PropVal = Props[Key];
+
+                if (HasProperty(PropName, OriginalObj))
+                {
+                    object val = null;
+                    val = OriginalObj.GetType().GetProperty(PropName).GetValue(OriginalObj);
+                    if (val != null && PropVal!=null && PropVal.GetType().Equals(typeof(Dictionary<string, object>)))
+                    {
+                        val = GetObjectValues((Dictionary<string, object>)PropVal, val);
+                    }
+                    NewObject.GetType().GetProperty(PropName).SetValue(NewObject, val);
+                }
+            }
+
             return NewObject;
         }
 

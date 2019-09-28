@@ -5,19 +5,19 @@ using System.Web;
 
 namespace InstApp.Annotation
 {
-    public class AttributeConstant
+    public enum AttributeConstant
     {
-        public const string TYPE_READONLY= "readonly";
-        public const string TYPE_ID_STR_NUMB = "id_";
-        public const string TYPE_ID_AI = "id_ai";
-        public const string TYPE_ID_NUMB = "id_number";
-        public const string TYPE_TEXTAREA = "textarea";
-        public const string TYPE_RICHTEXT= "richtext";
-        public const string TYPE_TEXTBOX = "textbox";
-        public const string TYPE_DROPDOWN = "dropdown";
-        public const string TYPE_SEARCHLIST = "search_list";
-        public const string TYPE_DATE = "date";
-        public const string TYPE_NUMBER = "number";
-        public const string TYPE_FILE_IMAGE = "file_image";
+        TYPE_READONLY,
+        TYPE_ID_STR_NUMB ,
+        TYPE_ID_AI ,
+        TYPE_ID_NUMB ,
+        TYPE_TEXTAREA ,
+        TYPE_RICHTEXT ,
+        TYPE_TEXTBOX ,
+        TYPE_DROPDOWN ,
+        TYPE_SEARCHLIST ,
+        TYPE_DATE ,
+        TYPE_NUMBER ,
+        TYPE_FILE_IMAGE 
     }
 }

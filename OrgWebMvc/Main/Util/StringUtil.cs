@@ -141,7 +141,7 @@ namespace InstApp.Util.Common
         public static string ToUpperCase(int index, string data)
         {
             string result = "";
-            if(data == null)
+            if (data == null)
             {
                 return "";
             }
@@ -166,6 +166,20 @@ namespace InstApp.Util.Common
             return false;
         }
 
+        internal static string AddSortQuery(string orderby, string ordertype)
+        {
+            string sql = "";
+            if (NotNullAndNotBlank(orderby))
+            {
+                sql += " ORDER BY " + orderby ;
+                if (NotNullAndNotBlank(ordertype))
+                {
+                    sql += " " + ordertype;
+                }
+            }
+            return sql;
+        }
+
         public static bool NotNullAndNotBlank(params object[] Objs)
         {
             foreach (object Obj in Objs)
@@ -176,6 +190,38 @@ namespace InstApp.Util.Common
                 }
             }
             return true;
+        }
+
+        internal static string AddDateFilterQuery(Dictionary<string, object> Params, string entity, string dateColumnName, bool beginWithAnd)
+        {
+            string sql = "";
+
+            string day = Params.ContainsKey(dateColumnName + ".day") ? Params[dateColumnName + ".day"].ToString() : "";
+            string month = Params.ContainsKey(dateColumnName + ".month") ? (string)Params[dateColumnName + ".month"].ToString() : "";
+            string year = Params.ContainsKey(dateColumnName + ".year") ? (string)Params[dateColumnName + ".year"].ToString() : "";
+
+            string sqlDay = (StringUtil.NotNullAndNotBlank(day) ? "  DAY([" + entity + "].[" + dateColumnName + "]) = " + day : "");
+
+            string sqlMonth = (StringUtil.NotNullAndNotBlank(month) ? "  MONTH([" + entity + "].[" + dateColumnName + "]) = " + month : "");
+
+            string sqlYear = (StringUtil.NotNullAndNotBlank(year) ? "  YEAR([" + entity + "].[" + dateColumnName + "]) = " + year : "");
+
+            sql += sqlDay;
+            if (sqlDay != "" && sqlMonth != "")
+            {
+                sql += " and ";
+            }
+            sql += sqlMonth;
+            if (sqlMonth != "" && sqlYear != "")
+            {
+                sql += " and " + sqlYear;
+            }
+
+            if (sql != "" && beginWithAnd)
+            {
+                sql = " and " + sql;
+            }
+            return sql;
         }
 
         public static bool NotNullAndNotBlankAndTypeOf(object Obj, Type t)
@@ -195,7 +241,7 @@ namespace InstApp.Util.Common
                 string[] Params = q.Split('&');
                 foreach (string Param in Params)
                 {
-                    if (Param != null &&Param!= "")
+                    if (Param != null && Param != "")
                     {
                         string[] Prop = Param.Split('=');
                         Map.Add(Prop[0], Prop[1]);

@@ -14,6 +14,7 @@ namespace OrgWebMvc.Main.Service
         public override List<object> ObjectList(int offset, int limit)
         {
             List<object> ObjList = new List<object>();
+            dbEntities = new ORG_DBEntities();
             var Sql = (from p in dbEntities.divisions orderby p.name select p);
             List<division> List = Sql.Skip(offset * limit).Take(limit).ToList();
             foreach (division c in List)
@@ -25,8 +26,8 @@ namespace OrgWebMvc.Main.Service
         }
         public override object Update(object Obj)
         {
-            Refresh();
-            division division = (division)Obj;
+            dbEntities = new ORG_DBEntities();
+             division division = (division)Obj;
             division DBDivision = (division)GetById(division.id);
             if (DBDivision == null)
             {
@@ -41,6 +42,7 @@ namespace OrgWebMvc.Main.Service
         {
             try
             {
+                dbEntities = new ORG_DBEntities();
                 division division = (from c in dbEntities.divisions where c.id == (int)Id select c).SingleOrDefault();
                 return division;
             }
@@ -55,6 +57,7 @@ namespace OrgWebMvc.Main.Service
         {
             try
             {
+                dbEntities = new ORG_DBEntities();
                 division division = (division)Obj;
                 dbEntities.divisions.Remove(division);
                 dbEntities.SaveChanges();
@@ -77,7 +80,7 @@ namespace OrgWebMvc.Main.Service
         public override object Add(object Obj)
         {
             division division = (division)Obj;
-
+            dbEntities = new ORG_DBEntities();
             division newDivision = dbEntities.divisions.Add(division);
             try
             {
@@ -109,6 +112,7 @@ namespace OrgWebMvc.Main.Service
         private List<object> ListWithSql(string sql, int limit = 0, int offset = 0)
         {
             List<object> categoryList = new List<object>();
+            dbEntities = new ORG_DBEntities();
             var divisions = dbEntities.divisions
                 .SqlQuery(sql
                 ).
@@ -133,7 +137,7 @@ namespace OrgWebMvc.Main.Service
             return categoryList;
         }
 
-        public override List<object> SearchAdvanced(Dictionary<string, object> Params, int limit = 0, int offset = 0)
+        public override List<object> SearchAdvanced(Dictionary<string, object> Params, int limit = 0, int offset = 0, bool updateCount = true)
         {
 
             string id = Params.ContainsKey("id") ? Params["id"].ToString() : "";
@@ -143,17 +147,11 @@ namespace OrgWebMvc.Main.Service
             string orderby = Params.ContainsKey("orderby") ? (string)Params["orderby"] : "";
             string ordertype = Params.ContainsKey("ordertype") ? (string)Params["ordertype"] : "";
 
-            string sql = "select * from division where id like '%" + id + "%'" +
-                " and name like '%" + name + "%' and description like '%" + desc + "%'" +
-                (StringUtil.NotNullAndNotBlank(institution_id) ? " and institution_id=" + institution_id + " " : "");
-            if (!orderby.Equals(""))
-            {
-                sql += " ORDER BY " + orderby;
-                if (!ordertype.Equals(""))
-                {
-                    sql += " " + ordertype;
-                }
-            }
+            string sql = "select * from [division] where [id] like '%" + id + "%'" +
+                " and [name] like '%" + name + "%' and [description] like '%" + desc + "%'" +
+                (StringUtil.NotNullAndNotBlank(institution_id) ? " and [institution_id] =" + institution_id + " " : "");
+            sql += StringUtil.AddSortQuery(orderby, ordertype);
+            dbEntities = new ORG_DBEntities();
             count = countSQL(sql, dbEntities.divisions);
             return ListWithSql(sql, limit, offset);
         }

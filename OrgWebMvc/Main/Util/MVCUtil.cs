@@ -83,14 +83,19 @@ namespace OrgWebMvc.Main.Util
             return new WebResponse(0, "Success " + Info, toSend);
         }
 
-        internal static WebResponse generateResponseList(BaseService EntitySvc, HttpRequestBase request, user loggedUser, string[] objParamToSend, Type type)
+        internal static WebResponse generateResponseList(BaseService EntitySvc, HttpRequestBase request, user loggedUser, object objParamToSend, Type type, bool PublicScope = false)
         {
+            if (PublicScope) loggedUser = null;
             List<object> ObjList = BaseService.GetObjectList(EntitySvc, request, loggedUser);
             //  List<division> Divisions = (List<division>)ObjectUtil.ConvertList(ObjList, typeof(List<division>));
             List<object> ListToSend = new List<object>();
             foreach (object D in ObjList)
             {
-                object Obj = ObjectUtil.GetObjectValues(objParamToSend, D);
+                object Obj = null;
+                if (objParamToSend.GetType().Equals(typeof(string[])))
+                    Obj = ObjectUtil.GetObjectValues((string[])objParamToSend, D);
+                else if (objParamToSend.GetType().Equals(typeof(Dictionary<string, object>)))
+                    Obj = ObjectUtil.GetObjectValues((Dictionary<string, object>)objParamToSend, D);
                 ListToSend.Add(Obj);
             }
             object ResponseData = null;

@@ -5,7 +5,9 @@ using OrgWebMvc.Main.Util;
 using OrgWebMvc.Models;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
@@ -55,7 +57,7 @@ namespace OrgWebMvc.Controllers
             EventService EventSvc = new EventService();
 
             //enable timeline
-            ViewData = MVCUtil.EnableTimeLine("Event","name", "date", ViewData);
+            ViewData = MVCUtil.EnableTimeLine("Event", "name", "date", ViewData);
             //ViewData["EnableTimeLine"] = true;
             //ViewData["Entity"] = "Event";
             //ViewData["DateId"] = "date";
@@ -112,14 +114,13 @@ namespace OrgWebMvc.Controllers
             }
             PostService PostSvc = new PostService();
 
-            ViewData = MVCUtil.EnableTimeLine("Post","title", "date", ViewData);
-
+            ViewData = MVCUtil.EnableTimeLine("Post", "title", "date", ViewData);
             ViewBag.Title = "Post";
             ViewData = MVCUtil.PopulateCRUDViewData(typeof(post), "Post", PostSvc, Request, ViewData);
             return View("~/Views/Shared/EntityMng.cshtml");
         }
 
-        public ActionResult User()
+        public ActionResult UserMng()
         {
             if (!UserValid())
             {
@@ -137,9 +138,9 @@ namespace OrgWebMvc.Controllers
         [HttpPost]
         public ActionResult DivisionSvc()
         {
-            bool UserIsLoggedIn = UserValid();
+            bool Access = UserValid() && IsAdmin();
             WebResponse Response = new WebResponse();
-            if (!UserIsLoggedIn || !StringUtil.NotNullAndNotBlank(Request.Form["Action"]))
+            if (!Access || !StringUtil.NotNullAndNotBlank(Request.Form["Action"]))
             {
                 return Json(Response);
             }
@@ -182,9 +183,9 @@ namespace OrgWebMvc.Controllers
         [HttpPost]
         public ActionResult ProgramSvc()
         {
-            bool UserIsLoggedIn = UserValid();
+            bool Access = UserValid();
             WebResponse Response = new WebResponse();
-            if (!UserIsLoggedIn || !StringUtil.NotNullAndNotBlank(Request.Form["Action"]))
+            if (!Access || !StringUtil.NotNullAndNotBlank(Request.Form["Action"]))
             {
                 return Json(Response);
             }
@@ -223,9 +224,9 @@ namespace OrgWebMvc.Controllers
         [HttpPost]
         public ActionResult EventSvc()
         {
-            bool UserIsLoggedIn = UserValid();
+            bool Access = UserValid();
             WebResponse Response = new WebResponse();
-            if (!UserIsLoggedIn || !StringUtil.NotNullAndNotBlank(Request.Form["Action"]))
+            if (!Access || !StringUtil.NotNullAndNotBlank(Request.Form["Action"]))
             {
                 return Json(Response);
             }
@@ -266,7 +267,7 @@ namespace OrgWebMvc.Controllers
         [HttpPost]
         public ActionResult MemberSvc()
         {
-            bool UserIsLoggedIn = UserValid();
+            bool Access = UserValid() && IsAdmin();
             WebResponse Response = new WebResponse();
             if (!StringUtil.NotNullAndNotBlank(Request.Form["Action"]))
             {
@@ -306,9 +307,9 @@ namespace OrgWebMvc.Controllers
         [HttpPost]
         public ActionResult SectionSvc()
         {
-            bool UserIsLoggedIn = UserValid();
+            bool Access = UserValid() && IsAdmin();
             WebResponse Response = new WebResponse();
-            if (!UserIsLoggedIn || !StringUtil.NotNullAndNotBlank(Request.Form["Action"]))
+            if (!Access || !StringUtil.NotNullAndNotBlank(Request.Form["Action"]))
             {
                 return Json(Response);
             }
@@ -346,9 +347,9 @@ namespace OrgWebMvc.Controllers
         [HttpPost]
         public ActionResult PositionSvc()
         {
-            bool UserIsLoggedIn = UserValid();
+            bool Access = UserValid() && IsAdmin();
             WebResponse Response = new WebResponse();
-            if (!UserIsLoggedIn || !StringUtil.NotNullAndNotBlank(Request.Form["Action"]))
+            if (!Access || !StringUtil.NotNullAndNotBlank(Request.Form["Action"]))
             {
                 return Json(Response);
             }
@@ -384,28 +385,43 @@ namespace OrgWebMvc.Controllers
         }
 
         [HttpPost]
-        public ActionResult PostSvc()
+        public async Task<ActionResult> PostSvc()
         {
-            bool UserIsLoggedIn = UserValid();
+            bool Access = UserValid();
             WebResponse Response = new WebResponse();
-            if (!UserIsLoggedIn || !StringUtil.NotNullAndNotBlank(Request.Form["Action"]))
+            if (/*!Access || */!StringUtil.NotNullAndNotBlank(Request.Form["Action"]))
             {
                 return Json(Response);
             }
             string Action = Request.Form["Action"].ToString();
             PostService EntitySvc = new PostService();
+
+            Dictionary<string, object> PostProps = new Dictionary<string, object>()
+            {
+                { "id", null },
+                { "user_id", null },
+                { "title", null },
+                { "body", null },
+                { "date",null },
+                 { "user",new Dictionary<string,object> { {"name", null } } },
+                { "type",null },
+                { "post_id",null }
+            };
+
             switch (Action)
             {
                 case "List":
-                    Response = MVCUtil.generateResponseList(EntitySvc, Request, LoggedUser, new string[]
-                    {
-                        "id","user_id","title","body","date","type","post_id"
-                    }, typeof(post));
+                    string Scope = Request.Form["Scope"];
+                    bool isPublic = (Scope != null && Scope.Equals("Public"))
+                   ;
+                    Response = MVCUtil.generateResponseList(EntitySvc, Request, LoggedUser, PostProps, typeof(post), isPublic);
                     break;
                 case "Form":
+                    if (!Access) return Json(Response);
                     Response = MVCUtil.generateResponseWithForm(typeof(post), EntitySvc, Request);
                     break;
                 case "Post":
+                    if (!Access) return Json(Response);
                     post post = (post)ObjectUtil.FillObjectWithMap(new post(), BaseService.ReqToDict(Request));
                     post.user_id = LoggedUser.id;
                     if (post != null)
@@ -416,7 +432,53 @@ namespace OrgWebMvc.Controllers
                     }
                     break;
                 case "Delete":
+                    if (!Access) return Json(Response);
                     Response = MVCUtil.DeleteEntity(EntitySvc, Request, Response);
+                    break;
+                case "Latest":
+                    // if (!Access) return Json(Response);
+                    string DateStr = Request.Form["timestamp"];
+                    post CurrentPost = EntitySvc.findLatestPost();
+                    if (CurrentPost != null)
+                    {
+                        DateTime Date = CurrentPost.created_date;
+                        DateStr = DateStr.Replace("T", " ");
+                        DateStr = DateStr.Replace("Z", "");
+                        DateStr = DateStr.Replace("-", "");
+                        try
+                        {
+                            Date = DateTime.ParseExact(DateStr, "yyyyMMdd HH:mm:ss.fff", CultureInfo.InvariantCulture);
+                        }catch(Exception ex)
+                       {
+                            Date = CurrentPost.created_date;
+                        }
+                        post LatestPost = new post();
+                        DateTime requestTime = DateTime.Now;
+                        DateTime runningTime;
+
+                        Boolean update = true;
+                        bool hasUpdate = Date <= CurrentPost.created_date;
+                        while (CurrentPost.created_date <= Date  )
+                        {
+                            runningTime = DateTime.Now;
+                            LatestPost = EntitySvc.findLatestPost();
+                            if (LatestPost != null)
+                                Date = LatestPost.created_date;
+                            TimeSpan deltaTime = runningTime - requestTime;
+                            if (deltaTime.TotalMilliseconds >= 6000.0)
+                            {
+                                update = false;
+                                break;
+                            }
+                        }
+                        
+                        Response = new WebResponse(update ? 0 : 1, StringUtil.DateTimeToString(DateTime.Now),
+                            ObjectUtil.GetObjectValues(new string[] { "id", "title" }, LatestPost));
+                    }
+                    else
+                    {
+                        Response = new WebResponse(0, "NoUpdate");
+                    }
                     break;
                 default:
                     break;
@@ -427,9 +489,9 @@ namespace OrgWebMvc.Controllers
         [HttpPost]
         public ActionResult UserSvc()
         {
-            bool UserIsLoggedIn = UserValid();
+            bool Access = UserValid() && IsAdmin();
             WebResponse Response = new WebResponse();
-            if (LoggedUser.admin != 1 ||!UserIsLoggedIn || !StringUtil.NotNullAndNotBlank(Request.Form["Action"]))
+            if (LoggedUser.admin != 1 || !Access || !StringUtil.NotNullAndNotBlank(Request.Form["Action"]))
             {
                 return Json(Response);
             }

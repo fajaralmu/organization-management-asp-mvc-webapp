@@ -10,10 +10,11 @@ namespace InstApp.Annotation
         public FieldAttribute()
         {
             SkipInTable = false;
+            FieldType = AttributeConstant.TYPE_TEXTBOX;
         }
 
         public string FieldName { get; set; }
-        public string FieldType { get; set; }
+        public AttributeConstant FieldType { get; set; }
         public object[] Values { get; set; }
         public object[] ItemNames { get; set; }
         public string ClassReference { get; set; }

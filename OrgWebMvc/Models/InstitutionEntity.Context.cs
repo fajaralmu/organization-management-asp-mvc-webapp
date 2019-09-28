@@ -15,19 +15,19 @@ namespace OrgWebMvc.Models
 
     public partial class ORG_DBEntities : DbContext
     {
-        private ORG_DBEntities()
+        public ORG_DBEntities()
             : base("name=ORG_DBEntities")
         {
         }
 
         private static ORG_DBEntities dbEntities = null;
 
-        public static ORG_DBEntities Instance()
-        {
-            if (dbEntities == null || InstApp.Util.Common.ObjectUtil.IsDisposed(dbEntities))
-                dbEntities = new ORG_DBEntities();
-            return dbEntities;
-        }
+        //public static ORG_DBEntities Instance()
+        //{
+        //    if (dbEntities == null || InstApp.Util.Common.ObjectUtil.IsDisposed(dbEntities))
+        //        dbEntities = new ORG_DBEntities();
+        //    return dbEntities;
+        //}
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             throw new UnintentionalCodeFirstException();

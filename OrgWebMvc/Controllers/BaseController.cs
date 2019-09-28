@@ -28,6 +28,11 @@ namespace OrgWebMvc.Controllers
             return !UserValid();
         }
 
+        public bool IsAdmin()
+        {
+            return LoggedUser != null && LoggedUser.admin == 1;
+        }
+
         public bool UserValid()
         {
 

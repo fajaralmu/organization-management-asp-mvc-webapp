@@ -19,13 +19,13 @@ namespace OrgWebMvc.Main.Util
         public HtmlTag(string Key, object Value)
         {
             this.Key = Key;
-            this.Value = Value;
+            this.innerHTML = Value;
             Init();
         }
         public HtmlTag(string Key, HtmlTag Value)
         {
             this.Key = Key;
-            this.Value = Value;
+            this.innerHTML = Value;
             Init();
             ValueList.Add(Value);
         }
@@ -45,7 +45,7 @@ namespace OrgWebMvc.Main.Util
         }
 
         public string Key { get; set; }
-        public object Value { get; set; }
+        public object innerHTML { get; set; }
         public string ID { get; set; }
         public string Class { get; set; }
         public string Name { get; set; }

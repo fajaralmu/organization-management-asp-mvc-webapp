@@ -47,7 +47,7 @@ textarea {
 }
 
 .li-uncheck::before {
-  content: "\2217";  /* Add content: \2022 is the CSS Code/unicode for a bullet */
+  content: "\2610";  /* Add content: \2610 is the CSS Code/unicode for a uncheck box */
   color: orange; /* Change the color */
   font-weight: bold; /* If you want it to be bold */
   display: inline-block; /* Needed to add space between the bullet and the text */ 
@@ -56,7 +56,7 @@ textarea {
 }
 
 .li-checked::before {
-  content: "\221A";  /* CSS Code/unicode  */
+  content: "\2611";  /* CSS Code/unicode  */
   color:  orange;/* Change the color */
   font-weight: bold; /* If you want it to be bold */
   display: inline-block; /* Needed to add space between the bullet and the text */ 

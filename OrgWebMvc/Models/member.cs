@@ -12,7 +12,7 @@ namespace OrgWebMvc.Models
     using InstApp.Annotation;
     using System;
     using System.Collections.Generic;
-
+    [Entity]
     public partial class member
 
     {

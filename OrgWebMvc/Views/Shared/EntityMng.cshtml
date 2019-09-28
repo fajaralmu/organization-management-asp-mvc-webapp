@@ -109,20 +109,26 @@
             }
 
             let params = "Action=Post";
-            let fieldParams = "field_param=${";
+            let fieldParams = "";
+            console.log("input length", inputs.length);
             for (let i = 0; i < inputs.length; i++) {
                 let field = inputs[i];
                 let value = field.value;
-                //  console.log("TYPE of FIELD", (field));
-                fieldParams += field.id + "=" + value;
+                if (field.getAttribute("role") != null && field.getAttribute("role") == "rtf") {
+                    value = window.escape(field.innerHTML.split('>').join( "\\>\\").split('<').join( "\\<\\"));
+                   
+                }
+                console.log("field ID", (field).id, field.getAttribute("role"));
+                fieldParams += "field-param-"+field.id + "=" + value;
                 if (i < inputs.length - 1) {
-                    fieldParams += ";";
+                    fieldParams += "&";
                 }
 
             }
 
-            fieldParams += "}$";
+           
             params += "&" + fieldParams;
+            console.log(params);
             postReq(URL, params, function (data) {
                 if (data.code == 0) {
                     alert("Success");
@@ -250,6 +256,9 @@
             }
             postReq(URL, param, function (response) {
                 formPanel.innerHTML = response.data;
+                if (firstLoad) {
+                    initDoc();
+                }
             }, function (data) {
                 alert("Server error");
             })

@@ -215,7 +215,9 @@ namespace OrgWebMvc.Main.Util
                     FieldAttribute Attribute = (FieldAttribute)Attributes[0];
                     HtmlTag InputField = new InputTag();
                     HtmlTag InputHelper = null;
-                    if (Attribute.FieldType.Contains("id_"))
+                    if (Attribute.FieldType.Equals(AttributeConstant.TYPE_ID_AI)||
+                        Attribute.FieldType.Equals(AttributeConstant.TYPE_ID_NUMB)||
+                        Attribute.FieldType.Equals(AttributeConstant.TYPE_ID_STR_NUMB))
                     {
                         if (Entity == null)
                             continue;
@@ -239,16 +241,17 @@ namespace OrgWebMvc.Main.Util
                     if (IsTextArea)
                     {
                         InputField.Key = "textarea";
-                        InputField.Value = Value == null ? "" : Value.ToString();
-                    }else if (IsRTF)
+                        InputField.innerHTML = Value == null ? "" : Value.ToString();
+                    }
+                    else if (IsRTF)
                     {
 
-                        string RFTFile = HtmlConstant.ReadRftFile();
-                        RFTFile.Replace("$ID$", InputField.ID);
-                        RFTFile.Replace("$VALUE$", Value == null ? "" : Value.ToString());
                         InputField.Key = "div";
-                     //   InputField.AddAttribute("contenteditable", "true");
-                        InputField.Value = RFTFile;
+                        InputField.Class = "";
+                        string RFTFile = HtmlConstant.RTFTemplate;
+                        RFTFile = RFTFile.Replace("${INPUTID}", Prop.Name);
+                        RFTFile = RFTFile.Replace("${VALUE}", Value == null ? "" : Value.ToString().Replace("\\<\\", "<").Replace("\\>\\", ">"));
+                        InputField.innerHTML = RFTFile;
                     }
                     else if (IsDropDown)
                     {
@@ -307,10 +310,12 @@ namespace OrgWebMvc.Main.Util
                     {
                         InputField.AddAttribute("required", "true");
                     }
-
-                    InputField.Class = "form-control";
-                    InputField.ID = Prop.Name;
-                    InputField.Name = "input-entity";
+                    if (!IsRTF)
+                    {
+                        InputField.Class = "form-control";
+                        InputField.ID = Prop.Name;
+                        InputField.Name = "input-entity";
+                    }
 
                     InputFields.Add(Label);
                     if (InputHelper != null)
