@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using OrgWebMvc.Models;
 using InstApp.Util.Common;
+using OrgWebMvc.Main.Util;
 
 namespace OrgWebMvc.Main.Service
 {
@@ -65,11 +66,14 @@ namespace OrgWebMvc.Main.Service
 
         public user GetUser(string Username, string Password)
         {
+            DebugConsole.Debug(this,"DB ENTITIES IS NULL: "+ (dbEntities==null));
+            dbEntities = new ORG_DBEntities();
             if (dbEntities == null || Username == null || Password == null)
             {
                 return null;
             }
-            dbEntities = new ORG_DBEntities();
+          
+            DebugConsole.Debug(this, dbEntities.users.ToString());
             user User = (from u in dbEntities.users
                          where u.username.Equals(Username) && u.password.Equals(Password)
                          select u).SingleOrDefault();

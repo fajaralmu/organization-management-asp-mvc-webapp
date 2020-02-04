@@ -241,6 +241,7 @@
     <Compile Include="Main\TxtResources\MainDir.cs" />
     <Compile Include="Main\Util\BreakLine.cs" />
     <Compile Include="Main\Util\CustomHelper.cs" />
+    <Compile Include="Main\Util\DebugConsole.cs" />
     <Compile Include="Main\Util\HtmlConstant.cs" />
     <Compile Include="Main\Util\HtmlTag.cs" />
     <Compile Include="Main\Util\InputTag.cs" />

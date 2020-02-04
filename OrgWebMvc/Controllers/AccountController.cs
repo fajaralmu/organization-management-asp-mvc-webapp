@@ -10,6 +10,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using OrgWebMvc.Models;
 using OrgWebMvc.Main.Service;
+using OrgWebMvc.Main.Util;
 
 namespace OrgWebMvc.Controllers
 {
@@ -48,6 +49,7 @@ namespace OrgWebMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
+            DebugConsole.Debug (this, "Valid State: " + ModelState.IsValid);
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -59,6 +61,7 @@ namespace OrgWebMvc.Controllers
 
             var result = SignInStatus.Failure;
             user User = UserService.GetUser(model.Username, model.Password);
+            DebugConsole.Debug(this, "User: "+ User);
             if (User != null)
             {
 

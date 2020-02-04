@@ -1,0 +1,118 @@
+-- Drop table
+
+-- DROP TABLE mpi_db.dbo.division
+
+CREATE TABLE mpi_db.dbo.division (
+	name varchar(100) NOT NULL,
+	description varchar(1000) NULL,
+	institution_id int NOT NULL,
+	created_date datetime NULL,
+	id int IDENTITY(1,1) NOT NULL
+) GO;
+
+-- Drop table
+
+-- DROP TABLE mpi_db.dbo.event
+
+CREATE TABLE mpi_db.dbo.event (
+	name varchar(100) NOT NULL,
+	location varchar(100) NOT NULL,
+	info varchar(100) NOT NULL,
+	done int NOT NULL,
+	participant int NOT NULL,
+	program_id int NOT NULL,
+	user_id int NOT NULL,
+	created_date datetime NULL,
+	[date] datetime NULL,
+	id int IDENTITY(1,1) NOT NULL
+) GO;
+
+-- Drop table
+
+-- DROP TABLE mpi_db.dbo.institution
+
+CREATE TABLE mpi_db.dbo.institution (
+	name varchar(100) NOT NULL,
+	description varchar(1000) NULL,
+	created_date datetime NULL,
+	id int IDENTITY(1,1) NOT NULL
+) GO;
+
+-- Drop table
+
+-- DROP TABLE mpi_db.dbo.[member]
+
+CREATE TABLE mpi_db.dbo.[member] (
+	name varchar(100) NULL,
+	description varchar(1000) NULL,
+	position_id int NULL,
+	created_date datetime NULL,
+	id int IDENTITY(1,1) NOT NULL
+) GO;
+
+-- Drop table
+
+-- DROP TABLE mpi_db.dbo.[position]
+
+CREATE TABLE mpi_db.dbo.[position] (
+	name varchar(100) NOT NULL,
+	section_id int NOT NULL,
+	parent_position_id int NULL,
+	created_date datetime NULL,
+	id int IDENTITY(1,1) NOT NULL
+) GO;
+
+-- Drop table
+
+-- DROP TABLE mpi_db.dbo.post
+
+CREATE TABLE mpi_db.dbo.post (
+	name varchar(100) NULL,
+	body varchar(1000) NULL,
+	post_id int NULL,
+	user_id int NOT NULL,
+	[type] int NULL,
+	[date] datetime NULL,
+	created_date datetime NULL,
+	id int IDENTITY(1,1) NOT NULL,
+	title varchar(100) NULL
+) GO;
+
+-- Drop table
+
+-- DROP TABLE mpi_db.dbo.program
+
+CREATE TABLE mpi_db.dbo.program (
+	name varchar(100) NOT NULL,
+	description varchar(1000) NULL,
+	sect_id int NOT NULL,
+	created_date datetime NULL,
+	id int IDENTITY(1,1) NOT NULL
+) GO;
+
+-- Drop table
+
+-- DROP TABLE mpi_db.dbo.[section]
+
+CREATE TABLE mpi_db.dbo.[section] (
+	name varchar(100) NOT NULL,
+	division_id int NOT NULL,
+	parent_section_id int NULL,
+	created_date datetime NULL,
+	id int IDENTITY(1,1) NOT NULL
+) GO;
+
+-- Drop table
+
+-- DROP TABLE mpi_db.dbo.[user]
+
+CREATE TABLE mpi_db.dbo.[user] (
+	username varchar(100) NULL,
+	name varchar(100) NULL,
+	password varchar(100) NULL,
+	email varchar(100) NULL,
+	admin int NULL,
+	institution_id int NULL,
+	created_date datetime NULL,
+	id int IDENTITY(1,1) NOT NULL
+) GO;
